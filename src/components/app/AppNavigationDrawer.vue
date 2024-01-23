@@ -4,67 +4,48 @@ import { ref } from 'vue'
 const drawer = ref(true);
 const rail = ref(false);
 
-const items = ref ([
-  { text: 'Home', icon: 'mdi-clock', route: '/'},
-  { text: 'Areas', icon: 'mdi-account', route: '/admin/areas' },
-  { text: 'Carreras', icon: 'mdi-account', route: '/admin/careers' },
-  { text: 'Asignaturas', icon: 'mdi-flag', route: '/admin/subjects' },
-  { text: 'Parametros de Horario', icon: 'mdi-flag', route: '/admin/schedule' }
-]);
-
-const open = ref(['configuration']);
+const open = ref(['home']);
 const menuGroupList = ref([
   {
-    name: 'Home',
-    value: 'home',
-    icon: 'mdi-home-city',
-    subMenus: []
-  },
-  {
     name: 'Configuración',
-    value: 'configuracion',
-    icon: 'mdi-cog-outline',
+    value: 'configuration',
+    icon: 'mdi-cog',
     subMenus: [
       {
         name: 'Facultades',
-        value: 'facultades',
-        icon: 'mdi-account',
+        value: 'area',
+        route: '/admin/areas'
       },
       {
         name: 'Carreras',
-        value: 'carreras',
-        icon: 'mdi-account'
+        value: 'careers',
+        route: '/admin/careers'
       },
       {
         name: 'Asignaturas',
-        value: 'asignaturas',
-        icon: 'mdi-account'
+        value: 'subjects',
+        route: '/admin/subjects'
       },
       {
-        name: 'Periodos Académicos',
-        value: 'periodos_academicos',
-        icon: 'mdi-account'
-      },
-      {
-        name: 'Parametros de Horario',
-        value: 'parametros_de_horario',
-        icon: 'mdi-account'
+        name: 'Parámetros de Horarios',
+        value: 'schedule',
+        route: '/admin/schedule'
       }
     ]
   },
   {
-    name: 'Horarios de Clases',
-    value: 'horario_de_clases',
-    icon: 'mdi-cog-outline',
+    name: 'Admin Clases',
+    value: 'schedule-admin',
+    icon: 'mdi-wrench-clock-outline',
     subMenus: [
       {
         name: 'Itinerario de Clases',
-        value: 'itinerario_de_clases',
-        icon: 'mdi-account',
+        value: 'itinerario',
+        route: '/admin/areas'
       }
     ]
   }
-])
+]);
 </script>
 
 <template>
@@ -74,32 +55,31 @@ const menuGroupList = ref([
       prepend-avatar="https://randomuser.me/api/portraits/men/85.jpg"
       title="John Leider" nav>
       <template v-slot:append>
-        <v-btn variant="text"
-          icon="mdi-chevron-left"
-          @click.stop="rail = !rail"
-        ></v-btn>
+        <v-btn variant="text" icon="mdi-chevron-left" @click.stop="rail = !rail"/>
       </template>
     </v-list-item>
 
     <v-divider></v-divider>
 
-    <v-list density="compact">
+    <v-list v-model:opened="open" density="compact">
       <v-list-subheader>SELECT AREA</v-list-subheader>
-
-      <v-list-item
-        v-for="(item, i) in items"
-        :key="i"
-        :value="item"
-        color="primary"
-        router :to="item.route"
-      >
-        <template v-slot:prepend>
-          <v-icon :icon="item.icon"></v-icon>
+      <v-list-item prepend-icon="mdi-home" title="Home" value="home" router to="/"/>
+      <v-list-group v-for="menuGroup in menuGroupList" :key="menuGroup.value" :value="menuGroup.value">
+        <template v-slot:activator="{ props }">
+          <v-list-item
+            v-bind="props"
+            :prepend-icon="menuGroup.icon"
+            :title="menuGroup.name"
+          ></v-list-item>
         </template>
-
-        <v-list-item-title v-text="item.text">
-        </v-list-item-title>
-      </v-list-item>
+        <v-list-item
+          v-for="subMenu in menuGroup.subMenus"
+          :key="subMenu.value"
+          :value="subMenu.value"
+          :title="subMenu.name"
+          router :to="subMenu.route">
+        </v-list-item>
+      </v-list-group>
     </v-list>
   </v-navigation-drawer>
 </template>
