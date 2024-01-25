@@ -52,7 +52,10 @@
           </v-card-actions>
         </v-card>
 
-        <v-card title="Estructura base del horario del Área $[Nombre Área]" variant="outlined">
+        <v-card
+          :title="`Estructura base del horario del Área ${globalAreaSelected.name}`"
+          variant="outlined"
+        >
           <HorarioGrafico
             :horaini="horainicio"
             :horafin="horafin"
@@ -70,12 +73,15 @@
     <script>
 import HorarioGrafico from './ScheduleGraphic.vue'
 import HorarioDias from './ScheduleDays.vue'
+import AxiosAM from '@/services/AxiosAM'
+
 export default {
   created() {
     // Lógica que quieres ejecutar al inicio de la carga de la página
     console.log('El componente se ha creado. Puedes realizar acciones aquí.')
+    this.recuperarParametros()
 
-    this.cambiarCantPer()
+    //this.cambiarCantPer()
   },
   name: 'HorarioForm',
   components: {
@@ -85,15 +91,46 @@ export default {
   data() {
     return {
       horainicio: '00:00',
-      horafin: '23:59',
-      minutosper: 45,
-      days: [true, true, true, true, true, true, false],
-      filas: 31,
+      horafin: '00:00',
+      minutosper: 0,
+      days: [false, false, false, false, false, false, false],
+      filas: 0,
       filaHoras: []
     }
   },
 
   methods: {
+    async recuperarParametros() {
+      try {
+        let datos = await AxiosAM.get('admin/schedule-parameters/1')
+        console.log(datos)
+
+        let valores = datos.data
+
+        this.horainicio =
+          this.fHora(valores.startTimeSchedule[0]) + ':' + this.fHora(valores.startTimeSchedule[1])
+        this.horafin =
+          this.fHora(valores.endTimeSchedule[0]) + ':' + this.fHora(valores.endTimeSchedule[1])
+        this.minutosper = valores.timeIntervalSchedule
+        this.days = [
+          valores.mondaySchedule,
+          valores.tuesdaySchedule,
+          valores.wednesdaySchedule,
+          valores.thursdaySchedule,
+          valores.fridaySchedule,
+          valores.saturdaySchedule,
+          valores.sundaySchedule
+        ]
+        //this.cambiarCantPer();
+      } catch (error) {
+        console.error('Error getting schedules', error)
+      }
+    },
+
+    fHora(numero) {
+      return numero < 10 ? '0' + numero : numero
+    },
+
     actualizarDias(dias) {
       this.days = dias
     },

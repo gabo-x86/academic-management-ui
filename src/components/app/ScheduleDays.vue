@@ -19,7 +19,7 @@ export default {
   name: "HorarioDiasSimple",
   data() {
     return {
-      days: [true, true, true, true, true, true, false],
+      
       diasTexto: [
         "LUNES",
         "MARTES",
@@ -31,6 +31,11 @@ export default {
       ],
     };
   },
+
+  props: {
+    days: Array
+  },
+
   methods: {
     emitChange() {
       this.$emit("actualizardias", this.days);
