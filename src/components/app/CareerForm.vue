@@ -29,12 +29,6 @@
               :rules="descriptionRules"
               @input="$emit('update:description', $event.target.value)"
             ></v-text-field>
-            <v-text-field
-              v-model="model.career.area.id"
-              label="Id del Area"
-              :rules="areaRules"
-              @input="$emit('update:area', $event.target.value)"
-            ></v-text-field>
             <v-container width="500">
               <v-row justify="space-around">
                 <v-btn
@@ -65,12 +59,14 @@
 </template>
 
 <script setup>
-import axios from 'axios';
 import { ref, reactive, watch, getCurrentInstance} from 'vue';
 import { useCareerStore } from '@/stores/admin/configgeneral/careerStore';
+import { useMainStore } from '@/stores/global';
+
 const props = defineProps(['crearCarrera', 'model']);
 const dialogVisible = ref(props.crearCarrera);
 const { emit } = getCurrentInstance();
+const mainStore = useMainStore();
 const form = ref(null)
 const codeRules = [
   value => {
@@ -146,7 +142,7 @@ const areaRules = [
 
 const model = reactive({
   career: {
-    area: { id: null },
+    area: { id: mainStore.areaId },
     name: props.model?.name || '',
     initials: props.model?.initials || '',
     description: props.model?.description || '',

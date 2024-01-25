@@ -101,6 +101,10 @@ const headers = [
   { title: 'Carrera', align: 'start', key: 'name' },
   { title: 'Acción', align: 'center', sortable: false, key: 'actions' },
 ];
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  return `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
+};
 
 const editCareerSetId = (areaID) => {
   editCareerId.value = areaID;
@@ -126,9 +130,14 @@ const updateDeleteCareer = (value) => {
   eliminarCarrera.value = value;
 };
 
+
+
 onMounted(async () => {
   await careerStore.getCareers(mainStore.areaId);
-  careers.value = careerStore.careers;
+  careers.value = careerStore.careers.map((career) => ({
+    ...career,
+    formattedCreationDate: formatDate(career.creationDate),
+  }));
   careersReady.value = true;
   console.log(careerStore.careers);
 });

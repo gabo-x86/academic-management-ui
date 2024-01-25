@@ -21,12 +21,8 @@
                        ></v-text-field>
                       <v-text-field  
                       v-model="model.career.creationDate" label="Fecha de fundación" :rules="creationDateRules" 
-                      prepend-inner-icon="mdi-calendar" 
+                      prepend-inner-icon="mdi-calendar"
                       @input="$emit('update:creationDate', $event.target.valueAsDate)"
-                       ></v-text-field>
-                       <v-text-field  
-                         v-model="model.career.area.id" label="Id del Area" :rules="areaRules"
-                         @input="$emit('update:area', $event.target.value)"
                        ></v-text-field>
                         <v-container  width="500" >
                           <v-row justify="space-around">
@@ -45,9 +41,11 @@
     </template>
     
     <script setup>
-import axios from 'axios';
-import { ref, reactive, watch, getCurrentInstance} from 'vue';
+import { ref, reactive, watch, getCurrentInstance, computed} from 'vue';
 import { useCareerStore } from '@/stores/admin/configgeneral/careerStore';
+import { format, parse } from 'date-fns';
+import { es } from 'date-fns/locale';
+
 const props = defineProps(['editCareer', 'model', 'editCareerId']);
 const { emit } = getCurrentInstance()
 const form = ref(null)
@@ -166,7 +164,6 @@ watch(() => props.editCareer, newValue => {
 watch(() => props.editCareerId, newId => {
   getCareerById(newId);
 });
-
 const closeEditDialog = () => {
   emit('close-dialogEdit', false);
 };
@@ -181,19 +178,18 @@ const validateAndSave = async careerId => {
   }
 };
 
+
 const getCareerById = async careerId => {
   await useCareerStore().getCareerById(careerId);
   console.log(useCareerStore().currentCareer);
   model.career = useCareerStore().currentCareer;
-  console.log(model.career);
+  console.log(model.career.creationDate);
 };
 
 const saveCareerEdit = careerId => {
   useCareerStore().saveCareerEdit(careerId);
-  // Aquí puedes actualizar tu modelo si es necesario
   model.value.career = useCareerStore().currentCareer.value;
 };
-
 
 
 </script>
