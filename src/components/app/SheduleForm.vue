@@ -95,14 +95,25 @@ export default {
       minutosper: 0,
       days: [false, false, false, false, false, false, false],
       filas: 0,
-      filaHoras: []
+      filaHoras: [],
+
+      initialValues: {
+        horainicio: '00:00',
+        horafin: '00:00',
+        minutosper: 0,
+        days: [false, false, false, false, false, false, false]
+      }
+
     }
   },
 
   methods: {
     async recuperarParametros() {
+
+      const area = this.globalAreaSelected;
+
       try {
-        let datos = await AxiosAM.get('admin/schedule-parameters/1')
+        let datos = await AxiosAM.get('admin/schedule-parameters/'+area.id);
         console.log(datos)
 
         let valores = datos.data
