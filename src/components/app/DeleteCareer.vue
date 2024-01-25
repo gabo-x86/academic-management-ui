@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="DeleteCareerVisible"  @update:modelValue="$emit('update:eliminarCarrera', $event)">
+    <v-dialog v-model="deleteCareerVisible"  @update:modelValue="$emit('update:eliminarCarrera', $event)">
       <v-card class="card-delete-style">
         <v-card-title class="eliminar-letra">
           <svg-icon  type="mdi" :path="icon4"></svg-icon>
@@ -22,43 +22,40 @@
     </v-dialog>
 </template>
 
-<script>
-import SvgIcon from '@jamescoyle/vue-icon'
-import { mdiAlert } from '@mdi/js'
+<script setup>
 import axios from 'axios';
-      
-export default {
-  props: ['eliminarCarrera', 'deleteCareerId'],
-  inject: ['refreshCareers'],
-  components: {
-		SvgIcon,
-	},
-  data() {
-    return {
-      DeleteCareerVisible: this.editCareer,
-      icon4: mdiAlert,
-    };
-  },
-  watch: {
-    eliminarCarrera(newValue) {
-      this.DeleteCareerVisible = newValue;
-    },
-  },
-  methods: {
-    closeDeleteDialog() {
-      this.$emit('close-deleteDialog', false);
-    },
-    deleteCareerById(careerId){
-      axios.delete(`http://localhost:8080/admin/areas/2/careers/${careerId}`).then(res=>{
-          console.log(res)
-          this.refreshCareers()
-          this.$emit('close-deleteDialog', false);
-          
-        }).catch( function(error){
+import { ref, reactive, watch, getCurrentInstance} from 'vue';
+import SvgIcon from '@jamescoyle/vue-icon';
+import { mdiAlert } from '@mdi/js';
+import { useCareerStore } from '@/stores/admin/configgeneral/careerStore';
+import { useMainStore } from '@/stores/global';
 
-        })
-    }
-  },
+const props = defineProps(['eliminarCarrera', 'deleteCareerId']);
+const { emit } = getCurrentInstance();
+const mainStore = useMainStore();
+const deleteCareerVisible = ref(props.eliminarCarrera);
+const icon4 = mdiAlert;
+
+watch(() => props.eliminarCarrera, (newValue) => {
+  deleteCareerVisible.value = newValue;
+});
+
+const closeDeleteDialog = () => {
+  emit('close-deleteDialog', false);
+};
+
+const deleteCareerById = (careerId) => {
+  console.log(careerId)
+  axios.delete(`http://localhost:8080/admin/areas/2/careers/${careerId}`)
+    .then((res) => {
+      console.log(res);
+      useCareerStore().getCareers(mainStore.areaId);
+      emit('close-deleteDialog', false);
+
+    })
+    .catch((error) => {
+      console.error(error);
+    });
 };
 </script>
 
