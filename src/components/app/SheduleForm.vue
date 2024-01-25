@@ -2,7 +2,8 @@
   <v-app>
     <v-main>
       <v-container>
-        <v-card class="mb-2"
+        <v-card
+          class="mb-2"
           title="Parámetros  de ajuste de horarios según las políticas del Área/Facultad"
           variant="outlined"
         >
@@ -51,10 +52,7 @@
           </v-card-actions>
         </v-card>
 
-        <v-card
-          title="Estructura base del horario del Área $[Nombre Área]"
-          variant="outlined"
-        >
+        <v-card title="Estructura base del horario del Área $[Nombre Área]" variant="outlined">
           <HorarioGrafico
             :horaini="horainicio"
             :horafin="horafin"
@@ -70,99 +68,97 @@
 </template>
     
     <script>
-import HorarioGrafico from "./HorarioGrafico.vue";
-import HorarioDias from "./HorarioDiasSimple.vue";
+import HorarioGrafico from './ScheduleGraphic.vue'
+import HorarioDias from './ScheduleDays.vue'
 export default {
   created() {
     // Lógica que quieres ejecutar al inicio de la carga de la página
-    console.log("El componente se ha creado. Puedes realizar acciones aquí.");
+    console.log('El componente se ha creado. Puedes realizar acciones aquí.')
 
-    this.cambiarCantPer();
+    this.cambiarCantPer()
   },
-  name: "HorarioForm",
+  name: 'HorarioForm',
   components: {
     HorarioGrafico,
-    HorarioDias,
+    HorarioDias
   },
   data() {
     return {
-      horainicio: "00:00",
-      horafin: "23:59",
+      horainicio: '00:00',
+      horafin: '23:59',
       minutosper: 45,
       days: [true, true, true, true, true, true, false],
       filas: 31,
-      filaHoras: [],
-    };
+      filaHoras: []
+    }
   },
 
   methods: {
     actualizarDias(dias) {
-      this.days = dias;
+      this.days = dias
     },
 
     cambiarCantPer() {
-      let minListIni = this.horainicio.split(":");
-      let minutosIni = parseInt(minListIni[0]) * 60 + parseInt(minListIni[1]);
+      let minListIni = this.horainicio.split(':')
+      let minutosIni = parseInt(minListIni[0]) * 60 + parseInt(minListIni[1])
 
-      let minListFin = this.horafin.split(":");
-      let minutosFin = parseInt(minListFin[0]) * 60 + parseInt(minListFin[1]);
+      let minListFin = this.horafin.split(':')
+      let minutosFin = parseInt(minListFin[0]) * 60 + parseInt(minListFin[1])
 
-      let diferencia = minutosFin - minutosIni;
+      let diferencia = minutosFin - minutosIni
       if (diferencia > 0 && this.minutosper > 0) {
         if (diferencia >= this.minutosper) {
-          let periodos = parseInt(diferencia / this.minutosper);
-          this.filas = periodos;
+          let periodos = parseInt(diferencia / this.minutosper)
+          this.filas = periodos
 
-          let filaHoraAux = [this.horainicio];
-          let cont = minutosIni;
+          let filaHoraAux = [this.horainicio]
+          let cont = minutosIni
 
           for (let i = 0; i < periodos; i++) {
-            cont = cont + this.minutosper;
+            cont = cont + this.minutosper
 
-            let horas = parseInt(cont / 60);
-            let minutos = parseInt(cont % 60);
+            let horas = parseInt(cont / 60)
+            let minutos = parseInt(cont % 60)
 
             let filaString =
-              (horas > 9 ? horas : "0" + horas) +
-              ":" +
-              (minutos > 9 ? minutos : "0" + minutos);
-            filaHoraAux.push(filaString);
+              (horas > 9 ? horas : '0' + horas) + ':' + (minutos > 9 ? minutos : '0' + minutos)
+            filaHoraAux.push(filaString)
           }
 
-          this.filaHoras = filaHoraAux;
+          this.filaHoras = filaHoraAux
         } else {
-          this.filas = 0;
-          this.filaHoras = [this.horainicio];
+          this.filas = 0
+          this.filaHoras = [this.horainicio]
         }
       } else {
-        this.filas = 0;
-        this.filaHoras = [this.horainicio];
+        this.filas = 0
+        this.filaHoras = [this.horainicio]
       }
-    },
+    }
   },
 
   watch: {
     minutosper: {
       handler: function (nuevo, oldVal) {
-        this.cambiarCantPer();
+        this.cambiarCantPer()
       },
-      deep: true,
+      deep: true
     },
 
     horainicio: {
       handler: function (nuevo, oldVal) {
-        this.cambiarCantPer();
+        this.cambiarCantPer()
       },
-      deep: true,
+      deep: true
     },
 
     horafin: {
       handler: function (nuevo, oldVal) {
-        this.cambiarCantPer();
+        this.cambiarCantPer()
       },
-      deep: true,
-    },
-  },
-};
+      deep: true
+    }
+  }
+}
 </script>
     

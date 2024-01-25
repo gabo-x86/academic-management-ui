@@ -10,7 +10,7 @@
   
 <script>
 
-import HorarioForm from "../configHorario/HorarioForm.vue"
+import HorarioForm from "../../../components/app/SheduleForm.vue"
 
 export default {
   name: "MainHorario",
