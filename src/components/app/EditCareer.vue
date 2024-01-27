@@ -4,7 +4,7 @@
           <v-card-title>Editar Carrera</v-card-title>
           <v-card-text>
                   <v-sheet width="500" class="mx-auto">
-                    <v-form ref="form">
+                    <v-form ref="form" @submit.prevent="validateAndSaveEdit">
                       <v-text-field  
                       v-model="model.career.code" label="Código *"  :rules="codeRules"
                       @input="$emit('update:code', $event.target.value)"></v-text-field>
@@ -20,15 +20,18 @@
                        @input="$emit('update:description', $event.target.value)"
                        ></v-text-field>
                       <v-text-field  
-                      v-model="model.career.creationDate" label="Fecha de fundación" :rules="creationDateRules" 
+                      v-model="model.career.formattedCreationDate" label="Fecha de fundación" 
+                      :rules="creationDateRules" 
                       prepend-inner-icon="mdi-calendar"
                       @input="$emit('update:creationDate', $event.target.valueAsDate)"
                        ></v-text-field>
                         <v-container  width="500" >
                           <v-row justify="space-around">
-                          <v-btn type="submit" class=" button-edit-dialoge mt-2 left-button  mr-auto "  
-                          color="blue" dark @click="validateAndSave(props.editCareerId)">Guardar</v-btn>
-                          <v-btn type="submit" class=" button-edit-dialoge mt-2 right-button ml-auto " 
+                            <v-btn type="submit" class="button-edit-dialoge mt-2 left-button  mr-auto"  
+                            color="blue" dark @click.prevent="validateAndSaveEdit(props.editCareerId)">
+                              Guardar
+                            </v-btn>
+                          <v-btn type="button" class=" button-edit-dialoge mt-2 right-button ml-auto " 
                           color="red" dark @click="closeEditDialog">Cancelar</v-btn>
                         </v-row>
                         </v-container>
@@ -41,16 +44,14 @@
     </template>
     
     <script setup>
-import { ref, reactive, watch, getCurrentInstance, computed} from 'vue';
+import { ref, reactive, watch, getCurrentInstance} from 'vue';
 import { useCareerStore } from '@/stores/admin/configgeneral/careerStore';
-import { format, parse } from 'date-fns';
-import { es } from 'date-fns/locale';
+import { format} from 'date-fns';
 
-const props = defineProps(['editCareer', 'model', 'editCareerId']);
+const props = defineProps(['editCareer', 'model', 'editCareerId', 'onSaved']);
 const { emit } = getCurrentInstance()
 const form = ref(null)
 const editCareerVisible = ref(props.editCareer);
-const fechaChange = ref('');
 const codeRules = [
   value => {
     if (!value) {
@@ -126,25 +127,14 @@ const creationDateRules = [
     if (specialCharacters.test(value)) {
       return 'The creation date cannot contain special or alphabetical characters.';
     }
-    fechaChange.value = new Date().toISOString();
-    fechaChange.value = fechaChange.value.split('T')[0];
-    console.log(fechaChange.value);
-    if (value > fechaChange.value) {
+    const currentDate = format(new Date(), 'dd-MM-yyyy', { timezone: 'GMT-4' });
+    if (value > currentDate) {
       return 'The creation date cannot be later than the current date.';
     }
     return true;
   },
 ];
 
-const areaRules = [
-  value => {
-    if (!value) {
-      return 'The area is required.';
-    } else {
-      return true;
-    }
-  },
-];
 
 const model = reactive({
   career: {
@@ -168,13 +158,15 @@ const closeEditDialog = () => {
   emit('close-dialogEdit', false);
 };
 
-const validateAndSave = async careerId => {
+const validateAndSaveEdit = async careerId => {
   const { valid } = await form.value.validate()
 
   if (valid) {
-    saveCareerEdit(careerId);
+    await saveCareerEdit(careerId);
+    props.onSaved();
+    emit('saved');
+    emit('close-dialogEdit', false);
   } else {
-    alert('Form is invalid');
   }
 };
 
@@ -183,12 +175,15 @@ const getCareerById = async careerId => {
   await useCareerStore().getCareerById(careerId);
   console.log(useCareerStore().currentCareer);
   model.career = useCareerStore().currentCareer;
+  model.career.creationDate = new Date(model.career.creationDate);
+  model.career.creationDate = format(model.career.creationDate, 'dd-MM-yyyy', { timezone: 'GMT-4' });
   console.log(model.career.creationDate);
 };
 
-const saveCareerEdit = careerId => {
-  useCareerStore().saveCareerEdit(careerId);
-  model.value.career = useCareerStore().currentCareer.value;
+const saveCareerEdit = async careerId => {
+  await useCareerStore().saveCareerEdit(careerId);
+  const currentCareer = useCareerStore().currentCareer;
+  model.career = currentCareer
 };
 
 

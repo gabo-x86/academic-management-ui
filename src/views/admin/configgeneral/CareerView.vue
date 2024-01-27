@@ -1,8 +1,11 @@
 <template>
   <div>
     <h1 style="text-align: center;">Carreras</h1>
-    <div class="button-with-margin">
+    
+    <v-container class="table-container">
+      <div class="button-with-margin">
     <v-btn
+      v-if="careersReady"
       prepend-icon="mdi-plus"
       color="blue"
       style="width: 200px; height: 50px;"
@@ -14,19 +17,20 @@
       Crear Nuevo
     </v-btn>
     <career-form
-      v-model:crearCarrera="crearCarrera"
-      v-model:code="code"
-      v-model:name="name"
-      v-model:initials="initials"
-      v-model:description="description"
-      v-model:area="area"
-      @update:code="val => code = val" 
-      @update:name="val => name = val" 
-      @update:initials="val => initials = val" 
-      @update:description="val => description = val" 
-      @update:area="val => area = {id: val}"  
-      @close-dialog="crearCarrera = false"
-    ></career-form>
+        v-model:crearCarrera="crearCarrera"
+        v-model:code="code"
+        v-model:name="name"
+        v-model:initials="initials"
+        v-model:description="description"
+        v-model:area="area"
+        @update:code="val => code = val" 
+        @update:name="val => name = val" 
+        @update:initials="val => initials = val" 
+        @update:description="val => description = val" 
+        @update:area="val => area = {id: val}" 
+        :onSaved="reloadTable"
+        @close-dialog="crearCarrera = false"
+      ></career-form>
 
     <delete-career
       v-model:eliminarCarrera="eliminarCarrera"
@@ -34,7 +38,6 @@
       @close-deleteDialog="updateDeleteCareer"
     ></delete-career>    
   </div>    
-    <v-container class="table-container">
       <v-data-table
       v-if="careersReady"
     :headers="headers"
@@ -59,22 +62,28 @@
         </v-row> 
     </template>
   </v-data-table>
+  <div v-else>
+        <p>No Seleccionaste ningun Area aun, No tenemos carreras que mostrarte</p>
+  </div>
     <edit-career
   v-model:editCareer="editCareer"
   :editCareerId="editCareerId"
   @close-dialogEdit="updateEditCareer"
+  :onSaved="reloadTable"
 ></edit-career>
   </v-container>
   </div>
 </template>
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { useMainStore } from '@/stores/global';
 import { useCareerStore } from '@/stores/admin/configgeneral/careerStore';
+import { useAreaStore } from '@/stores/admin/configgeneral/areaStore';
 import CareerForm from '@/components/app/CareerForm.vue';
 import EditCareer from '@/components/app/EditCareer.vue';
 import DeleteCareer from '@/components/app/DeleteCareer.vue';
 import SvgIcon from '@jamescoyle/vue-icon';
+import { sharedReload } from '@/stores/global'
 import {
   mdiSquareEditOutline,
   mdiFileDocumentOutline,
@@ -83,11 +92,11 @@ import {
 
 const mainStore = useMainStore();
 const careerStore = useCareerStore();
-
+const areaStore = useAreaStore();
 const icon1 = mdiSquareEditOutline;
 const icon2 = mdiFileDocumentOutline;
 const icon3 = mdiTrashCanOutline;
-
+const areasSelect = ref([]);
 const crearCarrera = ref(false);
 const eliminarCarrera = ref(false);
 const editCareer = ref(false);
@@ -101,6 +110,11 @@ const headers = [
   { title: 'Carrera', align: 'start', key: 'name' },
   { title: 'Acción', align: 'center', sortable: false, key: 'actions' },
 ];
+const headers2 = [
+  { title: 'Código', align: 'start', key: 'code' },
+  { title: 'Carrera', align: 'start', key: 'name' },
+  { title: 'Acción', align: 'center', sortable: false, key: 'actions' },
+];
 const formatDate = (dateString) => {
   const date = new Date(dateString);
   return `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
@@ -110,6 +124,12 @@ const editCareerSetId = (areaID) => {
   editCareerId.value = areaID;
   editCareer.value = true;
 };
+watch(sharedReload, () => {
+  if (sharedReload.value) {
+    reloadTable();
+    sharedReload.value = false; 
+  }
+});
 
 const deleteCareerSetId = (id) => {
   deleteCareerId.value = id;
@@ -130,16 +150,28 @@ const updateDeleteCareer = (value) => {
   eliminarCarrera.value = value;
 };
 
+const reloadTable = async () => {
+  await careerStore.getCareers(mainStore.areaId)
+};
 
 
 onMounted(async () => {
-  await careerStore.getCareers(mainStore.areaId);
-  careers.value = careerStore.careers.map((career) => ({
-    ...career,
-    formattedCreationDate: formatDate(career.creationDate),
+  watch(() => mainStore.areaId, async (newAreaId, oldAreaId) => {   
+    if (newAreaId !== null) {
+      await careerStore.getCareers(newAreaId);
+      careers.value = careerStore.careers.map((career) => ({
+        ...career,
+        formattedCreationDate: formatDate(career.creationDate),
+      }));
+      careersReady.value = true;
+    }
+  });
+  
+  await areaStore.getAreas();
+  areasSelect.value = areaStore.areas.map(area => ({
+    id: area.id,
+    name: area.name
   }));
-  careersReady.value = true;
-  console.log(careerStore.careers);
 });
 </script>
 

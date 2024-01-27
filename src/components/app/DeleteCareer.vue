@@ -24,7 +24,7 @@
 
 <script setup>
 import axios from 'axios';
-import { ref, reactive, watch, getCurrentInstance} from 'vue';
+import { ref, watch, getCurrentInstance} from 'vue';
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiAlert } from '@mdi/js';
 import { useCareerStore } from '@/stores/admin/configgeneral/careerStore';
@@ -45,10 +45,8 @@ const closeDeleteDialog = () => {
 };
 
 const deleteCareerById = (careerId) => {
-  console.log(careerId)
   axios.delete(`http://localhost:8080/admin/areas/2/careers/${careerId}`)
     .then((res) => {
-      console.log(res);
       useCareerStore().getCareers(mainStore.areaId);
       emit('close-deleteDialog', false);
 

@@ -4,7 +4,7 @@
       <v-card-title>Añadir Carrera</v-card-title>
       <v-card-text>
         <v-sheet width="500" class="mx-auto">
-          <v-form ref="form">
+          <v-form ref="form"  @submit.prevent="validateAndSave">
             <v-text-field
               v-model="model.career.code"
               label="Código *"
@@ -36,7 +36,7 @@
                   class="button-dialoge mt-2 left-button mr-auto"
                   color="blue"
                   dark
-                  @click="validateAndSave"
+                  @click.prevent="validateAndSave"
                 >
                   Guardar
                 </v-btn>
@@ -63,11 +63,11 @@ import { ref, reactive, watch, getCurrentInstance} from 'vue';
 import { useCareerStore } from '@/stores/admin/configgeneral/careerStore';
 import { useMainStore } from '@/stores/global';
 
-const props = defineProps(['crearCarrera', 'model']);
+const props = defineProps(['crearCarrera', 'model', 'onSaved']);
 const dialogVisible = ref(props.crearCarrera);
 const { emit } = getCurrentInstance();
 const mainStore = useMainStore();
-const form = ref(null)
+const form = ref(null);
 const codeRules = [
   value => {
     if (!value) {
@@ -130,16 +130,6 @@ const descriptionRules = [
     }
   },
 ];
-const areaRules = [
-  value => {
-    if (!value) {
-      return 'The area is required.';
-    } else {
-      return true;
-    }
-  },
-];
-
 const model = reactive({
   career: {
     area: { id: mainStore.areaId },
@@ -156,16 +146,22 @@ watch(() => props.crearCarrera, (newValue) => {
 });
 
 const closeDialog = () => {
-  emit('close-dialog');
+  emit('update:crearCarrera', false); 
+  emit('close-dialog'); 
+  form.value.reset();
 };
 
+
 const validateAndSave = async () => {
-  const { valid } = await form.value.validate()
+  const { valid } = await form.value.validate();
 
   if (valid) {
     useCareerStore().saveCareer(model);
+    props.onSaved();
+    emit('saved');
+    form.value.reset();
+    emit('close-dialog');
   } else {
-    alert('Form is invalid');
   }
 };
 

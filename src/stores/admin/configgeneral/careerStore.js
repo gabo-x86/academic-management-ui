@@ -3,7 +3,6 @@ import { ref } from 'vue'
 import AxiosAM from '@/services/AxiosAM';
 import { useMainStore } from '@/stores/global';
 import { format, parse } from 'date-fns';
-import { es } from 'date-fns/locale';
 
 const pathCareerResource = '/admin/areas'; 
 
@@ -15,7 +14,6 @@ export const useCareerStore = defineStore('careerStore', () => {
     try {
       const { status, data } = await AxiosAM.get(`${pathCareerResource}/${areaId}/careers`);
       if (status === 200) {
-        console.log(areaId)
         careers.value = data;
       }
     } catch (error) {
@@ -29,7 +27,6 @@ export const useCareerStore = defineStore('careerStore', () => {
       model.career.area.id = areaId;
       const { status, data } = await AxiosAM.post(`${pathCareerResource}/2/careers`, model.career);
       if (status === 200) {
-        console.log('Career was saved successfully');
         model.career = {
           area: { id: null },
           name: '',
@@ -43,19 +40,14 @@ export const useCareerStore = defineStore('careerStore', () => {
     }
   }
 
-  async function getCareerById(careerId) {
+  const getCareerById = async careerId => {
     try {
       const { status, data } = await AxiosAM.get(`${pathCareerResource}/2/careers/${careerId}`);
       if (status === 200) {
         const careerData = data;
         if (careerData && careerData.creationDate) {
-          careerData.creationDate = new Date(careerData.creationDate);
-          careerData.creationDate = format(careerData.creationDate, 'dd-MM-yyyy', { timezone: 'GMT-4' });
-  
-          console.log(careerData.creationDate);
+          careerData.formattedCreationDate = format(new Date(careerData.creationDate), 'dd-MM-yyyy', { timezone: 'GMT-4' });
           currentCareer.value = careerData;
-  
-          console.log(currentCareer.value.creationDate);
         } else {
           console.error('Invalid data received:', data);
         }
@@ -63,14 +55,26 @@ export const useCareerStore = defineStore('careerStore', () => {
     } catch (error) {
       console.error('Error getting career by id:', error);
     }
-  }
+  };
 
   async function saveCareerEdit(careerId) {
-    
     try {
-      const originalDate = parse(currentCareer.value.creationDate, 'dd-MM-yyyy', new Date(),{ timezone: 'UTC' });
-      currentCareer.value.creationDate = format(originalDate, 'yyyy-MM-dd', { timezone: 'UTC' });
-      const { status, data } = await AxiosAM.put(`${pathCareerResource}/2/careers/${careerId}`, currentCareer.value);
+      const creationDateValue = currentCareer.value.creationDate;
+      console.log('Original Creation Date:', creationDateValue);
+  
+      const parsedDate = parse(creationDateValue, 'dd-MM-yyyy', new Date(), { timezone: 'GMT-4' });
+      console.log('Parsed Date:', parsedDate);
+  
+      const formattedDate = format(parsedDate, 'yyyy-MM-dd', { timezone: 'UTC' });
+      console.log('Formatted Date:', formattedDate);
+  
+      const careerToSave = {
+        ...currentCareer.value,
+        creationDate: formattedDate,
+      };
+  
+      const { status, data } = await AxiosAM.put(`${pathCareerResource}/2/careers/${careerId}`, careerToSave);
+  
       if (status === 200) {
 
       }
