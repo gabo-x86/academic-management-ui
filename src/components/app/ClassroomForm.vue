@@ -1,41 +1,137 @@
 <script setup>
-  import { ref } from 'vue'
+  import {getCurrentInstance, reactive, ref, watch} from 'vue'
+  import { useClassroomStore} from "@/stores/admin/configgeneral/classroomStore.js";
+  import {useMainStore} from "@/stores/globalArea.js";
+  import { useForm } from "vee-validate";
+  import * as yup from "yup"
 
-  const dialog=ref(false)
+
+  const props = defineProps(['createClassroom','model','onSaved'])
+  const dialogVisible=ref(props.createClassroom)
+  const { emit } = getCurrentInstance()
+  const mainStore=useMainStore()
+  const form =ref(null)
+
+  const closeDialog = () => {
+    form.value.reset()
+    emit('close-dialog')
+  }
+
+  const model = reactive({
+    classroom:{
+      area:{id:mainStore.areaId},
+      name: props.model?.name || '',
+      initials: props.model?.initials || '',
+      type: props.model?.type || '',
+      address: props.model?.address || '',
+    }
+  })
+
+  watch(()=>props.createClassroom,(newValue)=>{
+    dialogVisible.value=newValue
+  })
+
+const validateSave = async ()=>{
+    const { valid } = await form.value.validate()
+  if(valid){
+    useClassroomStore().saveClassroom(model);
+    props.onSaved()
+    emit('saved')
+    form.value.reset()
+    emit('close-dialog')
+  }
+
+}
+
+//Reglas
+const initialsRules = [
+  value => {
+    if (!value) {
+      return 'The initials are required.'
+    }
+    if (value?.length >= 3 && value?.length <= 10) {
+      const specialCharacters = /[!@#$%^&*(),.?":{}|<>\/\\]/
+      if (!specialCharacters.test(value)) {
+        return true;
+      } else {
+        return 'The initials cannot contain special characters.'
+      }
+    } else {
+      return 'The initials must have at least 3 characters and at most 10 characters.'
+    }
+  },
+]
+
+const nameRules = [
+  value => {
+    if (!value) {
+      return 'The name is required.'
+    }
+    if (value?.length >= 3 && value?.length <= 50) {
+      const specialCharacters = /[!@#$%^&*(),.?":{}|<>\/\\]/
+
+      if (!specialCharacters.test(value)) {
+        return true;
+      } else {
+        return 'The name cannot special characters.'
+      }
+    } else {
+      return 'The name must have at least 3 characters and at most 50 characters.'
+    }
+  },
+]
+
+const typeRules = [
+  value => {
+    if (!value) {
+      return 'The Type is required.'
+    } else {
+      return true
+    }
+  },
+]
+
+const addressRules = [
+  value => {
+    if (!value) {
+      return 'The name is required.'
+    }
+    if (value?.length >= 3 && value?.length <= 50) {
+      const specialCharacters = /[!@#$%^&*(),.?":{}|<>\/\\]/
+
+      if (!specialCharacters.test(value)) {
+        return true
+      } else {
+        return 'The name cannot contain numbers or special characters.'
+      }
+    } else {
+      return 'The name must have at least 3 characters and at most 50 characters.'
+    }
+  },
+]
+
 </script>
 
 <template>
-  <v-row justify="end" class="">
     <v-dialog
-        v-model="dialog"
-        persistent
+        v-model="dialogVisible"
         width="500"
-    >
-      <template v-slot:activator="{ props }">
-        <div class="d-flex flex-row-reverse">
-          <v-btn
-              class="mx-9 my-4"
-              prepend-icon="mdi-plus"
-              color="blue"
-              width="200"
-              height="50"
-              v-bind="props"
-          >
-            Crear Nuevo
-          </v-btn>
-        </div>
-      </template>
+        @update:modelValue="$emit('update:createClasroom',$event)"
+        persistent>
       <v-card>
         <v-card-title>
-          <span class="text-h5">Crear Aula</span>
+          <span class="font-weight-bold">Crear Aula</span>
         </v-card-title>
         <v-card-text>
           <v-container>
+            <v-form ref="form">
             <v-row>
               <v-col cols="12">
                 <v-text-field
+                    v-model="model.classroom.name"
                     label="Nombre*"
-                    required
+                    :rules="nameRules"
+                    @input="$emit('update:name', $event.target.value)"
                 ></v-text-field>
               </v-col>
               <v-col
@@ -44,10 +140,12 @@
                   md="6"
               >
                 <v-text-field
+                    v-model="model.classroom.initials"
                     label="Sigla*"
+                    :rules="initialsRules"
+                    @input="$emit('update:initials', $event.target.value)"
                     hint="Por ejemplo: 617, INFLAB o 692F"
                     persistent-hint
-                    required
                 ></v-text-field>
               </v-col>
               <v-col
@@ -56,49 +154,48 @@
                   md="6"
               >
                 <v-select
+                    v-model="model.classroom.type"
                     :items="['Aula', 'Laboratorio', 'Auditorio']"
                     label="Tipo*"
-                    required
+                    :rules="typeRules"
+                    @input="$emit('update:type', $event.target.value)"
                 ></v-select>
               </v-col>
 
               <v-col cols="12">
                 <v-text-field
+                    v-model="model.classroom.address"
                     label="Dirección*"
-                    required
+                    :rules="addressRules"
+                    @input="$emit('update:address', $event.target.value)"
                 ></v-text-field>
-              </v-col>
-              <v-col cols="12">
-                <v-select
-                    :items="['Facultad de Ciencia y Tecnologia', 'Facultad de Ciencia Económica']"
-                    label="Facultad*"
-                    required
-                ></v-select>
               </v-col>
 
             </v-row>
+            </v-form>
           </v-container>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn
+              class="font-weight-bold"
               color="blue"
               variant="text"
-              @click="dialog = false"
+              @click="closeDialog"
           >
             Cancelar
           </v-btn>
           <v-btn
+              class="font-weight-bold"
               color="blue"
               variant="text"
-              @click="dialog = false"
+              @click="validateSave"
           >
             Guardar
           </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
-  </v-row>
 </template>
 
 <style scoped>
