@@ -1,11 +1,13 @@
 <template>
-  <v-app>
-    <v-main>
-      <v-container>
-        <Horario :rows="filas" :columns="diasSel.length" :days="diasSel" :filaHoras="filaHoras" />
-      </v-container>
-    </v-main>
-  </v-app>
+  <v-container>
+    <v-alert type="info" title="Horario" variant="tonal">
+      <ul>
+        <li>Selecciona los días laborales.</li>
+        <li>Especifíca los periodos activos.</li>
+      </ul>
+    </v-alert>
+    <Horario :rows="filas" :columns="diasSel.length" :days="diasSel" :filaHoras="filaHoras" />
+  </v-container>
 </template>
 
 
@@ -20,7 +22,7 @@ import Horario from './ScheduleTable.vue'
 
 export default {
   created() {
-    this.seleccionarDias(this.listaDias);
+    this.seleccionarDias(this.listaDias)
   },
 
   name: 'HorarioGrafico',

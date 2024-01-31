@@ -6,8 +6,8 @@
     <div class="checkbox-container">
     <div v-for="i in diasTexto.length" :key="i" class="checkbox-container">
       <div class="checkboxcomp">
-        <input type="checkbox" v-model="days[i-1]" @change="emitChange" />
-        <div>{{charIni(diasTexto[i-1]) }}</div>
+        <input type="checkbox" :id="`diacheck${i}`" v-model="days[i-1]" @change="emitChange" />
+        <label :for="`diacheck${i}`">{{diasTexto[i-1] }}</label>
       </div>
     </div>
   </div>
@@ -52,11 +52,11 @@ export default {
 <style>
 .checkbox-container {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
 }
 .checkboxcomp {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
 }
 
@@ -66,8 +66,8 @@ export default {
   margin: 4px;
 }
 
-.checkboxcomp div {
-  font-size: 10px;
+.checkboxcomp label {
+  font-size: 13px;
 }
 
 .titulo{
