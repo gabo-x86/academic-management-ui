@@ -1,10 +1,10 @@
 <template>
   <div>
-    <h1 style="text-align: center;">Carreras</h1>
+    <h1 style="text-align: center;">Lista de Carreras</h1>
     
     <v-container class="table-container">
       <div class="button-with-margin">
-    <v-btn
+        <v-btn
       v-if="careersReady"
       prepend-icon="mdi-plus"
       color="blue"
@@ -18,12 +18,11 @@
     </v-btn>
     <career-form
         v-model:crearCarrera="crearCarrera"
-        v-model:code="code"
         v-model:name="name"
         v-model:initials="initials"
         v-model:description="description"
+        v-model:creationDate="creationDate"
         v-model:area="area"
-        @update:code="val => code = val" 
         @update:name="val => name = val" 
         @update:initials="val => initials = val" 
         @update:description="val => description = val" 
@@ -41,15 +40,15 @@
       <v-data-table
       v-if="careersReady"
     :headers="headers"
-    :items="careerStore.careers"
+    :items="formatCareers(careerStore.careers)"
     density="compact"
-    :sort-by="[{ key: 'code', order: 'asc' }]"
+    :sort-by="[{ key: 'id', order: 'asc' }]"
      >
      <template v-slot:[`item.actions`]="{ item }">
       <v-row justify="space-around">
           <v-btn variant="text" class="botones-tabla-btn">
             <svg-icon type="mdi" :path="icon2"></svg-icon>
-            Ver planes de estudio
+            MALLAS CURRICULARES
           </v-btn>
           <v-btn variant="text" class="botones-tabla-btn"  @click="editCareerSetId(item.id)">
           <svg-icon type="mdi" :path="icon1"></svg-icon>
@@ -100,25 +99,28 @@ const areasSelect = ref([]);
 const crearCarrera = ref(false);
 const eliminarCarrera = ref(false);
 const editCareer = ref(false);
+const formattedCareers = ref([]);
 const careersReady = ref(false);
 const editCareerId = ref(0);
 const deleteCareerId = ref(0);
 const careers = ref([]);
 
 const headers = [
-  { title: 'Código', align: 'start', key: 'code' },
-  { title: 'Carrera', align: 'start', key: 'name' },
+{ title: 'Id', align: 'start', key: 'id' },
+  { title: 'Nombre', align: 'start', key: 'name' },
+  { title: 'Sigla', align: 'start', key: 'initials' },
+  { title: 'Fecha Fundación', align: 'start', key: 'creationDate' },
+  { title: 'Descrición', align: 'start', key: 'description' },
   { title: 'Acción', align: 'center', sortable: false, key: 'actions' },
 ];
-const headers2 = [
-  { title: 'Código', align: 'start', key: 'code' },
-  { title: 'Carrera', align: 'start', key: 'name' },
-  { title: 'Acción', align: 'center', sortable: false, key: 'actions' },
-];
+
 const formatDate = (dateString) => {
   const date = new Date(dateString);
-  return `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
-};
+  const day = date.getDate();
+  const month = date.getMonth() + 1;
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`; 
+}
 
 const editCareerSetId = (areaID) => {
   editCareerId.value = areaID;
@@ -154,18 +156,27 @@ const reloadTable = async () => {
   await careerStore.getCareers(mainStore.areaId)
 };
 
+const formatCareers = (careers) => {
+  return careers.map((career) => ({
+    ...career,
+    creationDate: formatDate(career.creationDate),
+  }));
+};
 
 onMounted(async () => {
-  watch(() => mainStore.areaId, async (newAreaId, oldAreaId) => {   
+  watch(() => mainStore.areaId, async (newAreaId) => {   
     if (newAreaId !== null) {
       await careerStore.getCareers(newAreaId);
-      careers.value = careerStore.careers.map((career) => ({
+      careers.value = careerStore.careers;
+      formattedCareers.value = careers.value.map((career) => ({
         ...career,
-        formattedCreationDate: formatDate(career.creationDate),
+        creationDate: formatDate(career.creationDate),  
       }));
       careersReady.value = true;
     }
   });
+
+
   
   await areaStore.getAreas();
   areasSelect.value = areaStore.areas.map(area => ({
@@ -173,6 +184,9 @@ onMounted(async () => {
     name: area.name
   }));
 });
+
+ 
+
 </script>
 
 <style scoped>
@@ -195,3 +209,4 @@ onMounted(async () => {
     max-width: 1500px;
   }
 </style>
+

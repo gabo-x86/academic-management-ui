@@ -91,6 +91,7 @@ const onAreaSelected = async () => {
     
     const selectedAreaObject = areasSelect.value.find(area => area.name === selectedArea.value);
 
+
     if (selectedAreaObject) {
       console.log(selectedAreaObject);
       mainStore.setAreaId(selectedAreaObject.id);
