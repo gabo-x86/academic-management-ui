@@ -7,7 +7,7 @@
         <v-btn
       v-if="careersReady"
       prepend-icon="mdi-plus"
-      color="blue"
+      color="primary"
       style="width: 200px; height: 50px;"
       @click="crearCarrera = true"
     >
