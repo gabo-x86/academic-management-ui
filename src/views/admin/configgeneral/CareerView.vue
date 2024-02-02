@@ -74,15 +74,13 @@
   </div>
 </template>
 <script setup>
-import { ref, onMounted, watch } from 'vue';
-import { useMainStore } from '@/stores/global';
+import { ref, onMounted, watch} from 'vue';
+import { useMainStore,sharedReload } from '@/stores/MainStore';
 import { useCareerStore } from '@/stores/admin/configgeneral/careerStore';
 import { useAreaStore } from '@/stores/admin/configgeneral/areaStore';
 import CareerForm from '@/components/app/CareerForm.vue';
 import EditCareer from '@/components/app/EditCareer.vue';
 import DeleteCareer from '@/components/app/DeleteCareer.vue';
-import SvgIcon from '@jamescoyle/vue-icon';
-import { sharedReload } from '@/stores/global'
 import {
   mdiSquareEditOutline,
   mdiFileDocumentOutline,
@@ -126,12 +124,6 @@ const editCareerSetId = (areaID) => {
   editCareerId.value = areaID;
   editCareer.value = true;
 };
-watch(sharedReload, () => {
-  if (sharedReload.value) {
-    reloadTable();
-    sharedReload.value = false; 
-  }
-});
 
 const deleteCareerSetId = (id) => {
   deleteCareerId.value = id;
@@ -153,7 +145,8 @@ const updateDeleteCareer = (value) => {
 };
 
 const reloadTable = async () => {
-  await careerStore.getCareers(mainStore.areaId)
+  const areaId = mainStore.area.areaId;
+  await careerStore.getCareers(areaId);
 };
 
 const formatCareers = (careers) => {
@@ -163,21 +156,20 @@ const formatCareers = (careers) => {
   }));
 };
 
+
 onMounted(async () => {
-  watch(() => mainStore.areaId, async (newAreaId) => {   
+  watch(() => mainStore.area.areaId, async (newAreaId) => {
     if (newAreaId !== null) {
       await careerStore.getCareers(newAreaId);
       careers.value = careerStore.careers;
       formattedCareers.value = careers.value.map((career) => ({
         ...career,
-        creationDate: formatDate(career.creationDate),  
+        creationDate: formatDate(career.creationDate),
       }));
       careersReady.value = true;
     }
   });
 
-
-  
   await areaStore.getAreas();
   areasSelect.value = areaStore.areas.map(area => ({
     id: area.id,

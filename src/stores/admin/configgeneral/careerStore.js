@@ -1,7 +1,7 @@
   import { defineStore } from 'pinia';
   import { ref } from 'vue'
   import AxiosAM from '@/services/AxiosAM';
-  import { useMainStore } from '@/stores/global';
+  import { useMainStore  } from '@/stores/MainStore'
   import { format, parse } from 'date-fns';
 
   const pathCareerResource = '/admin/areas'; 
@@ -23,8 +23,9 @@
 
     async function saveCareer(model) {
       try {
-        const { areaId } = mainStore;
+        const { areaId } = mainStore.area;
         model.career.areaId = areaId;
+        console.log(areaId)
         console.log(model.career.areaId)
         
         const parsedCreationDate = parse(model.career.creationDate, 'dd/MM/yyyy', new Date());
@@ -34,7 +35,6 @@
     
         if (status === 200) {
           model.career = {
-            areaId: '',
             name: '',
             initials: '',
             description: '',
@@ -65,27 +65,17 @@
     async function saveCareerEdit(careerId) {
       try {
         const parsedDate = parse(currentCareer.value.formattedCreationDate, 'dd/MM/yyyy', new Date(), { timezone: 'GMT-4' });
-        
-        // Asegúrate de que parsedDate sea una fecha válida antes de continuar
         if (!(parsedDate instanceof Date) || isNaN(parsedDate)) {
           console.error('Invalid date:', parsedDate);
           return;
         }
-    
-        // Formatea la fecha en el formato que espera la base de datos
         const formattedDate = format(parsedDate, 'yyyy-MM-dd', { timezone: 'UTC' });
-    
-        // Crea el objeto de carrera a guardar
         const careerToSave = {
           ...currentCareer.value,
           creationDate: formattedDate,
         };
-    
-        // Realiza la solicitud al servidor
-        const { status, data } = await AxiosAM.put(`${pathCareerResource}/2/careers/${careerId}`, careerToSave);
-    
+        const { status, data } = await AxiosAM.put(`${pathCareerResource}/2/careers/${careerId}`, careerToSave);  
         if (status === 200) {
-          // Éxito al guardar
         }
       } catch (error) {
         console.error('Error saving career:', error);

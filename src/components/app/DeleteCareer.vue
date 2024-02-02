@@ -28,12 +28,15 @@
 import axios from 'axios';
 import { ref, watch, getCurrentInstance} from 'vue';
 import { useCareerStore } from '@/stores/admin/configgeneral/careerStore';
-import { useMainStore } from '@/stores/global';
+import { useMainStore } from '@/stores/MainStore';
+import { useDate } from 'vuetify'
 
 const props = defineProps(['eliminarCarrera', 'deleteCareerId']);
 const { emit } = getCurrentInstance();
 const mainStore = useMainStore();
 const deleteCareerVisible = ref(props.eliminarCarrera);
+const date = useDate()
+
 
 
 watch(() => props.eliminarCarrera, (newValue) => {
@@ -42,14 +45,16 @@ watch(() => props.eliminarCarrera, (newValue) => {
 
 const closeDeleteDialog = () => {
   emit('close-deleteDialog', false);
+
 };
 
 const deleteCareerById = (careerId) => {
   axios.delete(`http://localhost:8080/admin/areas/2/careers/${careerId}`)
     .then((res) => {
-      useCareerStore().getCareers(mainStore.areaId);
+      useCareerStore().getCareers(mainStore.area.areaId);
       emit('close-deleteDialog', false);
-
+      const formatted = date.format('2010-04-13', 'fullDateWithWeekday')
+       console.log(formatted)
     })
     .catch((error) => {
       console.error(error);

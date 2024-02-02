@@ -64,8 +64,9 @@
 <script setup>
 import { ref, reactive, watch, getCurrentInstance} from 'vue';
 import { useCareerStore } from '@/stores/admin/configgeneral/careerStore';
-import { useMainStore } from '@/stores/global';
+import { useMainStore } from '@/stores/MainStore';
 import { format} from 'date-fns';
+
 
 const props = defineProps(['crearCarrera', 'model', 'onSaved']);
 const dialogVisible = ref(props.crearCarrera);
@@ -139,6 +140,11 @@ const creationDateRules = [
 
     const [day, month, year] = value.split('/').map(Number);
 
+    if (month < 1 || month > 12) {
+      console.log(month)
+      return 'Invalid month. Please enter a valid month between 1 and 12.';
+    }
+
     if (year > currentYear || (year === currentYear && (month > currentMonth || (month === currentMonth && day > currentDay)))) {
       return 'The creation date cannot be later than the current date.';
     }
@@ -149,7 +155,7 @@ const creationDateRules = [
 
 const model = reactive({
   career: {
-    areaId: mainStore.areaId,
+    areaId: mainStore.area.areaId,
     name: props.model?.name || '',
     initials: props.model?.initials || '',
     description: props.model?.description || '',

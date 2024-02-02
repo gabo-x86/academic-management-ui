@@ -55,13 +55,16 @@
     <script setup>
 import { ref, reactive, watch, getCurrentInstance} from 'vue';
 import { useCareerStore } from '@/stores/admin/configgeneral/careerStore';
-import { format, parse } from 'date-fns';
+import { format} from 'date-fns';
+
 
 const props = defineProps(['editCareer', 'model', 'editCareerId', 'onSaved']);
 const { emit } = getCurrentInstance()
 const form = ref(null)
 const editCareerVisible = ref(props.editCareer);
 
+
+ 
 const nameRules = [
 (value) => {
     if (!value) {
@@ -115,21 +118,37 @@ const descriptionRules = [
   },
 ];
 
-
 const creationDateRules = [
   value => {
     if (!value) {
       return 'The creation date is required.';
     }
+
     const specialCharacters = /[!@#$%^&*(),.?":{}|<>\\a-zA-Z]/;
     if (specialCharacters.test(value)) {
       return 'The creation date cannot contain special or alphabetical characters.';
     }
-    const currentDate = format(new Date(), 'dd/MM/yyyy', { timezone: 'GMT-4' });
 
-    const [currentDay, currentMonth, currentYear] = currentDate.split('/').map(Number);
+    const currentDate = new Date();
+    if (isNaN(currentDate.getTime())) {
+      return 'Error getting current date.';
+    }
+
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth() + 1;
+    const currentDay = currentDate.getDate();
 
     const [day, month, year] = value.split('/').map(Number);
+
+    if (month < 1 || month > 12) {
+      return 'Invalid month. Please enter a valid month between 1 and 12.';
+    }
+
+    const lastDayOfMonth = new Date(year, month, 0).getDate();
+
+    if (day < 1 || day > lastDayOfMonth) {
+      return `Invalid day. Please enter a valid day between 1 and ${lastDayOfMonth} for the selected month.`;
+    }
 
     if (year > currentYear || (year === currentYear && (month > currentMonth || (month === currentMonth && day > currentDay)))) {
       return 'The creation date cannot be later than the current date.';
@@ -140,7 +159,6 @@ const creationDateRules = [
 ];
 const model = reactive({
   career: {
-    areaId: props.model?.areaId|| '',
     name: props.model?.name || '',
     initials: props.model?.initials || '',
     description: props.model?.description || '',
@@ -178,7 +196,6 @@ const getCareerById = async careerId => {
   model.career = useCareerStore().currentCareer;
   model.career.creationDate = new Date(model.career.creationDate);
   model.career.creationDate = format(model.career.creationDate, 'dd-MM-yyyy', { timezone: 'GMT-4' });
-  console.log(model.career.creationDate);
 };
 
 const saveCareerEdit = async careerId => {

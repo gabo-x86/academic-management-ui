@@ -32,10 +32,9 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch} from 'vue';
-import { useMainStore } from '@/stores/global';
+import { ref, onMounted, watch } from 'vue';
+import { sharedReload, useMainStore } from '@/stores/MainStore'
 import { useAreaStore } from '@/stores/admin/configgeneral/areaStore';
-import { sharedReload } from '@/stores/global';
 
 const drawer = ref(true);
 const rail = ref(false);
@@ -88,23 +87,20 @@ const menuGroupList = ref([
 const areaStore = useAreaStore();
 
 const onAreaSelected = async () => {
-    
-    const selectedAreaObject = areasSelect.value.find(area => area.name === selectedArea.value);
+  const selectedAreaObject = areasSelect.value.find(area => area.name === selectedArea.value);
 
-
-    if (selectedAreaObject) {
-      console.log(selectedAreaObject);
-      mainStore.setAreaId(selectedAreaObject.id);
-      sharedReload.value = true;
+  if (selectedAreaObject) {
+    mainStore.setAreaId(selectedAreaObject.id);
+    console.log(mainStore.area.areaId)
+    sharedReload.value = true;
   }
 };
 
-watch(selectedArea, (newVal) => {
+watch(selectedArea, () => {
   onAreaSelected();
 });
 
 onMounted(async () => {
-  
   await areaStore.getAreas();
   areasSelect.value = areaStore.areas.map(area => ({
     id: area.id,
@@ -112,7 +108,6 @@ onMounted(async () => {
   }));
 });
 </script>
-
 <style scoped>
 
 </style>
