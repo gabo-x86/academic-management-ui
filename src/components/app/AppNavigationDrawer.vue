@@ -41,7 +41,7 @@ const menuGroupList = ref([
       {
         name: 'Itinerario de Clases',
         value: 'itinerario',
-        route: '/admin/areas'
+        route: '/admin/itinerary'
       }
     ]
   }
