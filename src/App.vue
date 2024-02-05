@@ -9,7 +9,7 @@ import AppNavigationDrawer from '@/components/app/AppNavigationDrawer.vue'
 
     <app-navigation-drawer/> <!-- Main navigation drawer component -->
 
-    <v-app-bar color="primary" density="compact">
+    <v-app-bar color="primary" density="compact" style="height: 56px; padding-top: 5px;">
       <template v-slot:prepend>
         <v-app-bar-nav-icon></v-app-bar-nav-icon>
       </template>
