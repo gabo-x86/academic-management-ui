@@ -6,7 +6,7 @@ import { useAreaStore } from '@/stores/admin/configgeneral/areaStore.js'
 const areaStore = useAreaStore();
 
 const headers = ref([
-  { title: 'Nombre', align: 'start', key: 'name' },
+  { title: 'Nombre', align: 'start', key: 'name'},
   { title: 'Sigla', align: 'end', key: 'initials' },
   { title: 'Acciones', align: 'end', sortable: false, key: 'actions' }
 ]);
@@ -27,5 +27,7 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-
+  .v-data-table-header__content {
+    font-weight: bold;
+  }
 </style>
