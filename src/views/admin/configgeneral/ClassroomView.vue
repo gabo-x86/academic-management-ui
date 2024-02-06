@@ -1,6 +1,6 @@
 <script setup>
-import {onMounted, ref} from "vue";
-import { useMainStore } from "@/stores/globalArea.js";
+import {onMounted, ref, watch} from "vue";
+import { useMainStore } from '@/stores/MainStore';
 import { useClassroomStore } from "@/stores/admin/configgeneral/classroomStore.js";
 import { useAreaStore} from "@/stores/admin/configgeneral/areaStore.js";
 import ClassroomFrom from '@/components/app/ClassroomForm.vue'//
@@ -31,43 +31,45 @@ const setDeleteClassroomId=(id) =>{
 
 const updateEditClassroom = (value)=>{
   if(value===false){
-    console.log(editClassroom.value);
+    //console.log(editClassroom.value);
   }
   editClassroom.value=value;
 }
 
 const updateDeleteClassroom=(value) =>{
   if(value===false){
-    console.log(deleteClassroom.value)
+    //console.log(deleteClassroom.value)
   }
   deleteClassroom.value=value
 }
 
 const reloadTable= async ()=>{
-  await classroomStore.getClassrooms(mainStore.areaId)
+  await classroomStore.getClassrooms(mainStore.area.areaId)
   classroomsReady.value = true;
-  console.log(classroomStore.classrooms);
+  //console.log(classroomStore.classrooms);
 }
 
 
 
 const headers = ref([
   { title: 'N°', value: 'index', align: 'center' },
-  { title: 'Sigla',align:'center', key: 'initials' , style: 'font-weight: bold;'},
-  { title: 'Nombre',align:'center', key: 'name' },
-  { title: 'Tipo',align:'center', key: 'type' },
-  { title: 'Direccion',align:'center', key: 'address' },
+  { title: 'Sigla',align:'start', key: 'initials' , style: 'font-weight: bold;'},
+  { title: 'Nombre',align:'start', key: 'name' },
+  { title: 'Tipo',align:'start', key: 'type' },
+  { title: 'Direccion',align:'start', key: 'address' },
   { title: 'Opciones', align:'center' ,sortable: false, key: 'actions' }
 ]);
 
 onMounted( async ()=>{
-  await classroomStore.getClassrooms(mainStore.areaId);
-  classroomsReady.value=true
-  console.log(classroomStore.classrooms)
+  watch(()=>mainStore.area.areaId, async (newAreaId)=>{
+    if (newAreaId != null){
+      await classroomStore.getClassrooms(mainStore.area.areaId);
+      classrooms.value=classroomStore.classrooms
+      classroomsReady.value=true
+      //console.log(classroomStore.classrooms)
+    }
+  })
 })
-
-
-
 </script>
 <template>
   <v-card
@@ -96,11 +98,6 @@ onMounted( async ()=>{
 
     <classroom-from
         v-model:createClassroom="createClassroom"
-        v-model:initials="initials"
-        v-model:name="name"
-        v-model:type="type"
-        v-model:address="address"
-        v-model:area="area"
         @update:initials="value=>initials=value"
         @update:name="value=>name=value"
         @update:type="value=>type=value"
@@ -147,6 +144,9 @@ onMounted( async ()=>{
           </v-row>
         </template>
       </v-data-table>
+      <div v-else>
+        <p>No seleccionaste ningún Area aun, no tenemos aulas que mostrarte</p>
+      </div>
     </v-card-text>
   </v-card>
 </template>

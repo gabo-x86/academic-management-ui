@@ -1,7 +1,7 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import AxiosAM from '@/services/AxiosAM.js'
-import { useMainStore } from '@/stores/globalArea.js';
+import { useMainStore } from '@/stores/MainStore'
 
 const pathCareerResource = '/admin/areas';
 
@@ -13,7 +13,6 @@ export const useClassroomStore = defineStore('classroomStore', ()=>{
         try {
             const {status, data} = await AxiosAM.get(`${pathCareerResource}/${areaId}/classrooms`);
             if (status===200){
-                console.log(areaId);
                 classrooms.value=data;
             }
         }catch (error){
@@ -23,13 +22,12 @@ export const useClassroomStore = defineStore('classroomStore', ()=>{
 
     async function saveClassroom(model){
         try {
-            const { areaId } = mainStore;
+            const { areaId } = mainStore.area;
             model.classroom.areaId = areaId;
+
             const {status, data} = await AxiosAM.post(`${pathCareerResource}/2/classrooms`, model.classroom);
             if (status===200){
-                console.log('Classroom was saved successfully');
                 model.classroom={
-                    areaId:'',
                     name:'',
                     initials:'',
                     type:'',
@@ -48,10 +46,7 @@ export const useClassroomStore = defineStore('classroomStore', ()=>{
                 const classroomData=data ;
                 if(classroomData){
                     currentClassroom.value=classroomData
-                }else{
-                    console.error('Invalid data received:', data);
                 }
-                console.log(classroomId);
             }
         } catch (error) {
             console.error('Error getting career by id:', error);
@@ -62,7 +57,7 @@ export const useClassroomStore = defineStore('classroomStore', ()=>{
         try {
             const { status, data } = await AxiosAM.put(`${pathCareerResource}/2/classrooms/${classroomId}`, currentClassroom.value);
             if (status === 200) {
-                console.log('Classroom edit was saved successfully');
+
             }
         } catch (error) {
             console.error('Error saving classroom:', error);
@@ -73,7 +68,7 @@ export const useClassroomStore = defineStore('classroomStore', ()=>{
         try {
             const {status, data}=await AxiosAM.delete(`${pathCareerResource}/2/classrooms/${classroomId}`)
             if (status === 200) {
-                console.log('Classroom was deleted successfully');
+
             }
         }catch (error){
             console.error('Error deleting classroom:', error)

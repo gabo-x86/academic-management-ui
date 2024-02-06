@@ -1,10 +1,11 @@
 <script setup>
   import {getCurrentInstance, reactive, ref, watch} from 'vue'
   import { useClassroomStore} from "@/stores/admin/configgeneral/classroomStore.js";
-  import {useMainStore} from "@/stores/globalArea.js";
-  import { useForm } from "vee-validate";
-  import * as yup from "yup"
+  import {useMainStore} from '@/stores/MainStore';
+  import { useField } from "vee-validate";
+  import * as yup from 'yup';
 
+  //const {value:name, errorMessage:nameError} =useField('classroom.name', yup.string().email().required()) //solo pruebo
 
   const props = defineProps(['createClassroom','model','onSaved'])
   const dialogVisible=ref(props.createClassroom)
@@ -19,7 +20,7 @@
 
   const model = reactive({
     classroom:{
-      area:{id:mainStore.areaId},
+      areaId: mainStore.area.areaId,
       name: props.model?.name || '',
       initials: props.model?.initials || '',
       type: props.model?.type || '',
@@ -43,7 +44,7 @@ const validateSave = async ()=>{
 
 }
 
-//Reglas
+//Validaciones
 const initialsRules = [
   value => {
     if (!value) {
@@ -170,7 +171,6 @@ const addressRules = [
                     @input="$emit('update:address', $event.target.value)"
                 ></v-text-field>
               </v-col>
-
             </v-row>
             </v-form>
           </v-container>

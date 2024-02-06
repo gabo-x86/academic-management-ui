@@ -1,7 +1,7 @@
 <script setup>
 import {getCurrentInstance, ref, watch} from 'vue'
   import {useClassroomStore} from "@/stores/admin/configgeneral/classroomStore.js";
-  import {useMainStore} from "@/stores/globalArea.js";
+  import {useMainStore} from "@/stores/MainStore.js";
 
   const props=defineProps(['deleteClassroom', 'deleteClassroomId'])
   const mainStore= useMainStore()
@@ -23,8 +23,8 @@ const deleteClassroomById = async (classroomId) => {
   try {
     // Validar classroomId aquí, si es necesario
     await classroomStore.deleteClassroomById(classroomId);
-    console.log(`Classroom with ID ${classroomId} deleted successfully`);
-    useClassroomStore().getClassrooms(mainStore.areaId)
+    //console.log(`Classroom with ID ${classroomId} deleted successfully`);
+    useClassroomStore().getClassrooms(mainStore.area.areaId)
     emit( 'close-deleteDialog', false )
   } catch (error) {
     console.error(`Error deleting classroom: ${error.message}`);
@@ -38,8 +38,7 @@ const deleteClassroomById = async (classroomId) => {
         v-model="deleteClassroomVisible"
         @update:modelValue="$emit('update:deleteClassroom', $event)"
         width="500"
-
-    >{{console.log(" funcion de dialog Delete"+deleteClassroomVisible)}}
+    >
       <v-card min-height="150">
         <v-card-title class="font-weight-bold mx-auto my-auto " >
           ¿Está seguro de que desea elimina el aula?

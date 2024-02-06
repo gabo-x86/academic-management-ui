@@ -9,7 +9,6 @@ import {getCurrentInstance, reactive, ref, watch} from 'vue'
 
   const model = reactive({
     classroom: {
-      areaId: props.model?.areaId || '',
       name: props.model?.name || '',
       initials:props.model?.initials || '',
       type:props.model?.type || '',
@@ -26,7 +25,7 @@ import {getCurrentInstance, reactive, ref, watch} from 'vue'
   })
   const getClassroomById = async (classroomId)=>{
     await useClassroomStore().getClassroomById(classroomId)
-    console.log('getClassroombyId: '+useClassroomStore().currentClassroom)
+    //console.log('getClassroombyId: '+useClassroomStore().currentClassroom)
     model.classroom= useClassroomStore().currentClassroom
   }
   const closeEditDialog = () =>{
@@ -47,11 +46,11 @@ import {getCurrentInstance, reactive, ref, watch} from 'vue'
   const saveClassroomEdit= async (classroomId) =>{
     await useClassroomStore().saveClassroomEdit(classroomId)
     const currentClassroom= useClassroomStore().currentClassroom
-    console.log(currentClassroom)
+    //console.log(currentClassroom)
     model.classroom=currentClassroom
   }
 
-//Reglas
+//Validaciones
 const initialsRules = [
   value => {
     if (!value) {
