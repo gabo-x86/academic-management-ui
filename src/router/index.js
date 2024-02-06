@@ -35,6 +35,11 @@ const router = createRouter({
       path: '/admin/schedule',
       name: 'admin-schedule',
       component: () => import('../views/admin/configgeneral/ScheduleParamsView.vue')
+    },
+    {
+      path: '/admin/itineraries',
+      name: 'admin-itineraries',
+      component: () => import('../views/admin/schedule/ItineraryView.vue')
     }
   ]
 })
