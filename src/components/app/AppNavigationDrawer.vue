@@ -70,9 +70,9 @@ const menuGroupList = ref([
         route: '/admin/schedule'
       },
       {
-        name:'Aulas',
-        value:'classroom',
-        route:'/admin/classroom'
+        name: 'Periodo Academico',
+        value: 'academic-period',
+        route: '/admin/academic-period'
       }
     ]
   },
@@ -96,7 +96,7 @@ const onAreaSelected = async () => {
 
   if (selectedAreaObject) {
     mainStore.setAreaId(selectedAreaObject.id);
-    console.log(mainStore.area.areaId)
+    //console.log(mainStore.area.areaId)
     sharedReload.value = true;
   }
 };
