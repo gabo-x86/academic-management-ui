@@ -68,6 +68,11 @@ const menuGroupList = ref([
         name: 'Parámetros de Horarios',
         value: 'schedule',
         route: '/admin/schedule'
+      },
+      {
+        name: 'Periodo Academico',
+        value: 'academic-period',
+        route: '/admin/academic-period'
       }
     ]
   },
@@ -91,7 +96,7 @@ const onAreaSelected = async () => {
 
   if (selectedAreaObject) {
     mainStore.setAreaId(selectedAreaObject.id);
-    console.log(mainStore.area.areaId)
+    //console.log(mainStore.area.areaId)
     sharedReload.value = true;
   }
 };
