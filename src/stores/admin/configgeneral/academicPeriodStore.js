@@ -11,7 +11,7 @@ export const useAcademicPeriodStore = defineStore('academicPeriodStore', () => {
 
   async function listAcademicPeriodByArea(areaID) {
     try {
-
+      
         const { status, data } = await AxiosAM.get(`${pathAcademicPeriodResource}/${areaID}/academic-periods`);
         areaId=areaID;
       if (status === 200) {
@@ -21,7 +21,6 @@ export const useAcademicPeriodStore = defineStore('academicPeriodStore', () => {
           startDate: formatDate(period.startDate, true),
           endDate: formatDate(period.endDate, true),
         }));
-        return { success: true, data: data };
       }
     } catch (error) {
       console.log('error getting academic Period');
@@ -35,7 +34,7 @@ export const useAcademicPeriodStore = defineStore('academicPeriodStore', () => {
         academicPeriod.value = data;
       }
     } catch (error) {
-      console.log('error getting academic Period by id:');
+      console.log('error getting academic PEriod by id:',error);
     }
   }
 
@@ -45,54 +44,54 @@ export const useAcademicPeriodStore = defineStore('academicPeriodStore', () => {
       model.startDate=formatDate(model.startDate, false);
       model.endDate=formatDate(model.endDate, false);
         const { status, data } = await AxiosAM.post(`${pathAcademicPeriodResource}/${areaId}/academic-periods`, model, areaId);
-      if (status === 201) {
-        return { success: true, data: data };
+      if (status === 200) {
+        console.log("CREACION ACADEMIC PERIDO:", data);
       }
     } catch (error) {
-      console.error('Error en create Academic Period:');
-      return { error: true, success: false, data: null }
+      console.error('Error en la solicitud:', error.message);
     }
   }
 
   async function editAcademicPeriod(AcademicPeriodDto, id) {
     try {
-      AcademicPeriodDto.startDate=formatDate(AcademicPeriodDto.startDate, false);
-      AcademicPeriodDto.endDate=formatDate(AcademicPeriodDto.endDate, false);
+      AcademicPeriodDto.startDate=formatDate(AcademicPeriodDto.startDate, false)
+      AcademicPeriodDto.endDate=formatDate(AcademicPeriodDto.endDate, false)
       const { status, data } = await AxiosAM.put(`${pathAcademicPeriodResource}/${areaId}/academic-periods/${id}`, AcademicPeriodDto, areaId);
   
       if (status === 200) {
-        return { success: true, data: data };
+        console.log("MODIFICACION  ACADEMIC PERIOD:", data);
       }
     } 
     catch (error) {
-      console.error('Error edit academic period:');
-      return { error: true, success: false, data: null }
+      console.error('Error saving career:', error);
     }
   }
 
   async function deleteAcademicPeriod(academicPeriodId) {
     try {
       const { status, data } = await AxiosAM.delete(`${pathAcademicPeriodResource}/${areaId}/academic-periods/${academicPeriodId}`);
-      if (status === 204) {
-        return { success: true, data: null };
+      if (status === 200) {
+        console.log("ELIMINAR ACADEMIC PERIOD", data);
       }
     } 
     catch (error) {
-      console.error('Error delete academic Period:');
-      return { error: true, success: false, data: null }
+      console.error('Error saving career:', error);
     }
   }
 
-  const formatDate = (dateString, band) => {
-    if (!band) {
-      const [day, month, year] = dateString.split('/').map(num => parseInt(num));
+  const formatDate = (dateString, toArray) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1);
+    const day = date.getDate();
+    
+    if (!toArray) {
       return [year, month, day];
     } else {
-      const date = new Date(dateString);
-      const year = date.getFullYear();
-      const month = (date.getMonth() + 1).toString().padStart(2, '0');
-      const day = date.getDate().toString().padStart(2, '0');
-      return `${day}/${month}/${year}`;
+
+      const formattedMonth = month.toString().padStart(2, '0');
+      const formattedDay = day.toString().padStart(2, '0'); 
+      return `${formattedDay}/${formattedMonth}/${year}`;
     }
   };
   
