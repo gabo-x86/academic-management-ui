@@ -9,9 +9,6 @@ export const useAreaStore = defineStore('areaStore', () => {
   async function getAreas() {
     try {
       const { status, data } = await AxiosAM.get(pathAreaResource);
-      //AxiosAM.post(pathCityResource, area);
-      //AxiosAM.put(pathCityResource, area);
-      //AxiosAM.delete(`${pathCityResource}/${id}`);
       if (status === 200) {
         areas.value = data;
       }
