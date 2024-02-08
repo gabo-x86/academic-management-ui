@@ -78,8 +78,8 @@ const nameRules = [
     if (!value) {
       return 'The name is required.';
     }
-    if (value?.length >= 3 && value?.length <= 10) {
-      const alphabeticRegex = /^[a-zA-Z]+$/;    
+    if (value?.length >= 3 && value?.length <= 90) {
+      const alphabeticRegex = /^[a-zA-Z\s.ñÑáéíóúÁÉÍÓÚ]+$/;  
       if (alphabeticRegex.test(value)) {
         return true;
       } else {
@@ -97,7 +97,7 @@ const siglaRules = [
     }
 
     if (value?.length >= 3 && value?.length <= 10) {
-      const alphabeticRegex = /^[a-zA-Z]+$/;    
+      const alphabeticRegex = /^[a-zA-Z\s.ñÑáéíóúÁÉÍÓÚ]+$/;  
       if (alphabeticRegex.test(value)) {
         return true;
       } else {
@@ -114,7 +114,7 @@ const descriptionRules = [
     if (!value) {
       return 'The description is required.';
     }
-    const alphanumericRegex = /^[a-zA-Z0-9\s]+$/;
+    const alphanumericRegex = /^[a-zA-Z0-9\sñÑáéíóúÁÉÍÓÚ."]+$/;
     if (!alphanumericRegex.test(value)) {
       return 'The description can only contain alphanumeric characters.';
     }
@@ -130,19 +130,31 @@ const creationDateRules = [
     if (!value) {
       return 'The creation date is required.';
     }
+
     const specialCharacters = /[!@#$%^&*(),.?":{}|<>\\a-zA-Z]/;
     if (specialCharacters.test(value)) {
       return 'The creation date cannot contain special or alphabetical characters.';
     }
-    const currentDate = format(new Date(), 'dd/MM/yyyy', { timezone: 'GMT-4' });
 
-    const [currentDay, currentMonth, currentYear] = currentDate.split('/').map(Number);
+    const currentDate = new Date();
+    if (isNaN(currentDate.getTime())) {
+      return 'Error getting current date.';
+    }
+
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth() + 1;
+    const currentDay = currentDate.getDate();
 
     const [day, month, year] = value.split('/').map(Number);
 
     if (month < 1 || month > 12) {
-      console.log(month)
       return 'Invalid month. Please enter a valid month between 1 and 12.';
+    }
+
+    const lastDayOfMonth = new Date(year, month, 0).getDate();
+
+    if (day < 1 || day > lastDayOfMonth) {
+      return `Invalid day. Please enter a valid day between 1 and ${lastDayOfMonth} for the selected month.`;
     }
 
     if (year > currentYear || (year === currentYear && (month > currentMonth || (month === currentMonth && day > currentDay)))) {
