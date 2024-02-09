@@ -27,7 +27,4 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-  .v-data-table-header__content {
-    font-weight: bold;
-  }
 </style>
