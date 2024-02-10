@@ -49,7 +49,6 @@ const defaultItem = ref({
   endDate: '',
 });
 
-
 const editItem = (item) => {
   editIndex.value = formattedAcademicPeriods.value.indexOf(item);
   editedItem.value = { ...item };
@@ -250,9 +249,6 @@ const startDateRules = [
     
     </v-data-table>
   </v-card>
-
-  
-
 </v-container>
 
 </template>
