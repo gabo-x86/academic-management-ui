@@ -49,7 +49,6 @@ const defaultItem = ref({
   endDate: '',
 });
 
-
 const editItem = (item) => {
   editIndex.value = formattedAcademicPeriods.value.indexOf(item);
   editedItem.value = { ...item };
@@ -141,16 +140,12 @@ const startDateRules = [
     return true;
   }
 ];
-
-
-const restricDate = [
-  v => !!v || 'La fecha de fin es obligatoria',
-  v => /^\d{1,2}\/\d{1,2}\/\d{4}$/.test(v) || 'El formato de la fecha debe ser día/mes/año'
-];
-
 </script>
 
 <template>
+  
+
+
 <v-container>    
   <br>  
   <h1 class="text-center">Lista de Peridos Académicos</h1>
@@ -203,7 +198,7 @@ const restricDate = [
                         required
                         prepend-inner-icon="mdi-calendar"
                         :error="showError && !editedItem.startDate"
-                        :rules="restricDate"
+                        :rules="startDateRules"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="6">
@@ -213,7 +208,7 @@ const restricDate = [
                         required
                         prepend-inner-icon="mdi-calendar"
                         :error="showError && !editedItem.endDate"
-                        :rules="restricDate"
+                        :rules="startDateRules"
                       ></v-text-field>
                     </v-col>
                   
@@ -254,9 +249,6 @@ const restricDate = [
     
     </v-data-table>
   </v-card>
-
-  
-
 </v-container>
 
 </template>
