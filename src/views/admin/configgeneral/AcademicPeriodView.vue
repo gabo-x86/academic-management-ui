@@ -92,7 +92,7 @@ const save = () => {
   if (editIndex.value > -1) {
     Object.assign(formattedAcademicPeriods.value[editIndex.value], editedItem.value);
     academicPeriodStore.editAcademicPeriod(editedItem.value, editedItem.value.id);
-    close;
+    close();
   } else {
     if (editedItem.value.name && editedItem.value.year && editedItem.value.startDate && editedItem.value.endDate) {
       formattedAcademicPeriods.value.push({ ...editedItem.value });
@@ -100,7 +100,7 @@ const save = () => {
       showError.value = false;
       close();
     }else{
-      console.log("Los Campo sstan vacios");
+      console.log("Los Campos estan vacios");
     }
   }
 };
@@ -123,17 +123,27 @@ for (let i = startYear; i <= endYear; i++) {
 }
 
 
-const nameRules = [
-  v => !!v || 'El nombre es obligatorio',
-  v => (v && v.length >= 6 && /^[a-zA-Z0-9]+$/.test(v)) || 'El nombre debe tener al menos 6 caracteres y solo puede contener letras y números'
-];
+
 
 const startDateRules = [
-  v => !!v || 'La fecha de inicio es obligatoria',
-  v => /^\d{1,2}\/\d{1,2}\/\d{4}$/.test(v) || 'El formato de la fecha debe ser día/mes/año'
+  v => !!v || 'La fecha de fin es obligatoria',
+  v => {
+    if (!v) return true;
+    const pattern = /^\d{1,2}\/\d{1,2}\/\d{4}$/;
+    if (!pattern.test(v)) return 'El formato de la fecha debe ser día/mes/año';
+    const [day, month, year] = v.split('/').map(Number);
+    if (isNaN(day) || isNaN(month) || isNaN(year)) {
+      return 'La fecha debe contener solamente números';
+    }
+    if (day < 1 || day > 31 || month < 1 || month > 12) {
+      return 'La fecha es inválida';
+    }
+    return true;
+  }
 ];
 
-const endDateRules = [
+
+const restricDate = [
   v => !!v || 'La fecha de fin es obligatoria',
   v => /^\d{1,2}\/\d{1,2}\/\d{4}$/.test(v) || 'El formato de la fecha debe ser día/mes/año'
 ];
@@ -144,8 +154,8 @@ const endDateRules = [
 <v-container>    
   <br>  
   <h1 class="text-center">Lista de Peridos Académicos</h1>
-  <br>
- 
+  <br> 
+
   <v-card>
     <v-data-table
       :headers="headers"
@@ -185,6 +195,7 @@ const endDateRules = [
                                     :error="showError && !editedItem.name" 
                                     :rules="nameRules" label="Nombre *"></v-text-field>
                     </v-col>
+
                     <v-col cols="12" sm="6" >
                       <v-text-field  
                         v-model="editedItem.startDate"
@@ -192,7 +203,7 @@ const endDateRules = [
                         required
                         prepend-inner-icon="mdi-calendar"
                         :error="showError && !editedItem.startDate"
-                        :rules="startDateRules"
+                        :rules="restricDate"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="6">
@@ -202,10 +213,10 @@ const endDateRules = [
                         required
                         prepend-inner-icon="mdi-calendar"
                         :error="showError && !editedItem.endDate"
-                        :rules="endDateRules"
+                        :rules="restricDate"
                       ></v-text-field>
                     </v-col>
-                    
+                  
                   </v-row>
                 </v-container>
               </v-card-text>
@@ -243,7 +254,11 @@ const endDateRules = [
     
     </v-data-table>
   </v-card>
+
+  
+
 </v-container>
+
 </template>
 <style scoped>
 
