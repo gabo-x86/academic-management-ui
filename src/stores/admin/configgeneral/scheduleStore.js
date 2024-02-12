@@ -1,36 +1,215 @@
-// En tu archivo scheduleStore.js
+import { defineStore } from 'pinia'
 
-import { ref } from 'vue';
-import { defineStore } from 'pinia';
-import AxiosAM from '@/services/AxiosAM.js';
+export const useScheduleStore = defineStore('myStore', {
+  state: () => ({
+    posItemsInitalSelected: [],
+    isEqualsValue: true,
+    daysListString: [],
+    daysItemsSelected:[],
+    periodsActive:[],
+    valorIni: {
+      "mondaySchedule": true,
+      "tuesdaySchedule": true,
+      "wednesdaySchedule": true,
+      "thursdaySchedule": true,
+      "fridaySchedule": true,
+      "saturdaySchedule": true,
+      "sundaySchedule": false,
+      "startTimeSchedule": null,
+      "endTimeSchedule": null,
+      "timeIntervalSchedule": 0,
+      "lunchTimeSchedule": false,
+      "startLunchTimeSchedule": null,
+      "endLunchTimeSchedule": null,
+      "betweenPeriod": 0
+    },
+    valorAct: {
+      "mondaySchedule": true,
+      "tuesdaySchedule": true,
+      "wednesdaySchedule": true,
+      "thursdaySchedule": true,
+      "fridaySchedule": true,
+      "saturdaySchedule": true,
+      "sundaySchedule": false,
+      "startTimeSchedule": null,
+      "endTimeSchedule": null,
+      "timeIntervalSchedule": 0,
+      "lunchTimeSchedule": false,
+      "startLunchTimeSchedule": null,
+      "endLunchTimeSchedule": null,
+      "betweenPeriod": 0
+    },
+  }),
+  actions: {
+    setPosItemsInitalSelected(values){
+      this.posItemsInitalSelected = values
+    },
 
-const pathScheduleResource = '/admin/schedule-parameters';
+    setSelectedPeriods(list){
+      this.periodsActive = list
+    },
 
-export const useScheduleStore = defineStore('scheduleStore', () => {
-  const schedules = ref([]);
+    setDays(daysItems) {
+      for (let i = 0; i < 7; i++) {
+        let valueItem = daysItems.includes(i);
 
-  async function getSchedules() {
-    try {
-      const { status, data } = await AxiosAM.get(pathScheduleResource);
-      if (status === 200) {
-        schedules.value = data;
+        if (i == 0) {
+          this.valorAct.mondaySchedule = valueItem;
+        } else if (i == 1) {
+          this.valorAct.tuesdaySchedule = valueItem;
+        } else if (i == 2) {
+          this.valorAct.wednesdaySchedule = valueItem;
+        } else if (i == 3) {
+          this.valorAct.thursdaySchedule = valueItem;
+        } else if (i == 4) {
+          this.valorAct.fridaySchedule = valueItem;
+        } else if (i == 5) {
+          this.valorAct.saturdaySchedule = valueItem;
+        } else if (i == 6) {
+          this.valorAct.sundaySchedule = valueItem;
+        }
       }
-    } catch (error) {
-      console.error('Error getting schedules', error);
+
+      this.equalsValues()
+      this.setDaysList();
+    },
+
+    setDaysBool(days) {
+      for (let i = 0; i < days.length; i++) {
+        let valueItem = days[i];
+
+        if (i == 0) {
+          this.valorAct.mondaySchedule = valueItem;
+        } else if (i == 1) {
+          this.valorAct.tuesdaySchedule = valueItem;
+        } else if (i == 2) {
+          this.valorAct.wednesdaySchedule = valueItem;
+        } else if (i == 3) {
+          this.valorAct.thursdaySchedule = valueItem;
+        } else if (i == 4) {
+          this.valorAct.fridaySchedule = valueItem;
+        } else if (i == 5) {
+          this.valorAct.saturdaySchedule = valueItem;
+        } else if (i == 6) {
+          this.valorAct.sundaySchedule = valueItem;
+        }
+      }
+
+      this.equalsValues()
+      this.setDaysList();
+    },
+
+    setStartTime(time) {
+      this.valorAct.startTimeSchedule = time;
+
+      this.equalsValues()
+    },
+
+    setEndTime(time) {
+      this.valorAct.endTimeSchedule = time
+
+      this.equalsValues()
+    },
+
+    setTimeInterval(minutes) {
+      this.valorAct.timeIntervalSchedule = minutes
+
+      this.equalsValues()
+    },
+
+    setBetweenPeriod(minutes) {
+      this.valorAct.betweenPeriod = minutes
+
+      this.equalsValues()
+    },
+
+    setLunch(start, end, activated) {
+      if (activated) {
+        this.valorAct.lunchTimeSchedule = true;
+        this.valorAct.startLunchTimeSchedule = start;
+        this.valorAct.endLunchTimeSchedule = end;
+      } else {
+        this.valorAct.lunchTimeSchedule = false;
+        this.valorAct.startLunchTimeSchedule = null;
+        this.valorAct.endLunchTimeSchedule = null;
+      }
+
+      this.equalsValues()
+    },
+
+    setValorIniCopy() {
+      this.valorIni = Object.assign(this.valorAct);
+      console.log("Me llaman xD")
+
+      this.equalsValues()
+    },
+
+    setValorIni(valorLeido,) {
+      for (var key in valorLeido) {
+        if (Object.prototype.hasOwnProperty.call(this.valorIni, key)) {
+
+          if (key === "startLunchTimeSchedule" || key === "endLunchTimeSchedule" || key === "startTimeSchedule" || key === "endTimeSchedule") {
+            this.valorIni[key] = this.timeToStringData(valorLeido[key])
+          } else {
+            this.valorIni[key] = valorLeido[key];
+          }
+
+
+        }
+      }
+
+      this.setDaysList();
+    },
+
+    timeToStringData(data) {
+      let res = null
+      if (data) {
+        res = this.fHora(data[0]) + ':' + this.fHora(data[1])
+      }
+
+      return res
+    },
+
+    fHora(numero) {
+      return numero < 10 ? '0' + numero : numero
+    },
+
+    equalsValues() {
+      this.isEqualsValue = JSON.stringify(this.valorAct) === JSON.stringify(this.valorIni);
+    },
+
+    setDaysList() {
+
+      let listaBool = [
+        this.valorAct.mondaySchedule,
+        this.valorAct.tuesdaySchedule,
+        this.valorAct.wednesdaySchedule,
+        this.valorAct.thursdaySchedule,
+        this.valorAct.fridaySchedule,
+        this.valorAct.saturdaySchedule,
+        this.valorAct.sundaySchedule]
+
+      let nameDays = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"]
+
+      let diasSel = [];
+      for (let i = 0; i < nameDays.length; i++) {
+        if (listaBool[i] === true) {
+          diasSel.push(nameDays[i]);
+        }
+      }
+
+      this.daysListString = nameDays;
+
+      
+      let listaItems = []
+      for(let i=0;i<listaBool.length;i++){
+        if(listaBool[i]===true){
+          listaItems.push(i);
+        }
+      }
+
+      this.daysItemsSelected = listaItems;
+
     }
   }
-
-  async function updateSchedule(id, updatedSchedule) {
-    try {
-      const { status } = await AxiosAM.put(`${pathScheduleResource}/${id}`, updatedSchedule);
-      if (status === 200) {
-        // Actualización exitosa
-        getSchedules(); // Actualiza la lista después de la actualización
-      }
-    } catch (error) {
-      console.error('Error updating schedule', error);
-    }
-  }
-
-  return { schedules, getSchedules, updateSchedule };
-});
+})

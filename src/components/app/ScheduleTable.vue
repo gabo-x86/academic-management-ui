@@ -1,6 +1,11 @@
 <template>
   <div>
     <v-container>
+      {{ selectedPeriods }}
+
+      <p>{{ scheduleStore.isEqualsValue }}</p>
+      <p>Actual: {{ scheduleStore.valorAct }}</p>
+      <p>Inicial: {{ scheduleStore.valorIni }}</p>
 
       <v-item-group multiple v-model="selectedDays">
         <v-row no-gutters>
@@ -40,7 +45,7 @@
                   <div class="text-caption">
                     {{
                       filaHoras[k - 1][2]
-                        ? filaHoras[k - 1][0] + ' a ' + filaHoras[k - 1][1]//almuerzo
+                        ? filaHoras[k - 1][0] + ' a ' + filaHoras[k - 1][1]
                         : filaHoras[k - 1][0] + ' a ' + filaHoras[k - 1][1]
                     }}
                   </div>
@@ -50,21 +55,22 @@
           </v-col>
 
           <v-col class="ma-1" v-for="j in diasTexto.length" :key="j">
-            <v-card
-              :disabled="!habilitadoColumna(j - 1)"
-              clickable
-              class="mx-auto"
-              max-width="344"
-              variant="elevated"
-              :color="isSelected ? 'primary' : ''"
-              v-if="filaHoras[k - 1][2]"
-            >
-              <v-card-item>
-                <div>
-                  <div class="text-caption">Almuerzo</div>
-                </div>
-              </v-card-item>
-            </v-card>
+            <v-item v-if="filaHoras[k - 1][2]">
+              <v-card
+                :disabled="!habilitadoColumna(j - 1)"
+                clickable
+                class="mx-auto"
+                max-width="344"
+                variant="elevated"
+                :color="isSelected ? 'primary' : ''"
+              >
+                <v-card-item>
+                  <div>
+                    <div class="text-caption">Almuerzo</div>
+                  </div>
+                </v-card-item>
+              </v-card>
+            </v-item>
 
             <v-item v-slot="{ isSelected, toggle }" v-else>
               <v-card
@@ -91,7 +97,35 @@
 </template>
   
 <script>
+import { useScheduleStore } from '@/stores/admin/configgeneral/scheduleStore'
+import { watch } from 'vue'
+
 export default {
+  setup() {
+    const scheduleStore = useScheduleStore()
+    /*watch(
+      () => scheduleStore.valorIni,
+      (newValue, oldValue) => {
+        if (JSON.stringify(newValue) === JSON.stringify(scheduleStore.valorAct)) {
+          this.selectedPeriods = scheduleStore.posItemsInitalSelected
+        }
+      }
+    )
+
+    watch(
+      () => scheduleStore.valorAct,
+      (newValue, oldValue) => {
+        if (JSON.stringify(newValue) === JSON.stringify(scheduleStore.valorIni)) {
+          this.selectedPeriods = scheduleStore.posItemsInitalSelected
+        }
+      }
+    )*/
+
+    return {
+      scheduleStore
+    }
+  },
+
   created() {
     this.cambiosTablaPeriodos()
   },
@@ -100,47 +134,65 @@ export default {
   data() {
     return {
       diasTexto: ['LUNES', 'MARTES', 'MIERCOLES', 'JUEVES', 'VIERNES', 'SABADO', 'DOMINGO'],
-      selectedDays: [0, 1, 2, 3, 4, 5],
+      selectedDays: this.days,
       selectedPeriods: []
     }
   },
 
   methods: {
+    valoresIguales() {
+      return (
+        JSON.stringify(this.scheduleStore.valorIni) === JSON.stringify(this.scheduleStore.valorAct)
+      )
+    },
+
     habilitadoColumna(col) {
       return this.selectedDays.includes(col)
     },
 
     cambiosTablaPeriodos() {
-      let dias = [0, 1, 2, 3, 4, 5, 6]
+      if (this.valoresIguales()) {
+        this.selectedPeriods = this.scheduleStore.posItemsInitalSelected
+      } else {
+        let dias = [0, 1, 2, 3, 4, 5, 6]
 
-      for (let i = 0; i < dias.length; i++) {
-        let columnaHabilitada = this.selectedDays.includes(dias[i])
-        let colPos = dias[i]
-        for (let k = 0; k < this.rows; k++) {
-          if (columnaHabilitada) {
-            let listaCopia = this.selectedPeriods
-            listaCopia.push(colPos)
-            listaCopia = Array.from(new Set(listaCopia))
+        for (let i = 0; i < dias.length; i++) {
+          let columnaHabilitada = this.selectedDays.includes(dias[i])
+          let colPos = dias[i]
+          for (let k = 0; k < this.rows; k++) {
+            if (columnaHabilitada) {
+              let listaCopia = this.selectedPeriods
+              listaCopia.push(colPos)
+              listaCopia = Array.from(new Set(listaCopia))
 
-            this.selectedPeriods = listaCopia
-          } else {
-            let listaCopia = this.selectedPeriods
-            listaCopia = listaCopia.filter(function (valor) {
-              return valor !== colPos
-            })
+              this.selectedPeriods = listaCopia
+            } else {
+              let listaCopia = this.selectedPeriods
+              listaCopia = listaCopia.filter(function (valor) {
+                return valor !== colPos
+              })
 
-            this.selectedPeriods = listaCopia
+              this.selectedPeriods = listaCopia
+            }
+
+            colPos = colPos + 7
           }
-
-          colPos = colPos + 7
         }
       }
     }
   },
 
   watch: {
+    selectedPeriods: {
+      handler: function (nuevoVal, oldVal) {
+        this.scheduleStore.setSelectedPeriods(nuevoVal)
+      },
+      deep: true
+    },
     selectedDays: {
       handler: function (nuevoSel, oldVal) {
+        this.scheduleStore.setDays(nuevoSel)
+
         let res
         let columnaHabilitada
         if (nuevoSel.length > oldVal.length) {

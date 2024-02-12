@@ -6,7 +6,7 @@
         <li>Especifíca los periodos activos.</li>
       </ul>
     </v-alert>
-    <Horario :rows="filas" :columns="diasSel.length" :days="diasSel" :filaHoras="filaHoras" />
+    <Horario :rows="filas" :columns="diasSel.length" :days="diasSelPos" :filaHoras="filaHoras" />
   </v-container>
 </template>
 
@@ -28,19 +28,21 @@ export default {
   name: 'HorarioGrafico',
   data() {
     return {
-      diasSel: []
+      diasSel: [],
+
+      diasSelPos: [],
     }
   },
   methods: {
     seleccionarDias(lista) {
-      let dias = ['LUNES', 'MARTES', 'MIERCOLES', 'JUEVES', 'VIERNES', 'SABADO', 'DOMINGO']
-      let res = []
-      for (let i = 0; i < lista.length; i++) {
-        if (lista[i] === true) {
-          res.push(dias[i])
+      let res = [];
+      for(let i=0;i<lista.length;i++){
+        if(lista[i]===true){
+          res.push(i);
         }
       }
-      this.diasSel = res
+
+      this.diasSelPos = res;
     }
   },
   props: {
@@ -54,7 +56,8 @@ export default {
   watch: {
     listaDias: {
       handler: function (lista, oldVal) {
-        let dias = ['LUNES', 'MARTES', 'MIERCOLES', 'JUEVES', 'VIERNES', 'SABADO', 'DOMINGO']
+        this.seleccionarDias(lista);
+        /*let dias = ['LUNES', 'MARTES', 'MIERCOLES', 'JUEVES', 'VIERNES', 'SABADO', 'DOMINGO']
         let res = []
         console.log(lista, 'new................')
         for (let i = 0; i < lista.length; i++) {
@@ -62,7 +65,7 @@ export default {
             res.push(dias[i])
           }
         }
-        this.diasSel = res
+        this.diasSel = res*/
       },
       deep: true
     }
