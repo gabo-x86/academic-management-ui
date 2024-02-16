@@ -65,7 +65,7 @@ function openMayaCurricular(item) {
   console.log('item select=', item);
   console.log('idFacultad=', item.id);
   // router.push("/admin/meshcurriculum");
-  router.push({name:'admin-meshcurriculum', params: { idArea: item.id, idCarrera: 1 }});
+  router.push({name:'admin-meshcurriculum', params: { idCarrera: 1 }});
 }
 
 async function submitArea(area) {

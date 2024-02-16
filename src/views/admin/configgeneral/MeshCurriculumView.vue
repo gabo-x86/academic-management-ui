@@ -1,8 +1,8 @@
 <script setup>
 import { onMounted, ref} from 'vue'
-// import { useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 
-// const router = useRouter();
+const router = useRouter();
 // const idAreaAct = router.params.idArea;
 // const idCarrierAct = router.params.idCarrera;
 // console.log(router.params.idCarrera);
@@ -35,6 +35,11 @@ async function getArticulo() {
   }
 }
 
+function newMeshcurriculum(item){
+  console.log('item id=', item);
+  router.push({name:'admin-newmeshcurriculum', params: { idCarrera: 1 }});
+}
+
 onMounted(() => {
   getArticulo();
   // const id = router.params.idArea;
@@ -60,7 +65,7 @@ onMounted(() => {
       </v-col>
     </v-row>
     <v-row class="justify-end">
-      <v-btn class="mr-2" color="primary">
+      <v-btn class="mr-2" color="primary" @click="newMeshcurriculum($route.params.idCarrera)">
         <v-icon>mdi-plus</v-icon>Nuevo
       </v-btn>
     </v-row>
