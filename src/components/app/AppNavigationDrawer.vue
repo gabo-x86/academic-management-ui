@@ -96,7 +96,6 @@ const onAreaSelected = async () => {
 
   if (selectedAreaObject) {
     mainStore.setAreaId(selectedAreaObject.id);
-    //console.log(mainStore.area.areaId)
     sharedReload.value = true;
   }
 };

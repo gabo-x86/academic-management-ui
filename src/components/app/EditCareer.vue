@@ -70,8 +70,8 @@ const nameRules = [
     if (!value) {
       return 'The name is required.';
     }
-    if (value?.length >= 3 && value?.length <= 10) {
-      const alphabeticRegex = /^[a-zA-Z]+$/;    
+    if (value?.length >= 3 && value?.length <= 90) {
+      const alphabeticRegex = /^[a-zA-Z\s.ñÑáéíóúÁÉÍÓÚ]+$/;  
       if (alphabeticRegex.test(value)) {
         return true;
       } else {
@@ -90,7 +90,7 @@ const siglaRules = [
     }
 
     if (value?.length >= 3 && value?.length <= 10) {
-      const alphabeticRegex = /^[a-zA-Z]+$/;    
+      const alphabeticRegex = /^[a-zA-Z\s.ñÑáéíóúÁÉÍÓÚ]+$/;  
       if (alphabeticRegex.test(value)) {
         return true;
       } else {
@@ -107,7 +107,7 @@ const descriptionRules = [
     if (!value) {
       return 'The description is required.';
     }
-    const alphanumericRegex = /^[a-zA-Z0-9\s]+$/;
+    const alphanumericRegex = /^[a-zA-Z0-9\sñÑáéíóúÁÉÍÓÚ."]+$/;
     if (!alphanumericRegex.test(value)) {
       return 'The description can only contain alphanumeric characters.';
     }

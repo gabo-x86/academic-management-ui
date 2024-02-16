@@ -38,7 +38,7 @@ const router = createRouter({
     },
     {
       path: '/admin/itinerary',
-      name: 'admin-itinerary',
+      name: 'admin-itineraries',
       component: () => import('../views/admin/configclass/ItineraryView.vue')
     },
     {
