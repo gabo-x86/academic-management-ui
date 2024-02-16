@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted} from 'vue'
+import { onMounted, ref} from 'vue'
 // import { useRouter } from 'vue-router'
 
 // const router = useRouter();
@@ -8,6 +8,24 @@ import { onMounted} from 'vue'
 // console.log(router.params.idCarrera);
 // console.log('idArea=',idAreaAct);
 // console.log('idCarrier=',idCarrierAct);
+const headers = ref([
+  { title: 'Nº', align: 'start', key: 'id' },
+  { title: 'Nombre', align: 'start', key: 'name' },
+  { title: 'Min Materias Aprobar', align: 'start', key: 'minmaterias' },
+  { title: 'Fecha Inicio', align: 'start', key: 'fechaini' },
+  { title: 'Fecha Fin', align: 'start', key: 'fechafin' },
+  { title: 'Acciones', align: 'center', sortable: false, key: 'actions' }
+]);
+
+const lstcurruculums = ref([
+  {
+    id: 1,
+    name: 'Plan nuevo 2023',
+    minmaterias: 52,
+    fechaini: '29/01/2023',
+    fechafin: 'indefinido',
+  },
+]);
 async function getArticulo() {
   try {
     console.log('-->', this);
@@ -47,8 +65,42 @@ onMounted(() => {
       </v-btn>
     </v-row>
 
-    
-    
+    <v-row>
+      <v-col>
+        <v-data-table-virtual
+          :headers="headers"
+          :items="lstcurruculums"
+          height="400"
+          item-value="name"
+        >
+          <template v-slot:item.actions="{ item }">
+            <v-icon
+              size="small"
+              class="me-2"
+              title="Ver"
+              @click="editItem(item)"
+            >
+              mdi-eye
+            </v-icon>
+            <v-icon
+              size="small"
+              class="me-2"
+              title="Editar"
+              @click="editItem(item)"
+            >
+              mdi-pencil
+            </v-icon>
+            <v-icon
+              size="small"
+              title="Eliminar"
+              @click="deleteItem(item)"
+            >
+              mdi-delete
+            </v-icon>
+          </template>
+        </v-data-table-virtual>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
