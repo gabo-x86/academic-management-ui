@@ -42,10 +42,11 @@ const router = createRouter({
       component: () => import('../views/admin/configclass/ItineraryView.vue')
     },
     {
-      path:'/admin/classroom',
-      name:'admin-classroom',
-      component:()=>import('../views/admin/configgeneral/ClassroomView.vue')
+      path: '/admin/academic-period',
+      name: 'admin-academic-period',
+      component: () => import('../views/admin/configgeneral/AcademicPeriodView.vue')
     }
+    
   ]
 })
 
