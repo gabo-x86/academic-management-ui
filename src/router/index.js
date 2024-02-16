@@ -37,6 +37,17 @@ const router = createRouter({
       component: () => import('../views/admin/configgeneral/ScheduleParamsView.vue')
     },
     {
+      path: '/admin/meshcurriculum/:idArea/:idCarrera',
+      name: 'admin-meshcurriculum',
+      component: () => import('../views/admin/configgeneral/MeshCurriculumView.vue'),
+      props: (router) => {
+        return {
+          idArea: router.params.idArea,
+          idCarrera: router.params.idCarrera,
+        };
+      },
+    },
+    {
       path: '/admin/itinerary',
       name: 'admin-itineraries',
       component: () => import('../views/admin/configclass/ItineraryView.vue')

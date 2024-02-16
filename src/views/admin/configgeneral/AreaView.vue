@@ -3,8 +3,10 @@
 import { onMounted, ref, nextTick} from 'vue'
 import { useAreaStore } from '@/stores/admin/configgeneral/areaStore.js'
 import AreaFormComp from '@/components/admin/configgeneral/AreaFormComp.vue'
+import { useRouter } from 'vue-router'
 
 const areaStore = useAreaStore();
+const router = useRouter();
 
 const headers = ref([
   { title: 'Nombre', align: 'start', key: 'name' },
@@ -59,6 +61,12 @@ function closeDeleteDialog() {
     editedIndex.value = -1;
   });
 }
+function openMayaCurricular(item) {
+  console.log('item select=', item);
+  console.log('idFacultad=', item.id);
+  // router.push("/admin/meshcurriculum");
+  router.push({name:'admin-meshcurriculum', params: { idArea: item.id, idCarrera: 1 }});
+}
 
 async function submitArea(area) {
   if (area.id) {
@@ -100,6 +108,9 @@ onMounted(async () => {
       </v-toolbar>
     </template>
     <template v-slot:item.actions="{ item }">
+      <v-icon size="small" class="me-2" @click="openMayaCurricular(item)" title="Mayas Curriculares">
+        mdi-file-document-outline
+      </v-icon>
       <v-icon size="small" class="me-2" @click="openEditItem(item)" title="Editar">
         mdi-pencil
       </v-icon>
