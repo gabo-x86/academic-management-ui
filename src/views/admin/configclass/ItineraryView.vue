@@ -13,8 +13,9 @@ const dialogEdit = ref(false)
 const dialogDelete = ref(false)
 const idCurrentItinerary = ref(null)
 const headers = ref([
-  { title: 'Nombre', align: 'start', key: 'name' },
-  { title: 'Carrera', align: 'end', key: 'careerName' },
+  { title: 'Carrera', align: 'center', key: 'careerName' },
+  { title: 'Nombre', align: 'center', key: 'name' },
+  { title: 'Malla Curricular', align: 'center', key: 'curriculumName' },
   { title: 'Acciones', align: 'end', sortable: false, key: 'actions' }
 ])
 
@@ -72,6 +73,7 @@ const closeDialogDelete = () => {
   <edit-itinerary
     :dialog="dialogEdit"
     :idItinerary="idCurrentItinerary"
+    :area="mainStore.area.areaId"
     @close-dialog-edit="closeDialogEdit"
     v-if="dialogEdit"
   >

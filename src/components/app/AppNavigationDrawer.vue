@@ -70,9 +70,9 @@ const menuGroupList = ref([
         route: '/admin/schedule'
       },
       {
-        name:'Aulas',
-        value:'classroom',
-        route:'/admin/classroom'
+        name: 'Periodo Academico',
+        value: 'academic-period',
+        route: '/admin/academic-period'
       }
     ]
   },
