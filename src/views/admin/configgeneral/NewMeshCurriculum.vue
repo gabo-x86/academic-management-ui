@@ -78,9 +78,7 @@
                 <v-icon>mdi-plus</v-icon> Agregar nivel
             </v-btn>
         </v-row>
-
     </div>
-
 </template>
 
 <style scoped>
