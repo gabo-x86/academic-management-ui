@@ -65,6 +65,11 @@ const menuGroupList = ref([
         route: '/admin/subjects'
       },
       {
+        name: 'Aulas',
+        value: 'classrooms',
+        route: '/admin/classrooms'
+      },
+      {
         name: 'Parámetros de Horarios',
         value: 'schedule',
         route: '/admin/schedule'

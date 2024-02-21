@@ -45,8 +45,23 @@ const router = createRouter({
       path: '/admin/academic-period',
       name: 'admin-academic-period',
       component: () => import('../views/admin/configgeneral/AcademicPeriodView.vue')
-    }
-    
+    },
+    {
+      path: '/admin/itinerary/list',
+      name: 'admin-list-group',
+      component: () => import('../views/admin/configclass/SeeItineraryView.vue')
+    },
+    {
+      path:'/admin/itinerary/groups',
+      name: 'admin-groups',
+      component:()=> import('../views/admin/configclass/GroupView.vue')
+    },
+    {
+      path: '/admin/classrooms',
+      name: 'admin-classrooms',
+      component: () => import('../views/admin/configgeneral/ClassroomView.vue')
+    },
+
   ]
 })
 

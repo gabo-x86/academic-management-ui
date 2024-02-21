@@ -90,7 +90,7 @@ const closeDialogDelete = () => {
   >
     <template v-slot:[`item.actions`]="{ item }">
       <v-row justify="space-around">
-        <v-btn variant="text" class="botones-tabla-btn" prepend-icon="mdi-eye-outline">
+        <v-btn variant="text" class="botones-tabla-btn" prepend-icon="mdi-eye-outline" to="/admin/itinerary/list">
           <template v-slot:prepend>
             <v-icon color="black"></v-icon>
           </template>
