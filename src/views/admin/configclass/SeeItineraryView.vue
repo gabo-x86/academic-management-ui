@@ -8,7 +8,7 @@ const headers = ref([
   { title: 'Horario',align:'start', key: 'scheals' },
   { title: 'Aula',align:'start', key: 'classroom' },
   { title: 'Docente Designado',align:'start', key: 'professor' },
-  { title: 'Opciones', align:'center' ,sortable: false, key: 'actions' }
+
 ]);
 </script>
 
@@ -31,7 +31,7 @@ const headers = ref([
         <template v-slot:prepend>
           <v-icon class="white-icon">mdi-plus</v-icon>
         </template>
-        Nuevo
+        Nuevo Grupo
       </v-btn>
     </div>
   <v-card-text>
