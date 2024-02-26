@@ -1,25 +1,50 @@
 <script setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
+import { useItineraryGroupStore} from '@/stores/admin/schedule/groupItineraryStore.js'
+import {useMainStore} from '@/stores/MainStore.js'
+import { useRoute } from 'vue-router';
+import { useItineraryStore } from '@/stores/admin/schedule/itineraryStore.js'
+const route = useRoute();
+
+const itineraryGroupStore = useItineraryGroupStore()
+const itineraryStore=useItineraryStore()
+const mainStore=useMainStore()
+
+const careerId = ref(null)
+const itineraryId=ref(null)
 
 const headers = ref([
-  { title: 'N°', value: 'index', align: 'center' },
-  { title: 'Nombre Asignatura',align:'start', key: 'subjects' , style: 'font-weight: bold;'},
-  { title: 'Grupo',align:'start', key: 'groups' },
-  { title: 'Horario',align:'start', key: 'scheals' },
-  { title: 'Aula',align:'start', key: 'classroom' },
-  { title: 'Docente Designado',align:'start', key: 'professor' },
+  { title: 'N°',  align: 'center', key: 'id' },
+  { title: 'Nombre Asignatura',align:'start', key: 'subjectName' , style: 'font-weight: bold;'},
+  { title: 'Grupo',align:'start', key: 'groupIdentifier' },
+  { title: 'Horario',align:'start', key: 'listScheduleDto' },
+  { title: 'Aula',align:'start', key: 'listScheduleDto' },
+  { title: 'Docente Designado',align:'start', key: 'listScheduleDto' },
 
 ]);
+
+onMounted( async () =>{
+  careerId.value = route.params.careerId;
+
+  itineraryId.value= route.params.itineraryId
+  console.log('itineraryId:'+itineraryId.value)
+  await itineraryStore.getItineraryById(itineraryId.value)
+  await itineraryGroupStore.getInineraryGroups(careerId.value,itineraryId.value)
+
+})
+
 </script>
 
 <template>
+
   <v-card
     class="mx-auto my-16"
     min-width="1000"
     max-width="1300"
   >
+    <p class="mx-10">Carrera: {{ itineraryStore.currentItinerary }}</p>
     <p class="text-center text-h5 font-weight-bold my-4" >
-      Ver Itinerario 1er Semestre
+      Itinerario: {{ itineraryStore.currentItinerary }}
     </p>
     <div class="d-flex flex-row-reverse">
       <v-btn
@@ -37,24 +62,48 @@ const headers = ref([
   <v-card-text>
     <v-data-table
       :headers="headers"
-      :items="headers"
+      :items="itineraryGroupStore.itineraryGroups"
       density="compact"
       item-key="name"
     >
-      <template v-slot:[`item.actions`]="{  }">
+      <template v-slot:item="{ item }">
+        <tr>
+          <td>{{ item.id }}</td>
+          <td>{{ item.subjectName }}</td>
+          <td>{{ item.groupIdentifier }}</td>
 
-        <v-row justify="space-around">
-          <v-btn variant="text" >
-            <v-icon icon="mdi-pencil"></v-icon>
-            editar
-          </v-btn>
-          <v-btn variant="text" >
-            <v-icon icon="mdi-delete"></v-icon>
-            eliminar
-          </v-btn>
-        </v-row>
+          <td>
+            <ul>
+              <li v-for="schedule in item.listScheduleDto" :key="schedule.id">
+                {{ schedule.dayOfWeek ? schedule.dayOfWeek:'null' }} -
+                {{ schedule.startTime ? schedule.startTime : 'null' }} -
+                {{ schedule.endTime ? schedule.endTime : 'null'  }}
+              </li>
+            </ul>
+          </td>
+          <td>
+            <ul>
+              <li v-for="schedule in item.listScheduleDto" :key="schedule.id">
+                {{ schedule.classroomInitials }}
+              </li>
+            </ul>
+          </td>
+          <td>
+            <ul>
+              <li v-for="schedule in item.listScheduleDto" :key="schedule.id">
+                {{ schedule.professorFullName ? schedule.professorFullName : 'null' }}
+              </li>
+            </ul>
+          </td>
+        </tr>
+
+
+
       </template>
+
     </v-data-table>
+    <pre>{{ itineraryGroupStore.itineraryGroups }}</pre>
+
   </v-card-text>
   </v-card>
 </template>

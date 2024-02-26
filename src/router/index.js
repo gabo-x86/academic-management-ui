@@ -47,7 +47,7 @@ const router = createRouter({
       component: () => import('../views/admin/configgeneral/AcademicPeriodView.vue')
     },
     {
-      path: '/admin/itinerary/list',
+      path: '/admin/areas/:areaId/careers/:careerId/itineraries/:itineraryId/itinerary-groups',
       name: 'admin-list-group',
       component: () => import('../views/admin/configclass/SeeItineraryView.vue')
     },

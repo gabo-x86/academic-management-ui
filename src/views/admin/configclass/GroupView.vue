@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 
+
 const index =['hola', 'adios', 'caio']
 
 const headers = ref([

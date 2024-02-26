@@ -11,6 +11,7 @@ const mainStore = useMainStore()
 const dialogCreate = ref(false)
 const dialogEdit = ref(false)
 const dialogDelete = ref(false)
+
 const idCurrentItinerary = ref(null)
 const headers = ref([
   { title: 'Nombre', align: 'start', key: 'name' },
@@ -39,6 +40,7 @@ const openDialogEdit = (id) => {
   idCurrentItinerary.value = id
   dialogEdit.value = true
 }
+
 const closeDialogEdit = () => {
   dialogEdit.value = false
 }
@@ -90,7 +92,12 @@ const closeDialogDelete = () => {
   >
     <template v-slot:[`item.actions`]="{ item }">
       <v-row justify="space-around">
-        <v-btn variant="text" class="botones-tabla-btn" prepend-icon="mdi-eye-outline" to="/admin/itinerary/list">
+        <v-btn
+          variant="text"
+          class="botones-tabla-btn"
+          prepend-icon="mdi-eye-outline"
+          :to="'/admin/areas/'+mainStore.area.areaId+'/careers/'+item.careerId+'/itineraries/'+item.id+'/itinerary-groups'"
+        >
           <template v-slot:prepend>
             <v-icon color="black"></v-icon>
           </template>
