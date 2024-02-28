@@ -6,7 +6,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      redirect: {name: 'dashboard'}
+      redirect: { name: 'dashboard' }
     },
     {
       path: '/admin/dashboard',
@@ -41,10 +41,34 @@ const router = createRouter({
       name: 'admin-itineraries',
       component: () => import('../views/admin/configclass/ItineraryView.vue')
     },
+
     {
-      path:'/admin/classroom',
-      name:'admin-classroom',
-      component:()=>import('../views/admin/configgeneral/ClassroomView.vue')
+      path: '/admin/manage-classes',
+      component: () => import('../views/admin/configclass/ManageClassesView.vue'),
+      children: [
+        {
+          path: '', // Esto representa la ruta base, sin ningún segmento adicional
+          name: 'admin-manage-classes',
+          component: () => import('../views/admin/configclass/ManageClassesByYearView.vue') // Componente por defecto
+        },
+        {
+          path: 'generate',
+          component: () => import('../views/admin/configclass/ManageClassesGenerateView.vue')
+        }
+      ]
+    },
+
+
+    {
+      path: '/admin/classroom',
+      name: 'admin-classroom',
+      component: () => import('../views/admin/configgeneral/ClassroomView.vue')
+    },
+
+    {
+      path: '/:pathMatch(.*)*',
+      component: () => import('../views/notfound/notFoundView.vue'),
+      name: 'not-found'
     }
   ]
 })
