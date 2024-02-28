@@ -1,21 +1,12 @@
-<template>
-  <v-app>
-    <v-main>
-      <v-container>
-        <HorarioForm />
-      </v-container>
-    </v-main>
-  </v-app>
-</template>
-  
-<script>
+<script setup>
 
-import HorarioForm from "../../../components/app/SheduleForm.vue"
-
-export default {
-  name: "MainHorario",
-  components: {
-    HorarioForm
-  },
-};
 </script>
+
+<template>
+  <h3>Parametros de Horario por factultad</h3>
+  <h3>{{globalAreaSelected}}</h3>
+</template>
+
+<style scoped>
+
+</style>
