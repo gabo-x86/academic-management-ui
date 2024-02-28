@@ -68,11 +68,6 @@ const menuGroupList = ref([
         name: 'Parámetros de Horarios',
         value: 'schedule',
         route: '/admin/schedule'
-      },
-      {
-        name: 'Periodo Academico',
-        value: 'academic-period',
-        route: '/admin/academic-period'
       }
     ]
   },

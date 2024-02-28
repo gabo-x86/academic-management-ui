@@ -66,7 +66,6 @@ const router = createRouter({
       name: 'admin-academic-period',
       component: () => import('../views/admin/configgeneral/AcademicPeriodView.vue')
     }
-    
   ]
 })
 
