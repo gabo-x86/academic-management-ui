@@ -8,7 +8,7 @@ let pathItineraryResource=`/admin/areas/1/careers/1/itineraries/1/itinerary-grou
 export const useItineraryGroupStore=defineStore('groupItineraryStore', ()=>{
   const mainStore= useMainStore()/// <<<-----
   const itineraryGroups =ref([]);
-  const currentItinerary = ref(null)
+  const currentItineraryGroup = ref(null)
   async function getInineraryGroups(careerId, itineraryId){
     try {
       const {status, data} = await AxiosAM.get("/admin/areas/1/careers/"+careerId+"/itineraries/"+itineraryId+"/itinerary-groups")
@@ -26,7 +26,7 @@ export const useItineraryGroupStore=defineStore('groupItineraryStore', ()=>{
     try {
       const {status, data}= await AxiosAM.get(pathItineraryResource+"/"+idItinerarGroup)
       if (status===200){
-        currentItinerary.value=data
+        currentItineraryGroup.value=data
         return{ success:true, data:data}
       }
     }catch (error){
@@ -63,6 +63,6 @@ export const useItineraryGroupStore=defineStore('groupItineraryStore', ()=>{
   }
 
 
-  return{getInineraryGroups, getInineraryGroupById, createInineraryGroup, deleteItinerarGroup, itineraryGroups, currentItinerary}
+  return{getInineraryGroups, getInineraryGroupById, createInineraryGroup, deleteItinerarGroup, itineraryGroups, currentItineraryGroup}
   }
 )
