@@ -1,13 +1,17 @@
 <script setup>
 import { onMounted, ref} from 'vue'
 import { useRouter } from 'vue-router'
+import { useCurriculumStore } from '@/stores/admin/configgeneral/curriculumStore';
 
 const router = useRouter();
+const curriculumStore = useCurriculumStore();
+const carreraSelect = { id: 1, name: 'Ing. de Sistemas'};
 // const idAreaAct = router.params.idArea;
 // const idCarrierAct = router.params.idCarrera;
 // console.log(router.params.idCarrera);
 // console.log('idArea=',idAreaAct);
 // console.log('idCarrier=',idCarrierAct);
+/*
 const headers = ref([
   { title: 'Nº', align: 'start', key: 'id' },
   { title: 'Nombre', align: 'start', key: 'name' },
@@ -16,7 +20,16 @@ const headers = ref([
   { title: 'Fecha Fin', align: 'start', key: 'fechafin' },
   { title: 'Acciones', align: 'center', sortable: false, key: 'actions' }
 ]);
-
+*/
+const headers = ref([
+  { title: 'Nº', align: 'start', key: 'id' },
+  { title: 'Nombre', align: 'start', key: 'name' },
+  { title: 'Min Materias Aprobar', align: 'start', key: 'minApprovedSubjects' },
+  { title: 'Fecha Inicio', align: 'start', key: 'startDate',sortable: false },
+  { title: 'Fecha Fin', align: 'start', key: 'endDate' },
+  { title: 'Acciones', align: 'center', sortable: false, key: 'actions' }
+]);
+/*
 const lstcurruculums = ref([
   {
     id: 1,
@@ -25,7 +38,8 @@ const lstcurruculums = ref([
     fechaini: '29/01/2023',
     fechafin: 'indefinido',
   },
-]);
+]);*/
+/*
 async function getArticulo() {
   try {
     console.log('-->', this);
@@ -34,20 +48,27 @@ async function getArticulo() {
     console.log(error)
   }
 }
-
+*/
 function newMeshcurriculum(item){
   console.log('item id=', item);
   router.push({name:'admin-newmeshcurriculum', params: { idCarrera: 1 }});
 }
 
+onMounted(async () => {
+  await curriculumStore.getCurriculums(carreraSelect);
+  console.log('Entreeeeeeeeee', carreraSelect);
+  console.log('store curriculum', curriculumStore.curriculums);
+});
+
+/*
 onMounted(() => {
   getArticulo();
   // const id = router.params.idArea;
-  /*console.log('---',this.$router.go(-1));
+  console.log('---',this.$router.go(-1));
   console.log(this.$route.params.idCarrera);
-  console.log('ID=',this.$route.params.idCarrera);*/
+  console.log('ID=',this.$route.params.idCarrera);
   // console.log('--->',router.params.idArea);
-})
+}) */
 </script>
 
 <template>
@@ -74,10 +95,13 @@ onMounted(() => {
       <v-col>
         <v-data-table-virtual
           :headers="headers"
-          :items="lstcurruculums"
+          :items="curriculumStore.curriculums"
           height="400"
           item-value="name"
         >
+          <template v-slot:item.startDate="{ item }">
+            {{item.startDate[2]}}/{{item.startDate[1]}}/{{item.startDate[0]}}
+          </template>
           <template v-slot:item.actions="{ item }">
             <v-icon
               size="small"
