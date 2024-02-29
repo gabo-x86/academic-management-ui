@@ -1,7 +1,10 @@
 <template>
   <v-app>
     <v-main>
-      <v-container>
+
+      {{ areaId }}
+
+      <v-container v-if="areaSel">
         <div class="mb-4">
           <v-alert
             v-model="alert"
@@ -116,6 +119,10 @@
           />
         </v-row>
       </v-container>
+
+      <v-container v-else>
+        Ninguna Area Seleccionada
+      </v-container>
     </v-main>
   </v-app>
 </template>
@@ -126,9 +133,12 @@ import ScheduleLunchDialog from './ScheduleLunchDIalog.vue'
 
 import AxiosAM from '@/services/AxiosAM'
 import { useScheduleStore } from '@/stores/admin/configgeneral/scheduleStore'
-import { watch } from 'vue'
+import { useMainStore } from '@/stores/MainStore'
+import { ref, watch } from 'vue'
+
 
 export default {
+
   setup() {
     const scheduleStore = useScheduleStore()
 
@@ -140,12 +150,21 @@ export default {
       scheduleStore.setValor2(valor2)
     }
 
+    const mainStore = useMainStore();
+
     return {
       scheduleStore,
       cambiarValor1,
-      cambiarValor2
+      cambiarValor2,
+
+      areaData: mainStore.area,
     }
   },
+
+  key: function() {
+    return this.areaId;
+  },
+
 
   editarDatosActuales() {
     this.cambiarParametros()
@@ -156,7 +175,8 @@ export default {
   },
 
   created() {
-    this.recuperarParametros()
+    //this.recuperarParametros()
+    this.verificarAreaSel(this.areaData)
   },
   name: 'HorarioForm',
   components: {
@@ -165,6 +185,8 @@ export default {
   },
   data() {
     return {
+      areaSel: false,
+      areaId: 0,
       postListSelecInital: [],
       alert: false,
       colorAlert: '',
@@ -195,6 +217,7 @@ export default {
   },
 
   methods: {
+
     cancelarAlmuerzo() {
       /*let valor = null
       for (let i = 0; i < this.filaHoras.length; i++) {
@@ -260,10 +283,10 @@ export default {
     },
 
     async recuperarParametros() {
-      const area = this.globalAreaSelected
+      
 
       try {
-        let datos = await AxiosAM.get('admin/schedule-parameters/' + area.id)
+        let datos = await AxiosAM.get('admin/schedule-parameters/' + this.areaId)
 
         let valores = datos.data
 
@@ -323,7 +346,7 @@ export default {
       }
 
       try {
-        let datos = await AxiosAM.get('admin/schedule-periods/' + area.id)
+        let datos = await AxiosAM.get('admin/schedule-periods/' + this.areaId)
 
         let valores = datos.data
 
@@ -344,7 +367,7 @@ export default {
               endTime: this.filaHoras[i][1],
               weekday: diasString[j],
               active: true,
-              areaId: area.id
+              areaId: this.areaId
             }
 
             if (this.filaHoras[i][2] === false) {
@@ -369,11 +392,11 @@ export default {
     },
 
     async cambiarParametros() {
-      const area = this.globalAreaSelected
+      
 
       let exitoso = false
       try {
-        await AxiosAM.put('admin/schedule-parameters/' + area.id, this.scheduleStore.valorAct)
+        await AxiosAM.put('admin/schedule-parameters/' + this.areaId, this.scheduleStore.valorAct)
 
         exitoso = true
       } catch (error) {
@@ -383,7 +406,7 @@ export default {
 
       let exitoEliminacion = false
       try {
-        await AxiosAM.delete('admin/schedule-periods/delete-by-area/' + area.id)
+        await AxiosAM.delete('admin/schedule-periods/delete-by-area/' + this.areaId)
         exitoEliminacion = true
       } catch (error) {
         exitoEliminacion = false
@@ -407,7 +430,7 @@ export default {
                 endTime: this.filaHoras[i][1],
                 weekday: diasString[j],
                 active: true,
-                areaId: area.id
+                areaId: this.areaId
               }
 
               if (
@@ -572,10 +595,31 @@ export default {
 
         this.cargandoDatos = false
       }
+    },
+
+    verificarAreaSel(nuevo){
+      if(nuevo!==null){
+          if(nuevo.areaId!==null){
+            console.log("nuevaArea"+nuevo.areaId);
+
+            this.areaId = nuevo.areaId;
+
+            this.areaSel = true;
+            this.recuperarParametros()
+          }
+        }
     }
   },
 
   watch: {
+    areaData: {
+      handler: function (nuevo, oldVal) {
+        this.verificarAreaSel(nuevo)
+        //this.created();
+      },
+      deep: true
+    },
+
     minutosper: {
       handler: function (nuevo, oldVal) {
         this.cambiarCantPer()

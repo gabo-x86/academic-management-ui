@@ -35,18 +35,7 @@ const router = createRouter({
       path: '/admin/schedule',
       name: 'admin-schedule',
       component: () => import('../views/admin/configgeneral/ScheduleParamsView.vue')
-    },
-    {
-      path: '/admin/itinerary',
-      name: 'admin-itineraries',
-      component: () => import('../views/admin/configclass/ItineraryView.vue')
-    },
-    {
-      path: '/admin/academic-period',
-      name: 'admin-academic-period',
-      component: () => import('../views/admin/configgeneral/AcademicPeriodView.vue')
     }
-    
   ]
 })
 
