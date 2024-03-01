@@ -1,10 +1,12 @@
 <template>
   <v-container>
+    {{ areaData }}
+    {{ carrerasList }}
     <v-row>
       <v-col cols="12">
         <v-row>
           <v-col cols="12" md="6">
-            <v-select v-model="carreraSel" :items="carrerasList" label="Carrera"></v-select>
+            <v-select v-model="carreraSel" :items="carrerasList" label="Carrera" item-text="id"></v-select>
           </v-col>
           <v-col cols="12" md="6">
             <v-select v-model="gestion" :items="gestiones" label="Gestión Académica"></v-select>
@@ -14,13 +16,16 @@
     </v-row>
 
     <v-row>
-      <ClassesTableForm :carrera="carreraSel" :gestion="gestion"/>
+      <ClassesTableForm :carrera="carreraSel" :gestion="gestion" />
     </v-row>
   </v-container>
 </template>
 
 <script>
+import { useMainStore } from '@/stores/MainStore'
 import ClassesTableForm from '../../../components/admin/manageclasses/ClassesTableCrudForm.vue'
+import { watch } from 'vue'
+import { useCareerStore } from '@/stores/admin/configgeneral/careerStore'
 
 export default {
   created() {
@@ -30,12 +35,21 @@ export default {
     this.listAreas()
   },
 
+  setup() {
+    const mainStore = useMainStore()
+
+    return {
+      areaData: mainStore.area
+    }
+  },
+
   data: () => ({
     gestion: null,
     gestiones: [],
 
     carreraSel: null,
-    carrerasList: []
+    carrerasList: [],
+    carrerasData:[]
   }),
 
   methods: {
@@ -57,15 +71,46 @@ export default {
       return list
     },
 
-    listAreas() {
-      let list = ['Ing de sistemas', 'Ing Comercial']
+    async listAreas(idArea) {
+      const { careers, getCareers } = useCareerStore() // Obtiene las carreras y el método getCareers del store
+      await getCareers(idArea) // Ajusta esto según cómo obtengas el areaId en tu aplicación
+
+      let list = [];
+      for(let i=0;i<careers.length; i++){
+        list.push(careers[i].name)
+      }
+
+      //['Ing de sistemas', 'Ing Comercial']
       this.carreraSel = list[0]
       this.carrerasList = list
+
+      this.carrerasData = careers;
+    },
+
+    verificarAreaSel(nuevo) {
+
+      this.carreraSel = null;
+      this.carrerasList = [];
+
+      if (nuevo !== null) {
+        if (nuevo.areaId !== null) {
+          this.listAreas(nuevo.areaId)
+        }
+      }
     }
   },
 
   components: {
     ClassesTableForm
+  },
+
+  watch: {
+    areaData: {
+      handler: function (nuevo, oldVal) {
+        this.verificarAreaSel(nuevo)
+      },
+      deep: true
+    }
   }
 }
 </script>

@@ -23,6 +23,10 @@
         </v-col>
       </v-row>
 
+      <v-row>
+        <loading-generate/>
+      </v-row>
+
     <v-row justify="center">
         <v-btn color="primary darken-2" variant="elevated">GENERAR</v-btn>
     </v-row> 
@@ -30,8 +34,10 @@
   </template>
 
 <script>
+import LoadingGenerate from '@/components/admin/manageclasses/LoadingGenerate.vue'
 
 export default {
+  components: { LoadingGenerate },
   created() {
     this.gestion = this.getYearToday()
     this.gestiones = this.getLastYears(this.gestion, 4)

@@ -96,16 +96,17 @@ export default {
     dialogDelete: false,
     headers: [
       {
-        title: 'Dessert (100g serving)',
+        title: 'Nro',
         align: 'start',
         sortable: false,
         key: 'name'
       },
-      { title: 'Calories', key: 'calories' },
-      { title: 'Fat (g)', key: 'fat' },
-      { title: 'Carbs (g)', key: 'carbs' },
-      { title: 'Protein (g)', key: 'protein' },
-      { title: 'Actions', key: 'actions', sortable: false }
+      { title: 'NOMNBRE ASIGNATURA', key: 'calories' },
+      { title: 'GRUPO', key: 'fat' },
+      { title: 'HORARIO', key: 'carbs' },
+      { title: 'AULA', key: 'protein' },
+      { title: 'DOCENTE ASIGNADO', key: 'protein' },
+      { title: 'OPCIONES', key: 'actions', sortable: false }
     ],
     desserts: [],
     editedIndex: -1,

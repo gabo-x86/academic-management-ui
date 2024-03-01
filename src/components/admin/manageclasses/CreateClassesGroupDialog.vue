@@ -18,7 +18,7 @@
           </v-toolbar-items>
         </v-toolbar>
         <v-card-item>
-          <classes-table-group/>
+          <classes-table-group />
         </v-card-item>
       </v-card>
     </v-dialog>
@@ -26,10 +26,27 @@
 </template>
 
 <script>
+import { useAreaStore } from '@/stores/admin/configgeneral/areaStore';
 
 import ClassesTableGroup from './ClassesTableGroup.vue';
 
 export default {
+  created(){
+    /*const { areas, getAreas} = useAreaStore() // Obtiene las carreras y el método getCareers del store
+    let data = await getAreas(idArea) // Ajusta esto según cómo obtengas el areaId en tu aplicación
+
+      let list = [];
+      for(let i=0;i<careers.length; i++){
+        list.push(careers[i].name)
+      }
+
+      //['Ing de sistemas', 'Ing Comercial']
+      this.carreraSel = list[0]
+      this.carrerasList = list
+
+      this.carrerasData = careers;*/
+  },
+  
   data() {
     return {
       dialog: false,

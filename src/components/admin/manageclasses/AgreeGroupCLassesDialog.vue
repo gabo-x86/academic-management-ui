@@ -127,7 +127,7 @@ export default {
 
   methods: {
     readData() {
-      this.periodosList = ['1-2024', '2-2024', 'Invierno', 'Verano']
+      this.periodosList = ['1 - Primer Semestre', '2 - Segundo Semestre', 'Invierno', 'Verano']
       this.diasList = ['LUNES', 'MARTES', 'MIERCOLES', 'JUEVES', 'VIERNES', 'SABADO', 'DOMINGO']
       this.docenteList = ['Juan Perez', 'Tito el bambino', 'Joel']
       this.aulaList = ['682a', '566b', '553c']

@@ -122,7 +122,7 @@ export default {
     },
 
     initialize() {
-      this.desserts = [
+      /*this.desserts = [
         {
           dia: 'Frozen Yogurt',
           horaInicio: 159,
@@ -193,7 +193,9 @@ export default {
           aula: 65,
           docente: 7
         }
-      ]
+      ]*/
+
+      this.desserts = [];
     },
 
     editItem(item) {
