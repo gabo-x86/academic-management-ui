@@ -35,15 +35,17 @@ export const useItineraryGroupStore=defineStore('groupItineraryStore', ()=>{
   }
 
   //ojos
-  async function createInineraryGroup(itineraryGroup){
+  async function createItineraryGroup(areaId,careerId,itineraryId,itineraryGroup){
     try {
-      const {status, data }= await AxiosAM.post(pathItineraryResource, itineraryGroup)
+      const {status, data }= await AxiosAM.post(`/admin/areas/${areaId}/careers/${careerId}/itineraries/${itineraryId}/itinerary-groups`, itineraryGroup)
       if (status===201){
         itineraryGroups.value.splice(0,0,data)
+        alert("¡Éxito! Grupo creado exitosamente.");
         return{ success:true, data:data }
       }
     }catch (error) {
-      console.log('error save itinerarGroup')
+      console.error('error save itinerarGroup',error)
+      alert("No se pudo crear el grupo porque nuestra carrera no tiene mismo materia. Por favor, inténtalo de nuevo.")
       return { error:true, success:false, data:null}
     }
   }
@@ -63,6 +65,6 @@ export const useItineraryGroupStore=defineStore('groupItineraryStore', ()=>{
   }
 
 
-  return{getInineraryGroups, getInineraryGroupById, createInineraryGroup, deleteItinerarGroup, itineraryGroups, currentItineraryGroup}
+  return{getInineraryGroups, getInineraryGroupById, createItineraryGroup, deleteItinerarGroup, itineraryGroups, currentItineraryGroup}
   }
 )

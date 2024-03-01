@@ -17,7 +17,7 @@ const itineraryName= ref(null)
 const SeeItinerary=ref(false)
 
 const itineraryGroupId=ref([])
-
+const sortBy=ref([{ key: 'id', order: 'desc' }])
 const headers = ref([
   { title: 'N°',  align: 'center', key: 'id' },
   { title: 'Nombre Asignatura',align:'start', key: 'subjectName' , style: 'font-weight: bold;'},
@@ -76,10 +76,10 @@ const changeDayOfWeek= (dayOfWeek) => changedDayOfWeek[dayOfWeek] || dayOfWeek;
     </div>
   <v-card-text>
     <v-data-table
+        v-model:sort-by="sortBy"
         :headers="headers"
         :items="itineraryGroupStore.itineraryGroups"
-        density="compact"
-        item-key="id"
+
     >
       <template v-slot:item="{ item }">
         <tr>
@@ -106,7 +106,7 @@ const changeDayOfWeek= (dayOfWeek) => changedDayOfWeek[dayOfWeek] || dayOfWeek;
           <td>
             <ul>
               <li v-for="schedule in item.listScheduleDto" :key="schedule.id">
-                {{ schedule.professorFullName ? schedule.professorFullName : 'null' }}
+                {{ schedule.professorFullName ? schedule.professorFullName : 'Por designar' }}
               </li>
             </ul>
           </td>

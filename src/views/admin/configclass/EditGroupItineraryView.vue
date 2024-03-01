@@ -10,14 +10,17 @@ const itineraryGroupStore = useItineraryGroupStore()
 const itineraryStore=useItineraryStore()
 const mainStore=useMainStore()
 
+const areaID=ref(null)
 const careerId = ref(null)
 const itineraryId=ref(null)
+
+
 const careerName =ref(null)
 const itineraryName= ref(null)
 
 const itineraryGroupId=ref([])
 const EditItinerary=ref(false)
-
+const sortBy=ref([{ key: 'id', order: 'desc' }])
 const headers = ref([
   { title: 'N°',  align: 'center', key: 'id' },
   { title: 'Nombre Asignatura',align:'start', key: 'subjectName' , style: 'font-weight: bold;'},
@@ -29,8 +32,11 @@ const headers = ref([
 ]);
 
 onMounted( async () =>{
+  areaID.value=route.params.areaId
   careerId.value = route.params.careerId
   itineraryId.value= route.params.itineraryId
+
+
 
   console.log('careerId:'+ careerId.value)
   console.log('itineraryId:'+itineraryId.value)
@@ -78,7 +84,7 @@ const changeDayOfWeek= (dayOfWeek) => changedDayOfWeek[dayOfWeek] || dayOfWeek;
           color="primary"
           width="200"
           height="50"
-          :to="'/admin/areas/'+mainStore.area.areaId+'/careers/'+careerId+'/itineraries/'+itineraryId+'/itinerary-groups'">
+          :to="'/admin/areas/'+areaID+'/careers/'+careerId+'/itineraries/'+itineraryId+'/itinerary-groups'">
         <template v-slot:prepend>
           <v-icon class="white-icon">mdi-plus</v-icon>
         </template>
@@ -87,10 +93,10 @@ const changeDayOfWeek= (dayOfWeek) => changedDayOfWeek[dayOfWeek] || dayOfWeek;
     </div>
     <v-card-text>
       <v-data-table
+          v-model:sort-by="sortBy"
           :headers="headers"
           :items="itineraryGroupStore.itineraryGroups"
-          density="compact"
-          item-key="name"
+
       >
         <template v-slot:item="{ item }">
           <tr>
@@ -117,7 +123,7 @@ const changeDayOfWeek= (dayOfWeek) => changedDayOfWeek[dayOfWeek] || dayOfWeek;
             <td>
               <ul>
                 <li v-for="schedule in item.listScheduleDto" :key="schedule.id">
-                  {{ schedule.professorFullName ? schedule.professorFullName : 'null' }}
+                  {{ schedule.professorFullName ? schedule.professorFullName : 'Por designar' }}
                 </li>
               </ul>
             </td>
