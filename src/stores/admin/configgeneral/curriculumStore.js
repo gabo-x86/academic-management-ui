@@ -3,6 +3,7 @@ import { defineStore } from 'pinia'
 import AxiosAM from '@/services/AxiosAM.js'
 
 const pathCurriculumResource = '/admin/areas/{areaId}/careers/';
+const pathArea = '/admin/areas/';
 export const useCurriculumStore = defineStore('curriculumStore', () => {
   const curriculums = ref([]);
   const dialog = ref(false);
@@ -20,9 +21,9 @@ export const useCurriculumStore = defineStore('curriculumStore', () => {
     }
   }
 
-  async function createArea(area) {
+  async function createCurriculum(areaId, curriculum) {
     try {
-      const { status, data } = await AxiosAM.post(pathCurriculumResource, area);
+      const { status, data } = await AxiosAM.post(`${pathArea}${areaId}/careers/{careerId}/curriculums`, curriculum);
       if (status === 201) {
         curriculums.value.splice(0, 0, data);
         return { success: true, data: data };
@@ -35,7 +36,7 @@ export const useCurriculumStore = defineStore('curriculumStore', () => {
 
   async function editArea(area) {
     try {
-      const {status, data} = await AxiosAM.put(`${pathCurriculumResource}/${area.id}`, area);
+      const {status, data} = await AxiosAM.put(`${pathArea}/${area.id}`, area);
       if (status === 200) {
         const index = curriculums.value.findIndex((obj) => obj.id === area.id);
         curriculums.value.splice(index, 1, area);
@@ -61,5 +62,5 @@ export const useCurriculumStore = defineStore('curriculumStore', () => {
     }
   }
 
-  return { curriculums, dialog, getCurriculums, createArea, editArea, deleteArea }
+  return { curriculums, dialog, getCurriculums, createCurriculum, editArea, deleteArea }
 })

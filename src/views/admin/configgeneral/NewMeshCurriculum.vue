@@ -1,6 +1,9 @@
 <script setup>
-// import { onMounted, ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import LevelCurriculum from '@/components/admin/configgeneral/meshcurriculum/LevelCurriculum.vue'
+import {useAreaStore} from '@/stores/admin/configgeneral/areaStore.js';
+import { useCurriculumStore } from '@/stores/admin/configgeneral/curriculumStore';
+
 </script>
 
 <template>
