@@ -3,13 +3,31 @@ import { onMounted, ref, watch } from 'vue'
 import LevelCurriculum from '@/components/admin/configgeneral/meshcurriculum/LevelCurriculum.vue'
 import {useAreaStore} from '@/stores/admin/configgeneral/areaStore.js';
 import { useCurriculumStore } from '@/stores/admin/configgeneral/curriculumStore';
+import { useRoute } from 'vue-router';
+// const careerId = '';
+// const carrera = {};
+const curriculumStore = useCurriculumStore();
+const carreraActive = ref({});
+const carreraId = ref('');
+
+onMounted(async () => {
+  //await areaStore.getAreas();
+  const route = useRoute();
+  const careerId = route.params.idCarrera;
+  carreraId.value = careerId;
+  const carrera = await curriculumStore.getCareerWithId(careerId);
+  carreraActive.value = carrera.data;
+
+  console.log('--->', this.globalAreaSelected);
+  
+});
 
 </script>
 
 <template>
     <div class="pa-4">
         <div class="py-4 mx-lg-auto">
-            <p><strong>Carrera: </strong>Ing. de Sistemas</p>
+            <p><strong>Carrera: </strong>{{ carreraActive.name }}</p>
         </div>
         
         <v-row class="justify-end">
@@ -34,6 +52,9 @@ import { useCurriculumStore } from '@/stores/admin/configgeneral/curriculumStore
         <v-form v-model="valid">
             <v-container>
                 <v-row>
+                    <v-col cols="12" md="6">
+                        <v-text-field v-model="careerId" :value="carreraId"/>
+                    </v-col>
                     <v-col cols="12" md="6">
                         <v-text-field v-model="firstname" :rules="nameRules" :counter="50" label="Nombre" required
                             hide-details

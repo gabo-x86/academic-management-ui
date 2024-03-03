@@ -16,7 +16,7 @@ const headers = ref([
 ]);
 function newMeshcurriculum(item){
   console.log('item id=', item);
-  router.push({name:'admin-newmeshcurriculum', params: { idCarrera: carreraSelect.id }});
+  router.push({name:'admin-newmeshcurriculum', params: { idCarrera: 1 }});
 }
 
 onMounted(async () => {

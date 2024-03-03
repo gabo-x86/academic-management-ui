@@ -7,6 +7,7 @@ const pathArea = '/admin/areas/';
 export const useCurriculumStore = defineStore('curriculumStore', () => {
   const curriculums = ref([]);
   const dialog = ref(false);
+  const carrera = ref({});
 
   async function getCurriculums(career) {
     try {
@@ -18,6 +19,19 @@ export const useCurriculumStore = defineStore('curriculumStore', () => {
     } catch (error) {
       // handle error
       console.log('error getting curriculums..');
+    }
+  }
+
+  async function getCareerWithId(idCareer) {
+    try {
+      const { status, data } = await AxiosAM.get(`${pathArea}{areaID}/careers/${idCareer}`);
+
+      if (status === 200) {
+        carrera.value = data;
+        return { success: true, data: data };
+      }
+    } catch (error) {
+      console.log('error getting career..');
     }
   }
 
@@ -62,5 +76,5 @@ export const useCurriculumStore = defineStore('curriculumStore', () => {
     }
   }
 
-  return { curriculums, dialog, getCurriculums, createCurriculum, editArea, deleteArea }
+  return { curriculums, dialog, carrera, getCurriculums, createCurriculum, editArea, deleteArea, getCareerWithId }
 })
