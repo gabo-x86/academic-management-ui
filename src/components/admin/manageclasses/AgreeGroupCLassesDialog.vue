@@ -24,7 +24,11 @@
               </v-col>
 
               <v-col cols="12" sm="4" md="4">
-                <v-autocomplete label="Día *" v-model="editedItem.dia" :items="diasList"></v-autocomplete>
+                <v-autocomplete
+                  label="Día *"
+                  v-model="editedItem.dia"
+                  :items="diasList"
+                ></v-autocomplete>
               </v-col>
               <v-col cols="12" sm="4" md="4">
                 <v-text-field
@@ -76,7 +80,11 @@
                 ></v-autocomplete>
               </v-col>
               <v-col cols="12" sm="4" md="4">
-                <v-autocomplete label="Aula *" v-model="editedItem.aula" :items="aulaList"></v-autocomplete>
+                <v-autocomplete
+                  label="Aula *"
+                  v-model="editedItem.aula"
+                  :items="aulaList"
+                ></v-autocomplete>
               </v-col>
             </v-row>
           </v-container>
@@ -91,6 +99,10 @@
   </v-row>
 </template>
   <script>
+import { useMainStore } from '@/stores/MainStore'
+import { useAcademicPeriodStore } from '@/stores/admin/configgeneral/academicPeriodStore'
+import { useClassroomStore } from '@/stores/admin/configgeneral/classroomStore'
+
 export default {
   created() {
     this.readData()
@@ -100,8 +112,8 @@ export default {
     editedItem: {
       periodo: null,
       dia: null,
-      horaInicio: "",
-      horaFin: "",
+      horaInicio: '',
+      horaFin: '',
       cargo: null,
       docente: null,
       aula: null
@@ -110,34 +122,66 @@ export default {
     defaultItem: {
       periodo: null,
       dia: null,
-      horaInicio: "",
-      horaFin: "",
+      horaInicio: '',
+      horaFin: '',
       cargo: null,
       docente: null,
       aula: null
     },
 
     dialog: false,
-    
+
     periodosList: [],
     diasList: [],
     docenteList: [],
-    aulaList: [],
+    aulaList: []
   }),
 
   methods: {
-    readData() {
-      this.periodosList = ['1 - Primer Semestre', '2 - Segundo Semestre', 'Invierno', 'Verano']
+    async readData() {
+      this.periodosList = await this.readPeriods() //['1 - Primer Semestre', '2 - Segundo Semestre', 'Invierno', 'Verano']
       this.diasList = ['LUNES', 'MARTES', 'MIERCOLES', 'JUEVES', 'VIERNES', 'SABADO', 'DOMINGO']
       this.docenteList = ['Juan Perez', 'Tito el bambino', 'Joel']
-      this.aulaList = ['682a', '566b', '553c']
+      this.aulaList = await this.readClassrooms();
+    },
+
+    async readPeriods() {
+      const mainStore = useMainStore()
+      let areaData = mainStore.area
+
+      let res = []
+
+      const { listAcademicPeriodByArea, academicPeriods } = useAcademicPeriodStore() // Obtiene las carreras y el método getCareers del store
+      await listAcademicPeriodByArea(areaData)
+
+      for (let i = 0; i < academicPeriods.length; i++) {
+        res.push(academicPeriods[i].name)
+      }
+
+      return res
+    },
+
+    async readClassrooms() {
+      const mainStore = useMainStore()
+      let areaData = mainStore.area
+
+      let res = []
+
+      const {classrooms, getClassrooms} = useClassroomStore() // Obtiene las carreras y el método getCareers del store
+      await getClassrooms(areaData)
+
+      for (let i = 0; i < classrooms.length; i++) {
+        res.push(classrooms[i].name)
+      }
+
+      return res
     },
 
     saveData() {
-      this.$emit("agregarHorario", this.editedItem);
+      this.$emit('agregarHorario', this.editedItem)
       this.dialog = false
 
-      this.editedItem = this.defaultItem;
+      this.editedItem = this.defaultItem
     }
   }
 }

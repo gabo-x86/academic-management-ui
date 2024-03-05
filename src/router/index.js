@@ -47,9 +47,9 @@ const router = createRouter({
       component: () => import('../views/admin/configclass/ManageClassesView.vue'),
       children: [
         {
-          path: '', // Esto representa la ruta base, sin ningún segmento adicional
+          path: '',
           name: 'admin-manage-classes',
-          component: () => import('../views/admin/configclass/ManageClassesByYearView.vue') // Componente por defecto
+          component: () => import('../views/admin/configclass/ManageClassesByYearView.vue')
         },
         {
           path: 'generate',
@@ -69,7 +69,15 @@ const router = createRouter({
       path: '/:pathMatch(.*)*',
       component: () => import('../views/notfound/notFoundView.vue'),
       name: 'not-found'
+    
+    },
+    
+    {
+      path: '/admin/academic-period',
+      name: 'admin-academic-period',
+      component: () => import('../views/admin/configgeneral/AcademicPeriodView.vue')
     }
+    
   ]
 })
 
