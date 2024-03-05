@@ -14,6 +14,7 @@ const curriculumId = ref('');
 const lstNiveles = ref([
     'A', 'B', 'C', 'D', 'F', 'G', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q'
 ]);
+const tempLstNivel = ref(['A']);
 const niveles = ref([]);
 const mainStore = useMainStore();
 const areaId = 1; // por ahora  mainStore.area.areaId
@@ -43,6 +44,7 @@ function onSave() {
 }
 function addNewAsignature() {
     console.log('niveles completos=', lstNiveles);
+    console.log('temporal lista=', tempLstNivel);
     console.log('me hiciste click');
 
 }
