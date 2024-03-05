@@ -16,12 +16,11 @@ const headers = ref([
 ]);
 function newMeshcurriculum(item){
   console.log('item id=', item);
-  router.push({name:'admin-newmeshcurriculum', params: { idCarrera: 1 }});
+  router.push({name:'admin-newmeshcurriculum', params: { idCarrera: carreraSelect.id }});
 }
 
 onMounted(async () => {
   await curriculumStore.getCurriculums(carreraSelect);
-  console.log('store curriculum', curriculumStore.curriculums);
 });
 </script>
 
@@ -35,7 +34,6 @@ onMounted(async () => {
       <v-col class="fill-height" height="500">
         <div class="text-center grey d-flex flex-column align-center justify-center" height="100%">
           <h3>Lista de mallas curriculares</h3>
-          <p>Parámetro idCarrera: {{ $route.params.idCarrera }}</p>
         </div>
       </v-col>
     </v-row>
