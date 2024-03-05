@@ -11,9 +11,10 @@ const curriculumStore = useCurriculumStore();
 const carreraActive = ref({});
 const carreraId = ref('');
 const curriculumId = ref('');
-
-const editedIndex = ref(-1);
-const niveles = ref({});
+const lstNiveles = ref([
+    'A', 'B', 'C', 'D', 'F', 'G', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q'
+]);
+const niveles = ref([]);
 const mainStore = useMainStore();
 const areaId = 1; // por ahora  mainStore.area.areaId
 console.log('areaId=', areaId);
@@ -31,30 +32,19 @@ const curriculumForm = ref({
 const nivelInicioCompartido = ref({
     levelIdentifier: 1,
     levelName: "Nivel A",
+    levelValue: "A"
 });
 
 const asignaturaInicioCampartido = ref([]);
-
-const defaultCurriculum = ref({
-    id: null,
-    levelIdentifier: '',
-    levelName: ''
-});
-
-const emit = defineEmits(['submit']);
 
 function onSave() {
     const curriculumTemp = Object.assign({}, curriculumForm.value);
     console.log('Form=', curriculumTemp);
 }
+function addNewAsignature() {
+    console.log('niveles completos=', lstNiveles);
+    console.log('me hiciste click');
 
-function openNewDialog() {
-    niveles.value = defaultCurriculum.value;
-    curriculumStore.dialog = true;
-}
-
-function dialogFormTitle() {
-    return editedIndex.value === -1 ? 'Nuevo Nivel' : 'Editar Nivel';
 }
 onMounted(async () => {
     const route = useRoute();
@@ -126,12 +116,11 @@ onMounted(async () => {
             </v-container>
 
             <v-row class="justify-end">
-                <v-btn class="mr-2" color="primary" @click="openNewDialog">
+                <v-btn class="mr-2" color="primary" @click="addNewAsignature">
                     <v-icon>mdi-plus</v-icon> Agregar nivel
                 </v-btn>
             </v-row>
         </v-form>
-        <level-form-comp :title="dialogFormTitle()" :area-obj="area" @submit="submitArea" @close="closeDialog" />
         <v-row>
             <v-col sm="12" md="6" class="mt-4">
                 <level-curriculum :nivel-obj="nivelInicioCompartido" :asignatura-array="asignaturaInicioCampartido"></level-curriculum>
