@@ -1,80 +1,70 @@
-import { ref } from 'vue'
+import { ref,  } from 'vue'
 import { defineStore } from 'pinia'
 import AxiosAM from '@/services/AxiosAM.js'
+import { useMainStore } from '@/stores/MainStore'
 
+const pathCareerResource = '/admin/areas';
 const pathCurriculumResource = '/admin/areas/{areaId}/careers/';
 const pathArea = '/admin/areas/';
-export const useCurriculumStore = defineStore('curriculumStore', () => {
-  const curriculums = ref([]);
-  const dialog = ref(false);
-  const carrera = ref({});
 
-  async function getCurriculums(career) {
-    try {
-      const { status, data } = await AxiosAM.get(`${pathCurriculumResource}${career.id}/curriculums`);
-      if (status === 200) {
-        curriculums.value = data;
-        return { success: true, data: data };
-      }
-    } catch (error) {
-      // handle error
-      console.log('error getting curriculums..');
+export const useCurriculumStore = defineStore('classroomStore', () => {
+    const curriculums = ref([]);
+    const curriculumsByCareer = ref([]);
+    const currentCurriculum = ref(null);
+    const mainStore = useMainStore();
+
+    const carrera = ref({});
+
+    async function getCurriculumsByCareer(areaId,careerId) {
+        try {
+            const { status, data } = await AxiosAM.get(`${pathCareerResource}/${areaId}/careers/${careerId}/curriculums`);
+            if (status === 200) {
+                curriculumsByCareer.value = data;
+            }
+        } catch (error) {
+            console.error('Error getting curriculums: ', error);
+        }
     }
-  }
 
-  async function getCareerWithId(idCareer) {
-    try {
-      const { status, data } = await AxiosAM.get(`${pathArea}{areaID}/careers/${idCareer}`);
-
-      if (status === 200) {
-        carrera.value = data;
-        return { success: true, data: data };
+    async function getCurriculums(career) {
+      try {
+        const { status, data } = await AxiosAM.get(`${pathCurriculumResource}${career.id}/curriculums`);
+        if (status === 200) {
+          curriculums.value = data;
+          return { success: true, data: data };
+        }
+      } catch (error) {
+        // handle error
+        console.log('error getting curriculums..');
       }
-    } catch (error) {
-      console.log('error getting career..');
     }
-  }
 
-  async function createCurriculum(areaId, curriculum) {
-    try {
-      const { status, data } = await AxiosAM.post(`${pathArea}${areaId}/careers/{careerId}/curriculums`, curriculum);
-      if (status === 201) {
-        curriculums.value.splice(0, 0, data);
-        return { success: true, data: data };
+    async function getCareerWithId(idCareer) {
+      try {
+        const { status, data } = await AxiosAM.get(`${pathArea}{areaID}/careers/${idCareer}`);
+  
+        if (status === 200) {
+          carrera.value = data;
+          return { success: true, data: data };
+        }
+      } catch (error) {
+        console.log('error getting career..');
       }
-    } catch (error) {
-      console.log('error creating area');
-      return { error: true, success: false, data: null }
     }
-  }
-
-  async function editArea(area) {
-    try {
-      const {status, data} = await AxiosAM.put(`${pathArea}/${area.id}`, area);
-      if (status === 200) {
-        const index = curriculums.value.findIndex((obj) => obj.id === area.id);
-        curriculums.value.splice(index, 1, area);
-        return { success: true, data: data };
+  
+    async function createCurriculum(areaId, curriculum) {
+      try {
+        const { status, data } = await AxiosAM.post(`${pathArea}${areaId}/careers/{careerId}/curriculums`, curriculum);
+        if (status === 201) {
+          curriculums.value.splice(0, 0, data);
+          return { success: true, data: data };
+        }
+      } catch (error) {
+        console.log('error creating area');
+        return { error: true, success: false, data: null }
       }
-    } catch (error) {
-      console.log('error editing area');
-      return { error: true, success: false, data: null }
     }
-  }
 
-  async function deleteArea(area) {
-    try {
-      const {status} = await AxiosAM.delete(`${pathCurriculumResource}/${area.id}`);
-      if (status === 204) {
-        const index = curriculums.value.findIndex((obj) => obj.id === area.id);
-        curriculums.value.splice(index, 1);
-        return { success: true, data: null };
-      }
-    } catch (error) {
-      console.log('error deleting area');
-      return { error: true, success: false, data: null }
-    }
-  }
-
-  return { curriculums, dialog, carrera, getCurriculums, createCurriculum, editArea, deleteArea, getCareerWithId }
-})
+    return {curriculums,curriculumsByCareer,currentCurriculum, carrera,getCurriculumsByCareer, getCurriculums, getCareerWithId, createCurriculum};
+}
+);
