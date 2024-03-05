@@ -1,24 +1,22 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
+import { useSubjectStore } from '@/stores/admin/configgeneral/subjectStore';
 
+const subjectStore = useSubjectStore();
 const asignaturaForm = ref({
     id: null,
     name: '',
     initials: '',
     description: ''
 });
-const select = null;
-const lstAsignatura = [
-    'Algebra 1',
-    'Calculo 1',
-    'Introduccion a la programacion',
-    'Ingles',
-];
-const requisitos= [];
 const props = defineProps({ modelValue: Boolean });
 const emit = defineEmits(['update:modelValue']);
 
 function close() { emit('update:modelValue', false); }
+
+onMounted(async () => {
+  await subjectStore.getSubjects(1);
+});
 </script>
 <template>
     <v-dialog :model-value="modelValue" width="700">
@@ -30,14 +28,14 @@ function close() { emit('update:modelValue', false); }
                 <v-container>
                     <v-row>
                         <v-col cols="12">
-                            <v-select label="Asignatura *" :items="lstAsignatura"></v-select>
+                            <v-select label="Asignatura *" :items="subjectStore.subjects" :item-title="'name'" :item-value="'id'" required></v-select>
                         </v-col>
                         <v-col cols="12">
                             <v-text-field v-show="false" v-model="asignaturaForm.id" />
                             <v-text-field label="Carga horaria *" v-model="asignaturaForm.name" required />
                         </v-col>
                         <v-col cols="12">
-                            <v-select label="Requisitos" :items="lstAsignatura" multiple></v-select>
+                            <v-select label="Requisitos" :items="subjectStore.subjects" :item-title="'name'" :item-value="'id'" multiple></v-select>
                         </v-col>
                         <v-col cols="12">
                             <v-checkbox label="Electiva"></v-checkbox>

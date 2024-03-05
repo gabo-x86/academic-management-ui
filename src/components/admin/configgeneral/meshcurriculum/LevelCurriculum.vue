@@ -1,6 +1,5 @@
 <script setup>
-import { onMounted, ref, nextTick} from 'vue'
-import { asignatureStore } from '@/stores/admin/configgeneral/asignatureStore.js'
+import { onMounted, ref, watch} from 'vue'
 import AsignatureFormComp from '@/components/admin/configgeneral/meshcurriculum/AsignatureForm.vue'
 
 const lstLevels = [
@@ -11,43 +10,31 @@ const lstLevels = [
     prerequi: 'Base de datos',
     electiva: 'NO'
   },
-]
-const editedIndex = ref(-1);
-const asignature = ref({});
-
-const deleteDialog = ref(false);
-const deleteMessage = ref('');
-
-const defaultAsignature = ref({
-  id: null,
-  name: '',
-  initials: '',
-  description: ''
-});
-
-const showDialog = ref(false);
-
-async function submitAsignatura(asignatura) {
-  if (asignatura.id) {
-    await asignatureStore.editArea(asignatura);
-  } else {
-    await asignatureStore.createArea(asignatura);
+];
+const props = defineProps({
+  nivelObj: {
+    type: Object,
+    required: true
+  },
+  asignaturaArray: {
+    type: Array,
+    required: false
   }
-  asignatureStore.dialog = false;
-}
-
-function dialogFormTitle() {
-  return editedIndex.value === -1 ? 'Nueva Asignatura' : 'Editar Asignatura';
-}
+});
+const showDialog = ref(false);
 
 function openNewDialog() {
   showDialog.value = !showDialog.value;
 }
 
-function openNewDialog2() {
-  asignature.value = defaultAsignature.value;
-  asignatureStore.dialog = true;
-}
+watch(() => props.nivelObj, (obj) => {
+  console.log('objeto=', obj);
+  if (obj.id) {
+    console.log('obj id=', obj.id);
+  } else {
+    console.log('Entre');
+  }
+});
     
 </script>
 
@@ -56,7 +43,7 @@ function openNewDialog2() {
     class="mx-auto"
   >
     <template v-slot:title>
-      Nivel A
+      {{ props.nivelObj.levelName }}
       <v-divider></v-divider>
     </template>
 
@@ -82,23 +69,11 @@ function openNewDialog2() {
         </tbody>
       </v-table>
       <div class="mt-4">
-        <!-- 
-        <v-btn @click="openNewDialog" v-bind="props">
-          Añadir asignatura
-        </v-btn> -->
         <v-btn @click="openNewDialog">Añadir asignatura</v-btn>
       </div>
     </v-card-text>
   </v-card>
   <asignature-form-comp v-model="showDialog"></asignature-form-comp>
-
-  <!-- 
-  <asignature-form-comp
-    :title="dialogFormTitle()"
-    :asignature-obj="asignature"
-    @submit="submitAsignatura"
-    @close="closeDialog"
-  /> -->
 </template>
 
 <style scoped>

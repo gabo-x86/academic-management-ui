@@ -7,7 +7,7 @@ const pathCareerResource = '/admin/areas';
 const pathCurriculumResource = '/admin/areas/{areaId}/careers/';
 const pathArea = '/admin/areas/';
 
-export const useCurriculumStore = defineStore('classroomStore', () => {
+export const useCurriculumStore = defineStore('curriculumStore', () => {
     const curriculums = ref([]);
     const curriculumsByCareer = ref([]);
     const currentCurriculum = ref(null);
