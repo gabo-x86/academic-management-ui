@@ -1,7 +1,7 @@
 <template>
   <v-container>
     {{ areaData }}
-    {{ carrerasList }}
+    {{ carrerasData }}
     <v-row>
       <v-col cols="12">
         <v-row>
@@ -49,6 +49,7 @@ export default {
 
     carreraSel: null,
     carrerasList: [],
+
     carrerasData:[]
   }),
 
