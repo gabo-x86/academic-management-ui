@@ -12,9 +12,9 @@ const curriculumStore = useCurriculumStore()
 const props = defineProps(['dialog', 'area'])
 const emit = defineEmits(['close-dialog'])
 const schema = yup.object().shape({
-  nombre: yup.string().required(),
-  carrera: yup.string().required(),
-  curriculum: yup.string().required()
+  nombre: yup.string().required('El nombre del itinerario es requerido'),
+  carrera: yup.string().required('La carrera es requerida'),
+  curriculum: yup.string().required('El curriculum es requerido')
 })
 
 const cargarCurriculums = async (value) => {
