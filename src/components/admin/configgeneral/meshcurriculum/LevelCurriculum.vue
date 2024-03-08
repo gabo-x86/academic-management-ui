@@ -73,7 +73,7 @@ watch(() => props.nivelObj, (obj) => {
       </div>
     </v-card-text>
   </v-card>
-  <asignature-form-comp v-model="showDialog"></asignature-form-comp>
+  <asignature-form-comp v-model="showDialog" :nivel-obj="props.nivelObj" :asignatura-array="props.asignaturaArray"></asignature-form-comp>
 </template>
 
 <style scoped>

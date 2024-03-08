@@ -1,44 +1,95 @@
 <script setup>
 import { onMounted, ref, watch } from 'vue'
-import { useSubjectStore } from '@/stores/admin/configgeneral/subjectStore';
+import { useSubjectStore } from '@/stores/admin/configgeneral/subjectStore'
 
-const subjectStore = useSubjectStore();
+const subjectStore = useSubjectStore()
 const asignaturaForm = ref({
-    id: null,
-    name: '',
-    initials: '',
-    description: ''
-});
-const props = defineProps({ modelValue: Boolean });
-const emit = defineEmits(['update:modelValue']);
+    // id: null,
+    subjectId: '',
+    optional: '',
+    path: '',
+    workload: ''
+})
+const props = defineProps({
+    nivelObj: {
+        type: Object,
+        required: true
+    },
+    asignaturaArray: {
+        type: Array,
+        required: false
+    },
+    modelValue: Boolean
+})
+const txtObject = '';
+var arrayTemAsig = [];
+// const props = defineProps({ modelValue: Boolean });
+const emit = defineEmits(['update:modelValue'])
 
-function close() { emit('update:modelValue', false); }
+function close() {
+    emit('update:modelValue', false)
+}
+
+function onSave() {
+    console.log('-->',asignaturaForm.value.path);
+    var multiple = '';
+    Array.from(asignaturaForm.value.path).forEach((element) => {
+        if(element != '') {
+            console.log(txtObject+element+', ')
+            multiple = multiple+element+', ';
+        }
+    }
+        // console.log(element)
+    );
+    multiple = multiple.slice(0, multiple.length - 2);
+    var obj = {
+        "subjectId": asignaturaForm.value.subjectId,
+        "optional": asignaturaForm.value.optional,
+        "path": multiple,
+        "workload": asignaturaForm.value.workload,
+    };
+
+    console.log('obj=', obj);
+
+    arrayTemAsig.push(obj);
+
+    console.log('array=', arrayTemAsig);
+    // props.asignaturaArray = arrayTemAsig;
+    console.log(props.asignaturaArray);
+
+    const areaTemp = Object.assign({}, asignaturaForm.value);
+
+    console.log('areaTemp=', areaTemp)
+    // emit('submit', areaTemp);
+}
 
 onMounted(async () => {
-  await subjectStore.getSubjects(1);
-});
+    await subjectStore.getSubjects(1)
+})
 </script>
 <template>
     <v-dialog :model-value="modelValue" width="700">
         <v-card>
             <v-card-title>
-                <span class="text-h5">Añadir Asignatura  Nivel A</span>
+                <span class="text-h5">Añadir Asignatura {{ props.nivelObj.levelName }}</span>
             </v-card-title>
             <v-card-text>
                 <v-container>
                     <v-row>
                         <v-col cols="12">
-                            <v-select label="Asignatura *" :items="subjectStore.subjects" :item-title="'name'" :item-value="'id'" required></v-select>
+                            <v-select label="Asignatura *" :items="subjectStore.subjects" :item-title="'name'"
+                                :item-value="'id'" v-model="asignaturaForm.subjectId" required></v-select>
                         </v-col>
                         <v-col cols="12">
                             <v-text-field v-show="false" v-model="asignaturaForm.id" />
-                            <v-text-field label="Carga horaria *" v-model="asignaturaForm.name" required />
+                            <v-text-field label="Carga horaria *" v-model="asignaturaForm.workload" required />
                         </v-col>
                         <v-col cols="12">
-                            <v-select label="Requisitos" :items="subjectStore.subjects" :item-title="'name'" :item-value="'id'" multiple></v-select>
+                            <v-select label="Requisitos" :items="subjectStore.subjects" :item-title="'name'"
+                                :item-value="'name'" v-model="asignaturaForm.path" multiple></v-select>
                         </v-col>
                         <v-col cols="12">
-                            <v-checkbox label="Electiva"></v-checkbox>
+                            <v-checkbox label="Electiva" v-model="asignaturaForm.optional"></v-checkbox>
                         </v-col>
                     </v-row>
                 </v-container>
@@ -47,12 +98,10 @@ onMounted(async () => {
             <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn color="blue-darken-1" variant="text" @click="close">Cerrar</v-btn>
-                <v-btn color="blue-darken-1" variant="text">Guardar</v-btn>
+                <v-btn color="blue-darken-1" variant="text" @click="onSave">Guardar</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

@@ -11,10 +11,26 @@ const curriculumStore = useCurriculumStore();
 const carreraActive = ref({});
 const carreraId = ref('');
 const curriculumId = ref('');
-const lstNiveles = ref([
-    'A', 'B', 'C', 'D', 'F', 'G', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q'
-]);
-const tempLstNivel = ref(['A']);
+const lstNiveles = [
+    {levelIdentifier: 1, levelName: 'Nivel A' },
+    {levelIdentifier: 2, levelName: 'Nivel B' },
+    {levelIdentifier: 3, levelName: 'Nivel C' },
+    {levelIdentifier: 4, levelName: 'Nivel D' },
+    {levelIdentifier: 5, levelName: 'Nivel E' },
+    {levelIdentifier: 6, levelName: 'Nivel F' },
+    {levelIdentifier: 7, levelName: 'Nivel G' },
+    {levelIdentifier: 8, levelName: 'Nivel H' },
+    {levelIdentifier: 9, levelName: 'Nivel I' },
+    {levelIdentifier: 10, levelName: 'Nivel J' },
+    {levelIdentifier: 11, levelName: 'Nivel K' },
+    {levelIdentifier: 12, levelName: 'Nivel L' },
+    {levelIdentifier: 13, levelName: 'Nivel M' },
+    {levelIdentifier: 14, levelName: 'Nivel N' },
+    {levelIdentifier: 15, levelName: 'Nivel 0' },
+    {levelIdentifier: 16, levelName: 'Nivel P' },
+    {levelIdentifier: 17, levelName: 'Nivel Q' },
+    ];
+const tempLstNivel = ['Nivel A'];
 const niveles = ref([]);
 const mainStore = useMainStore();
 const areaId = 1; // por ahora  mainStore.area.areaId
@@ -33,7 +49,6 @@ const curriculumForm = ref({
 const nivelInicioCompartido = ref({
     levelIdentifier: 1,
     levelName: "Nivel A",
-    levelValue: "A"
 });
 
 const asignaturaInicioCampartido = ref([]);
@@ -46,6 +61,18 @@ function addNewAsignature() {
     console.log('niveles completos=', lstNiveles);
     console.log('temporal lista=', tempLstNivel);
     console.log('me hiciste click');
+
+    
+
+    const filtro = lstNiveles.filter(item => item.levelName != tempLstNivel );
+
+    // let approved = students.filter(student => student.score >= 11);
+
+    console.log('filtro=',filtro);
+    // primer valor del array
+    console.log('primero en lista=', filtro[0]);
+    tempLstNivel.push(filtro[0].levelName);
+    console.log('auxliar=', tempLstNivel);
 
 }
 onMounted(async () => {
