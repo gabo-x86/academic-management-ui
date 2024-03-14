@@ -45,10 +45,8 @@ export const useClassroomStore = defineStore('classroomStore', ()=>{
         try {
             const { status, data } = await AxiosAM.get(`${pathCareerResource}/2/classrooms/${classroomId}`);
             if (status === 200) {
-                const classroomData=data ;
-                if(classroomData){
-                    currentClassroom.value=classroomData
-                }
+                currentClassroom.value=data
+                return{ success:true, data:data}
             }
         } catch (error) {
             console.error('Error getting career by id:', error);

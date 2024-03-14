@@ -5,6 +5,7 @@ import { useSubjectStore } from "@/stores/admin/configgeneral/subjectStore.js";
 import { useClassroomStore } from "@/stores/admin/configgeneral/classroomStore.js";
 import { useItineraryGroupStore } from "@/stores/admin/schedule/groupItineraryStore.js";
 import { useItineraryStore } from "@/stores/admin/schedule/itineraryStore.js";
+import { useItineraryScheduleStore } from "@/stores/admin/schedule/scheduleItineraryStore.js"
 
 
 const route = useRoute();
@@ -12,22 +13,38 @@ const subjectStore=useSubjectStore()
 const classroomStore = useClassroomStore()
 const itineraryGroupStore = useItineraryGroupStore()
 const itineraryStore=useItineraryStore()
+const itineraryScheduleStore=useItineraryScheduleStore()
+const form = ref(null);
 
 const dialogVisible = ref(false);
 const selectedOption = ref('option3');
-const rows =ref([])
-const rowsB=rows
 
-const proffessor =[{id:1, name:'BORIS CALANCHA NAVIA'},{id:2, name:'LETICIA BLANCO COCA'}]
+//espero que terminara service de professor en backend
+//puedes crear dos filas en tabla de professor en BD
+const professor =ref([
+    {id:1, name:'BORIS CALANCHA NAVIA'},
+    {id:2, name:'LETICIA BLANCO COCA'}
+])
 
+const Days=ref([
+    {name:'LUNES', nameEng:'MONDAY'},
+    {name:'MARTES',nameEng:'TUESDAY'},
+    { name:'MIERCOLES',nameEng:'WEDNESDAY' },
+    { name:'JUEVES', nameEng:'THURSDAY'},
+    { name:'VIERNES', nameEng:'FRIDAY'},
+    { name:'SABADO', nameEng:'SATURDAY' },
+    { name:'DOMINGO', nameEng:'SUNDAY' }
+])
 const headers = ref([
   { title: 'Dia', value: 'dayOfWeek', align: 'center' },
   { title: 'Horario Inicio',align:'start', key: 'startTime' , style: 'font-weight: bold;'},
   { title: 'Horario Fin',align:'start', key: 'endTime' },
-  { title: 'Aula',align:'start', key: 'classroomId' },
-  { title: 'Docente',align:'start', key: 'professorId' },
+  { title: 'Aula',align:'start', key: 'classroomName' },
+  { title: 'Docente',align:'start', key: 'professorFullName' },
   { title: 'Opcion', align:'center' ,sortable: false, key: 'actions' }
 ])
+
+
 
 const careerId = ref(null)
 const itineraryId=ref(null)
@@ -40,111 +57,144 @@ areaID.value=route.params.areaId
 careerId.value=route.params.careerId
 itineraryId.value=route.params.itineraryId
 
-console.log('areaId: '+areaID.value)
+//console.log('areaId: '+areaID.value)
+
+const listSchedule = ref([])
+const lastId=ref(null)
 
 onMounted( async ()=>{
   await subjectStore.getSubjects(areaID.value)
   await classroomStore.getClassrooms(areaID.value)
   await itineraryStore.getItineraryById(itineraryId.value)
-  console.log("itinerary_ID:"+itineraryStore.currentItinerary.curriculumId)
-  console.log(selectedSubject)
+  //console.log("itinerary_ID:"+itineraryStore.currentItinerary.curriculumId)
+  //console.log("subject ID"+selectedSubject)
 })
-const newRow = ref({});
+
+const dayOfWeek=ref('')
+const startTime=ref('')
+const endTime=ref('')
+const professorId=ref(null)
+const assistant=ref(null)
+const classroomId=ref(null)
+
+
+const IsCreatedGroup=ref(true)
+const stateBack=ref(false)
+const stateSC=ref(true)
+
 const onSubmit = async ()=>{
-  const groupItinerary ={
-    itineraryId:itineraryStore.currentItinerary.id,
+  const { valid } = await form.value.validate()
+  if(valid){
+  if(IsCreatedGroup.value){
+    const Group={
+      itineraryId:itineraryId.value,
       curriculumId:itineraryStore.currentItinerary.curriculumId,
-      subjectId:selectedSubject.value ,
+      subjectId:selectedSubject.value,
       identifier:identGroup.value,
-      remark:remark.value,
-      listSchedule:rows.value
+      remark:'',
+      listSchedule:[{
+        dayOfWeek:dayOfWeek.value,
+        startTime:startTime.value,
+        endTime:endTime.value,
+        professorId:professorId.value,
+        assistant:assistant.value,
+        classroomId:classroomId.value
+      }]
+    }
+    await itineraryGroupStore.createItineraryGroup(areaID.value,careerId.value,itineraryId.value,Group)
+    IsCreatedGroup.value=false
+    stateBack.value=true
+    selectedOption.value='option3'
+    stateSC.value=false
+
+  }else{
+    const Schedule={
+      dayOfWeek:dayOfWeek.value,
+      startTime:startTime.value,
+      endTime:endTime.value,
+      professorId:professorId.value,
+      assistant:assistant.value,
+      classroomId:classroomId.value,
+      groupItineraryId:lastId.value
+    }
+    await itineraryScheduleStore.createItinerarySchedule(lastId.value,Schedule)
+    selectedOption.value='option3'
+    console.log(JSON.stringify(Schedule))
   }
-    await itineraryGroupStore.createItineraryGroup(
-        areaID.value,
-        careerId.value,
-        itineraryId.value,
-        groupItinerary)
-    clean()
+  clean()
+  closeDialog();
+
+  const response = await  itineraryGroupStore.getInineraryGroups(careerId.value, itineraryId.value)
+  // Ordena los datos por ID de manera descendente
+  const sortedData = response.data.sort((a, b) => b.id - a.id);
+  // Obtiene el último ID
+  lastId.value = sortedData[0].id;
+
+  await itineraryGroupStore.getInineraryGroupById(lastId.value)
+  listSchedule.value=itineraryGroupStore.currentItineraryGroup.listScheduleDto
+  //console.log('ultimo ID'+lastId.value)
+  }
 }
 
 const openDialog = () => {
   dialogVisible.value = true;
-  console.log(selectedSubject.value)
 };
 
 const closeDialog = () => {
   dialogVisible.value = false;
-  restForm();
+  clean();
 };
 
-const addRow = () => {
-    rows.value.push({ ...newRow.value });
-    console.log(JSON.stringify(rows.value))
-    closeDialog();
-};
-
-const restForm = () => {
-  newRow.value = {
-    dayOfWeek: '',
-    startTime: '',
-    endTime:'',
-    classroomId:null,
-    professorId:null
-  };
-};
-const deleteRow = (item) => {
-  const index = rows.value.indexOf(item);
-  rows.value.splice(index, 1);
-};
+async function confirmDelete(id){
+  //console.log("Delete ID:"+id)
+  await itineraryScheduleStore.deleteItinerarySchedule(id)
+  await itineraryGroupStore.getInineraryGroupById(lastId.value);
+  listSchedule.value=itineraryGroupStore.currentItineraryGroup.listScheduleDto
+}
 
 const clean=()=>{
-  rows.value = [];
+  dayOfWeek.value=''
+  startTime.value=''
+  endTime.value=''
+  professorId.value=null
+  assistant.value=null
+  classroomId.value=null
+}
+const deleteGroup = async ()=>{
+  await itineraryGroupStore.deleteItinerarGroup(lastId.value)
   selectedSubject.value=null
-  identGroup.value=null
-}
-const className = ref('')
-const nameClassroom = async (id) =>{
-  await classroomStore.getClassroomById(id);
-  className.value = classroomStore.currentClassroom.name;
-  console.log(className);
-  return className
+  identGroup.value=''
+  listSchedule.value=[]
+  stateBack.value=false
+  IsCreatedGroup.value=true
+  stateSC.value=true
 }
 
-
-const ChangeDayOfWeek = (dayOfWeek) => {
-  switch (dayOfWeek) {
-    case 'MONDAY':
-      return 'LU';
-    case 'TUESDAY':
-      return 'MA';
-    case 'WEDNESDAY':
-      return 'MI';
-    case 'THURSDAY':
-      return 'JU';
-    case 'FRIDAY':
-      return 'VI';
-    case 'SATURDAY':
-      return 'SA';
-    case 'SUNDAY':
-      return 'DO';
-    default:
-      return dayOfWeek;
+const formatTime = (time) => {
+  if (!time) return 'null';
+  const [hours, minutes] = time;
+  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+};
+const changeDayOfWeek= (dayOfWeek) => changedDayOfWeek[dayOfWeek] || dayOfWeek;
+  const changedDayOfWeek = {
+    MONDAY: 'LU',
+    TUESDAY: 'MA',
+    WEDNESDAY: 'MA',
+    THURSDAY: 'JU',
+    FRIDAY: 'VI',
+    SATURDAY: 'SA',
+    SUNDAY: 'DO',
   }
 
-}
-let rules=ref(false)
 const typeRules = [
-  value => {
+  (value) => {
     if (!value) {
       return 'This is required.'
     } else {
-      rules=true
       return true
     }
   },
 ]
-
-
 </script>
 
 <template>
@@ -159,6 +209,7 @@ const typeRules = [
       color="primary"
       width="200"
       height="50"
+      :disabled="stateBack"
       :to="'/admin/areas/'+areaID+'/careers/'+careerId+'/itineraries/'+itineraryId+'/edit'">
       <<< volver
     </v-btn>
@@ -204,7 +255,7 @@ const typeRules = [
         <v-card-title>
           <span class="text-h5">Añadir Itinerario</span>
         </v-card-title>
-        <v-form ref="form" @submit.prevent="addRow">
+        <v-form ref="form" @submit.prevent="onSubmit">
           <v-card-text>
             <v-container>
               <v-select
@@ -216,16 +267,18 @@ const typeRules = [
               <v-row>
                 <v-col>
                   <v-select
-                      v-model="newRow.dayOfWeek"
+                      v-model="dayOfWeek"
                       label="Dia *"
-                      :items="['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY']"
+                      :items=Days
+                      :item-title="'name'"
+                      :item-value="'nameEng'"
                       variant="outlined"
                       :rules="typeRules"
                   ></v-select>
                 </v-col>
                 <v-col>
                   <v-text-field
-                      v-model="newRow.startTime"
+                      v-model="startTime"
                       label="Hora inicio *"
                       type="time"
                       suffix="hrs"
@@ -235,7 +288,7 @@ const typeRules = [
                 </v-col>
                 <v-col>
                   <v-text-field
-                      v-model="newRow.endTime"
+                      v-model="endTime"
                       label="Hora fin *"
                       type="time"
                       suffix="hrs"
@@ -250,17 +303,26 @@ const typeRules = [
                 <v-radio label="Asistente" value="option2" class="mx-4"></v-radio>
                 <v-radio label="Por designar" value="option3"  class="mx-4"></v-radio>
               </v-radio-group>
+              <div v-if="selectedOption==='option2'">
+                <v-text-field
+                    v-model="assistant"
+                    label="Asistente"
+                    variant="outlined"
+                ></v-text-field>
+              </div>
+              <div v-else>
+                <v-select
+                    v-model="professorId"
+                    label="Docente"
+                    :item-title="'name'"
+                    :item-value="'id'"
+                    :items="professor"
+                    :disabled="selectedOption === 'option3'"
+                    variant="outlined"
+                ></v-select>
+              </div>
               <v-select
-                  v-model="newRow.professorId"
-                  label="Docente"
-                  :item-title="'name'"
-                  :item-value="'id'"
-                  :items="proffessor"
-                  :disabled="selectedOption === 'option3' || selectedOption === 'option2'"
-                  variant="outlined"
-              ></v-select>
-              <v-select
-                  v-model="newRow.classroomId"
+                  v-model="classroomId"
                   label="Aula *"
                   :items="classroomStore.classrooms"
                   :item-title="'name'"
@@ -280,25 +342,25 @@ const typeRules = [
       </v-card>
     </v-dialog>
     <v-data-table
-      :headers="headers"
-      :items="rows"
-      density="compact"
-      item-key="name">
+        :headers="headers"
+        :items="listSchedule"
+        density="compact"
+        item-key="name">
       <template v-slot:item.dayOfWeek="{ item }">
-        {{ ChangeDayOfWeek(item.dayOfWeek) }}
+        {{ changeDayOfWeek(item.dayOfWeek) }}
       </template>
-      <template v-slot:item.classroomId="{ item }">
-        {{ nameClassroom(item.classroomId) }}
+      <template v-slot:item.startTime="{ item }">
+        {{ formatTime(item.startTime) }}
       </template>
-      <template v-slot:item.professorId="{ item }">
-        {{ item.professorId ? item.professorId:'Por designar' }}
+      <template v-slot:item.endTime="{ item }">
+        {{ formatTime(item.endTime) }}
       </template>
       <template v-slot:top>
         <v-toolbar flat>
           <v-toolbar-title>Horario</v-toolbar-title>
           <v-divider class="mx-4" inset vertical></v-divider>
           <v-spacer></v-spacer>
-          <v-btn color="primary" @click="openDialog">
+          <v-btn color="primary" @click="openDialog" :disabled="identGroup===''">
             Nuevo
           </v-btn>
         </v-toolbar>
@@ -306,12 +368,11 @@ const typeRules = [
       <template v-slot:[`item.actions`]="{ item }">
         <v-row justify="space-around">
           <v-btn variant="text" >
-            <v-icon icon="mdi-close-circle-outline" color="red" @click="deleteRow(item)"></v-icon>
+            <v-icon icon="mdi-close-circle-outline" color="red" @click="confirmDelete(item.id)"></v-icon>
           </v-btn>
         </v-row>
       </template>
     </v-data-table>
-<pre>test: {{ nameClassroom(1)+' otro:' }}</pre>
   </v-card-text>
     </v-card>
     <v-form ref="form" @submit.prevent="onSubmit">
@@ -322,7 +383,8 @@ const typeRules = [
             color="primary"
             width="200"
             height="50"
-            @click="clean"
+            :disabled="stateSC"
+            @click="deleteGroup"
         >
           Cancelar
         </v-btn>
@@ -333,7 +395,8 @@ const typeRules = [
             color="primary"
             width="200"
             height="50"
-            type="submit"
+            :disabled="stateSC"
+            :to="'/admin/areas/'+areaID+'/careers/'+careerId+'/itineraries/'+itineraryId+'/edit'"
         >
           Guardar
         </v-btn>
@@ -341,6 +404,8 @@ const typeRules = [
     </v-row>
     </v-form>
 </v-card>
+<!--  <pre> listSchedule: {{ listSchedule }}</pre>-->
+<!--  <pre> Last ID: {{ lastId }}</pre>-->
 </template>
 
 <style scoped>

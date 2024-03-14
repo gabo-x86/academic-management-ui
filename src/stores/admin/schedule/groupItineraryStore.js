@@ -1,12 +1,11 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import AxiosAM from '@/services/AxiosAM.js'
-import {useMainStore} from '@/stores/MainStore.js'
 
 let pathItineraryResource=`/admin/areas/1/careers/1/itineraries/1/itinerary-groups`
 
 export const useItineraryGroupStore=defineStore('groupItineraryStore', ()=>{
-  const mainStore= useMainStore()/// <<<-----
+
   const itineraryGroups =ref([]);
   const currentItineraryGroup = ref(null)
   async function getInineraryGroups(careerId, itineraryId){
@@ -17,7 +16,6 @@ export const useItineraryGroupStore=defineStore('groupItineraryStore', ()=>{
         return{ success:true, data: data}
       }
     }catch (error){
-      //handle error
       console.log('error getting itinerary-groups');
     }
   }
@@ -33,14 +31,12 @@ export const useItineraryGroupStore=defineStore('groupItineraryStore', ()=>{
       console.log('error get IdItinerarGroup ')
     }
   }
-
-  //ojos
   async function createItineraryGroup(areaId,careerId,itineraryId,itineraryGroup){
     try {
       const {status, data }= await AxiosAM.post(`/admin/areas/${areaId}/careers/${careerId}/itineraries/${itineraryId}/itinerary-groups`, itineraryGroup)
       if (status===201){
         itineraryGroups.value.splice(0,0,data)
-        alert("¡Éxito! Grupo creado exitosamente.");
+        //alert("¡Éxito! Grupo creado exitosamente.");
         return{ success:true, data:data }
       }
     }catch (error) {
@@ -49,22 +45,18 @@ export const useItineraryGroupStore=defineStore('groupItineraryStore', ()=>{
       return { error:true, success:false, data:null}
     }
   }
-
-
   async function deleteItinerarGroup(idItinerarGroup){
     try {
       const {status, data} = await AxiosAM.delete(pathItineraryResource+"/"+idItinerarGroup)
       if (status===204) {
-        this.getInineraryGroups()
+        //alert("¡Éxito! Grupo eliminado exitosamente.");
         return{ success:true, data:data}
       }
     }catch (error) {
-      console.log('error delete idItinerarGroup')
+      console.log('error delete idItinerarGroup',error)
       return {  error:true, success:false, data:null}
     }
   }
-
-
   return{getInineraryGroups, getInineraryGroupById, createItineraryGroup, deleteItinerarGroup, itineraryGroups, currentItineraryGroup}
   }
 )
