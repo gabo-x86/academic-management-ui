@@ -14,9 +14,7 @@ const careerId = ref(null)
 const itineraryId=ref(null)
 const careerName =ref(null)
 const itineraryName= ref(null)
-const SeeItinerary=ref(false)
 
-const itineraryGroupId=ref([])
 const sortBy=ref([{ key: 'id', order: 'desc' }])
 const headers = ref([
   { title: 'N°',  align: 'center', key: 'id' },
@@ -32,8 +30,8 @@ onMounted( async () =>{
   careerId.value = route.params.careerId
   itineraryId.value= route.params.itineraryId
 
-  console.log('careerId:'+ careerId.value)
-  console.log('itineraryId:'+itineraryId.value)
+  //console.log('careerId:'+ careerId.value)
+  //console.log('itineraryId:'+itineraryId.value)
 
   await itineraryStore.getItineraryById(itineraryId.value)
   await itineraryGroupStore.getInineraryGroups(careerId.value,itineraryId.value)
