@@ -18,7 +18,26 @@
           </v-toolbar-items>
         </v-toolbar>
         <v-card-item>
-          <classes-table-group />
+          <v-row>
+            <v-col cols="12" md="6">
+              <v-autocomplete
+                label="Asignatura"
+                v-model="editedItem.remark"
+                :items="materiaList"
+              ></v-autocomplete>
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-text-field
+                label="Identificador de Grupo"
+                type="String"
+                suffix=""
+                v-model="identGrupo"
+              ></v-text-field>
+            </v-col>
+          </v-row>
+
+          {{ 'areaID::::::' + areaId.areaId }}
+          <classes-table-group :areaId="areaId" />
         </v-card-item>
       </v-card>
     </v-dialog>
@@ -26,12 +45,13 @@
 </template>
 
 <script>
-import { useAreaStore } from '@/stores/admin/configgeneral/areaStore';
+import { useAreaStore } from '@/stores/admin/configgeneral/areaStore'
 
-import ClassesTableGroup from './ClassesTableGroup.vue';
+import ClassesTableGroup from './ClassesTableGroup.vue'
+import AxiosAM from '@/services/AxiosAM'
 
 export default {
-  created(){
+  created() {
     /*const { areas, getAreas} = useAreaStore() // Obtiene las carreras y el método getCareers del store
     let data = await getAreas(idArea) // Ajusta esto según cómo obtengas el areaId en tu aplicación
 
@@ -45,19 +65,81 @@ export default {
       this.carrerasList = list
 
       this.carrerasData = careers;*/
+
+    console.log('createclassdesGroup createdddddddddddddd')
+    this.readMaterias()
   },
-  
+
   data() {
     return {
       dialog: false,
       notifications: false,
       sound: true,
-      widgets: false
+      widgets: false,
+      identGrupo: '',
+      materia: null,
+      materiaList: [],
+      materiaListData: [],
+
+      editedItem: {
+        curriculumId: 0,
+        subjectId: 0,
+        identifier: 'ID',
+        remark: 'NA',
+        listSchedule: []
+      },
+
+      defaultItem: {
+        curriculumId: 0,
+        subjectId: 0,
+        identifier: 'ID',
+        remark: 'NA',
+        listSchedule: []
+      }
     }
   },
 
-  components:{
+  saveData() {
+    this.$emit('agregarHorario', this.editedItem)
+    this.dialog = false
+
+    this.editedItem = this.defaultItem
+  },
+
+  methods: {
+    async readMaterias() {
+      let res = []
+      let materias
+      try {
+        const { status, data } = await AxiosAM.get(`/admin/areas/${this.areaId.areaId}/subjects`)
+        if (status === 200) {
+          materias = data
+          this.materiaListData = data
+          console.log(data, 'MATERIAAAAAAAAAAAAAAS')
+
+          //return { success: true, data: data }
+        }
+      } catch (error) {
+        console.log('error getting academic Period')
+      }
+
+      for (let i = 0; i < materias.length; i++) {
+        res.push(materias[i].name)
+      }
+
+      if (res.length > 0) {
+        //this.materia = res[0]
+        this.materiaList = res
+      }
+    }
+  },
+
+  components: {
     ClassesTableGroup
+  },
+
+  props: {
+    areaId: Number
   }
 }
 </script>

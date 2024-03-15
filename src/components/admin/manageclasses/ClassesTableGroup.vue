@@ -11,7 +11,7 @@
         <v-toolbar-title>Horarios</v-toolbar-title>
         <v-divider class="mx-4" inset vertical></v-divider>
         <v-spacer></v-spacer>
-        <agree-group-c-lasses-dialog @agregarHorario="agregarElemento" />
+        <agree-group-c-lasses-dialog :areaId="areaId" @agregarHorario="agregarElemento" />
         <v-dialog v-model="dialogDelete" max-width="500px">
           <v-card>
             <v-card-title class="text-h5">¿Está seguro que sea eliminar el horario?</v-card-title>
@@ -36,9 +36,6 @@
     </template>
   </v-data-table>
 
-  <v-btn v-if="desserts.length === 0" color="primary" variant="text" @click="generarDatosRedirect">
-    Generar Clases desde itinerario</v-btn
-  >
 </template>
 
 <script>
@@ -47,39 +44,52 @@ import AgreeGroupCLassesDialog from './AgreeGroupCLassesDialog.vue'
 export default {
   data: () => ({
     dialogDelete: false,
+    
+    /*
+     dayOfWeek: '',
+              startTime: '00:00',
+              endTime: '00:00',
+              professorId: 0,
+              assistant: '',
+              classroomId: 1,
+              groupItineraryId: 1
+    */
+    
     headers: [
       {
         title: 'Día',
         align: 'start',
         sortable: false,
-        key: 'dia'
+        key: 'dayOfWeek'
       },
-      { title: 'Horario Inicio', key: 'horaInicio' },
-      { title: 'Horario Fin', key: 'horaFin' },
-      { title: 'Aula', key: 'aula' },
-      { title: 'Docente', key: 'docente' },
+      { title: 'Horario Inicio', key: 'startTime' },
+      { title: 'Horario Fin', key: 'endTime' },
+      { title: 'Aula', key: 'classroomId' },
+      { title: 'Docente', key: 'professorId' },
       { title: 'Opción', key: 'actions', sortable: false }
     ],
+
     desserts: [],
     editedIndex: -1,
+
     editedItem: {
-      periodo: null,
-      dia: null,
-      horaInicio: "",
-      horaFin: "",
-      cargo: null,
-      docente: null,
-      aula: null
+      curriculumId: 0,
+      subjectId: 0,
+      identifier: 'ID',
+      remark: 'NA',
+      listSchedule: [
+      ]
     },
+    
     defaultItem: {
-      periodo: null,
-      dia: null,
-      horaInicio: "",
-      horaFin: "",
-      cargo: null,
-      docente: null,
-      aula: null
+      curriculumId: 0,
+      subjectId: 0,
+      identifier: 'ID',
+      remark: 'NA',
+      listSchedule: [
+      ]
     }
+
   }),
 
   components: {
@@ -88,7 +98,8 @@ export default {
 
   props: {
     carrera: String,
-    gestion: Number
+    gestion: Number,
+    areaId: Number
   },
 
   computed: {
@@ -239,6 +250,6 @@ export default {
       }
       this.close()
     }
-  }
+  },
 }
 </script>

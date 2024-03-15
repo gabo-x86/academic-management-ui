@@ -4,16 +4,16 @@
     page-text="{0}-{1} de {2}"
     :headers="headers"
     :items="desserts"
-    :sort-by="[{ key: 'calories', order: 'asc' }]"
+    :sort-by="[{ key: 'id', order: 'asc' }]"
   >
     <template v-slot:top>
       <v-toolbar flat>
-        <v-toolbar-title>{{ "Clases de "+carrera+" "+gestion }}</v-toolbar-title>
+        <v-toolbar-title>{{ 'Clases de ' + "carrera.name" + ' ' + "gestion.year" }}</v-toolbar-title>
         <v-divider class="mx-4" inset vertical></v-divider>
         <v-spacer></v-spacer>
         <v-dialog v-model="dialog" max-width="500px">
           <template v-slot:activator="{ props }">
-            <create-classes-group-dialog />
+            <create-classes-group-dialog @agregar="agregarElemento" :areaId="areaId" />
           </template>
           <v-card>
             <v-card-title>
@@ -76,22 +76,38 @@
         Eliminar
       </v-btn>
     </template>
+
+    <template v-slot:item.horarios="{ item }">
+      <SimpleListDivider :itemList="genHorarioString(item)" />
+    </template>
+
+    <template v-slot:item.aulas="{ item }">
+      <SimpleListDivider :itemList="genAulaString(item)" />
+    </template>
+
+    <template v-slot:item.docentes="{ item }">
+      <SimpleListDivider :itemList="genDocenteString(item)" />
+    </template>
+
     <template v-slot:no-data>
       <!--<v-btn color="primary" @click="initialize"> Reset </v-btn>-->
-      <p>No existen datos disponibles en este momento</p>  
+      <p>No existen datos disponibles en este momento</p>
     </template>
-    
   </v-data-table>
 
-  <v-btn color="primary" variant="text" @click="generarDatosRedirect"> Generar Clases desde itinerario</v-btn>
-
+  <v-btn color="primary" variant="text" @click="generarDatosRedirect">
+    Generar Clases desde itinerario</v-btn
+  >
 </template>
 
 <script>
+import SimpleListDivider from '@/components/app/SimpleListDivider.vue'
 import CreateClassesGroupDialog from './CreateClassesGroupDialog.vue'
+import AxiosAM from '@/services/AxiosAM'
 
 export default {
   data: () => ({
+    //{"id":39,"level":1,"subjectName":"Introduccion a la Programacion","subjectInitials":"Intro Prog","groupIdentifier":"CGOR2N2","remark":"Clase de Geometría Orgánica","listScheduleDto":[{"id":70,"dayOfWeek":"FRIDAY","startTime":[8,0],"endTime":[10,0],"classroomName":"Laboratorio de Informática","classroomInitials":"INFLAB","professorFullName":"No esta asignado aun."}
     dialog: false,
     dialogDelete: false,
     headers: [
@@ -101,38 +117,41 @@ export default {
         sortable: false,
         key: 'name'
       },
-      { title: 'NOMNBRE ASIGNATURA', key: 'calories' },
-      { title: 'GRUPO', key: 'fat' },
-      { title: 'HORARIO', key: 'carbs' },
-      { title: 'AULA', key: 'protein' },
-      { title: 'DOCENTE ASIGNADO', key: 'protein' },
+      { title: 'NOMNBRE ASIGNATURA', key: 'remark' },
+      { title: 'GRUPO', key: 'groupIdentifier' },
+      { title: 'HORARIO', key: 'horarios', sortable: false },
+      { title: 'AULA', key: 'aulas', sortable: false },
+      { title: 'DOCENTE ASIGNADO', key: 'docentes', sortable: false },
       { title: 'OPCIONES', key: 'actions', sortable: false }
     ],
     desserts: [],
     editedIndex: -1,
     editedItem: {
-      name: '',
-      calories: 0,
-      fat: 0,
-      carbs: 0,
-      protein: 0
+      curriculumId: 0,
+      subjectId: 0,
+      identifier: 'ID',
+      remark: 'NA',
+      listScheduleDto: []
     },
     defaultItem: {
-      name: '',
-      calories: 0,
-      fat: 0,
-      carbs: 0,
-      protein: 0
+      curriculumId: 0,
+      subjectId: 0,
+      identifier: 'ID',
+      remark: 'NA',
+      listScheduleDto: []
     }
   }),
 
   components: {
-    CreateClassesGroupDialog
+    CreateClassesGroupDialog,
+    SimpleListDivider
   },
 
-  props:{
+  props: {
     carrera: String,
     gestion: Number,
+    areaId: Number,
+    listData: Array
   },
 
   computed: {
@@ -147,6 +166,13 @@ export default {
     },
     dialogDelete(val) {
       val || this.closeDelete()
+    },
+
+    listData: {
+      handler: function (nuevo, oldVal) {
+        this.desserts = nuevo  
+      },
+      deep: true
     }
   },
 
@@ -155,12 +181,195 @@ export default {
   },
 
   methods: {
+    agregarElemento(elemento) {
+      this.editedItem = elemento
+      this.save()
+    },
 
-    generarDatosRedirect(){
-        this.$router.push('manage-classes/generate');
+    genHorarioString(item) {
+      let res = []
+      for (let i = 0; i < item.listScheduleDto.length; i++) {
+        res.push(
+          item.listScheduleDto[i].dayOfWeek.substring(0, 2) +
+            ' ' +
+            item.listScheduleDto[i].startTime +
+            ' - ' +
+            item.listScheduleDto[i].startTime
+        )
+      }
+
+      return res
+    },
+
+    genAulaString(item) {
+      let res = []
+      for (let i = 0; i < item.listScheduleDto.length; i++) {
+        /*let dataClassroom;
+        try {
+          const { status, data } = await AxiosAM.get(
+            `/admin/areas/${this.areaId.areaId}/classrooms/${item.listScheduleDto[i].classroomId}`
+          )
+          if (status === 200) {
+            dataClassroom = data
+          }
+        } catch (error) {
+          console.error('Error getting classroom: ', error)
+        }*/
+
+        //{"id":39,"level":1,"subjectName":"Introduccion a la Programacion","subjectInitials":"Intro Prog","groupIdentifier":"CGOR2N2","remark":"Clase de Geometría Orgánica","listScheduleDto":[{"id":70,"dayOfWeek":"FRIDAY","startTime":[8,0],"endTime":[10,0],"classroomName":"Laboratorio de Informática","classroomInitials":"INFLAB","professorFullName":"No esta asignado aun."}
+
+        res.push(String(item.listScheduleDto[i].classroomName))
+      }
+
+      return res
+    },
+
+    genDocenteString(item) {
+      let res = []
+      for (let i = 0; i < item.listScheduleDto.length; i++) {
+        /*let dataClassroom;
+        try {
+          const { status, data } = await AxiosAM.get(
+            `/admin/areas/${this.areaId.areaId}/classrooms/${item.listScheduleDto[i].classroomId}`
+          )
+          if (status === 200) {
+            dataClassroom = data
+          }
+        } catch (error) {
+          console.error('Error getting classroom: ', error)
+        }*/
+
+        res.push(String(item.listScheduleDto[i].professorFullName))
+      }
+
+      return res
+    },
+
+    generarDatosRedirect() {
+      this.$router.push('manage-classes/generate')
     },
 
     initialize() {
+      this.desserts = this.listData
+
+      /*this.desserts = [
+        {
+          curriculumId: 1,
+          subjectId: 1,
+          identifier: 'CGOR2N2',
+          remark: 'Clase de Geometría Orgánica',
+          listScheduleDto: [
+            {
+              dayOfWeek: 'LUNES',
+              startTime: '08:00',
+              endTime: '10:00',
+              professorId: 123,
+              assistant: 'Juan Pérez',
+              classroomId: 1,
+              groupItineraryId: 1
+            },
+            {
+              dayOfWeek: 'VIERNES',
+              startTime: '09:00',
+              endTime: '11:00',
+              professorId: 456,
+              assistant: 'María González',
+              classroomId: 2,
+              groupItineraryId: 1
+            }
+          ]
+        },
+
+        {
+          curriculumId: 2,
+          subjectId: 3,
+          identifier: 'ALG1A2',
+          remark: 'Álgebra I Avanzada',
+          listScheduleDto: [
+            {
+              dayOfWeek: 'MARTES',
+              startTime: '10:00',
+              endTime: '12:00',
+              professorId: 789,
+              assistant: null,
+              classroomId: 201,
+              groupItineraryId: 2
+            },
+            {
+              dayOfWeek: 'JUEVES',
+              startTime: '10:00',
+              endTime: '12:00',
+              professorId: 789,
+              assistant: null,
+              classroomId: 201,
+              groupItineraryId: 2
+            }
+          ]
+        }
+      ]*/
+      /*this.desserts = [
+        {
+          id: 1,
+          level: 1,
+          subjectName: 'Matemáticas',
+          subjectInitials: 'MAT',
+          groupIdentifier: 'A',
+          remark: 'Curso básico de matemáticas',
+          listScheduleDtoDto: [
+            {
+              id: 1,
+              dayOfWeek: 'Lunes',
+              startTime: {
+                hour: 8,
+                minute: 0,
+                second: 0,
+                nano: 0
+              },
+              endTime: {
+                hour: 10,
+                minute: 0,
+                second: 0,
+                nano: 0
+              },
+              classroomName: 'Aula 101',
+              classroomInitials: 'A101',
+              professorFullName: 'Juan Pérez'
+            }
+            // Otros horarios para esta materia...
+          ]
+        },
+        {
+          id: 2,
+          level: 1,
+          subjectName: 'Historia',
+          subjectInitials: 'HIS',
+          groupIdentifier: 'B',
+          remark: 'Curso introductorio de historia',
+          listScheduleDtoDto: [
+            {
+              id: 2,
+              dayOfWeek: 'Miércoles',
+              startTime: {
+                hour: 9,
+                minute: 0,
+                second: 0,
+                nano: 0
+              },
+              endTime: {
+                hour: 11,
+                minute: 0,
+                second: 0,
+                nano: 0
+              },
+              classroomName: 'Aula 102',
+              classroomInitials: 'A102',
+              professorFullName: 'María González'
+            }
+            // Otros horarios para esta materia...
+          ]
+        }
+      ]*/
+
       /*this.desserts = [
         {
           name: 'Frozen Yogurt',
