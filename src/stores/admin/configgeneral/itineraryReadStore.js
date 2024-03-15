@@ -11,7 +11,7 @@ export const useItineraryReadStore = defineStore('itinearyReadStore', () => {
       const { status, data } = await AxiosAM.get(`${pathCareerResource}/${areaId}/itineraries`);
       if (status === 200) {
         itineraries.value = data;
-        console.log("LO LEIIIIIIIIIIIIIIIIIII", itineraries)
+        //console.log("LO LEIIIIIIIIIIIIIIIIIII", itineraries)
       }
     } catch (error) {
       console.error('Error getting careers:', error);

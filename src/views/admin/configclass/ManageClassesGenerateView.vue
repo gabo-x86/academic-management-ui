@@ -41,7 +41,7 @@
       </v-col>
     </v-row>
     <v-row justify="center">
-      <v-btn color="primary darken-2" variant="elevated" @click="generarDatosBD">GENERAR</v-btn>
+      <v-btn color="primary darken-2" variant="elevated" @click="generarDatosBD">GENERAR CLASES</v-btn>
     </v-row>
     <v-row justify="end">
       <toast-simple
