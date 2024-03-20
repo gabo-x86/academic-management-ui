@@ -1,11 +1,12 @@
 <script setup>
-import {onMounted, ref} from 'vue'
+import {onMounted, ref, watch} from 'vue'
 import {useRoute} from "vue-router";
-import { useSubjectStore } from "@/stores/admin/configgeneral/subjectStore.js";
-import { useClassroomStore } from "@/stores/admin/configgeneral/classroomStore.js";
-import { useItineraryGroupStore } from "@/stores/admin/schedule/groupItineraryStore.js";
-import { useItineraryStore } from "@/stores/admin/schedule/itineraryStore.js";
-import { useItineraryScheduleStore } from "@/stores/admin/schedule/scheduleItineraryStore.js"
+import {useSubjectStore} from "@/stores/admin/configgeneral/subjectStore.js";
+import {useClassroomStore} from "@/stores/admin/configgeneral/classroomStore.js";
+import {useItineraryGroupStore} from "@/stores/admin/schedule/groupItineraryStore.js";
+import {useItineraryStore} from "@/stores/admin/schedule/itineraryStore.js";
+import {useItineraryScheduleStore} from "@/stores/admin/schedule/scheduleItineraryStore.js"
+import AxiosAM from "@/services/AxiosAM.js";
 
 
 const route = useRoute();
@@ -53,6 +54,7 @@ const selectedSubject = ref(null)
 const identGroup=ref('')
 const remark=ref('')
 
+
 areaID.value=route.params.areaId
 careerId.value=route.params.careerId
 itineraryId.value=route.params.itineraryId
@@ -62,12 +64,42 @@ itineraryId.value=route.params.itineraryId
 const listSchedule = ref([])
 const lastId=ref(null)
 
+watch(() => subjectStore.subjects, (subjects) => {
+  if (subjects.length > 0) {
+    selectedSubject.value = subjects[0].id;
+    console.log(selectedSubject.value)
+    // Acceda al ID actualizado aquí
+  }
+}, { immediate: true });
+
+
 onMounted( async ()=>{
+
+
   await subjectStore.getSubjects(areaID.value)
   await classroomStore.getClassrooms(areaID.value)
   await itineraryStore.getItineraryById(itineraryId.value)
+
   //console.log("itinerary_ID:"+itineraryStore.currentItinerary.curriculumId)
   //console.log("subject ID"+selectedSubject)
+  await subjectStore.getSubjects(areaID.value)
+  console.log("subject ID"+selectedSubject.value)
+
+  
+  const response = await AxiosAM.get(`/admin/areas/${areaID.value}/careers/${careerId.value}/itineraries/${itineraryId.value}/itinerary-groups/suggest-group-identifier?subjectId=1&curriculumId=1`);
+  //const response = await AxiosAM.get(`/admin/areas/1/careers/1/itineraries/1/itinerary-groups/suggest-group-identifier?subjectId=1&curriculumId=1`);
+  console.log("dato", response.data);
+  if (response.status === 200 && response.data.suggestedIdentGroup) {
+    const suggestedIdentGroup = response.data.suggestedIdentGroup;
+    identGroup.value = suggestedIdentGroup;
+  } else {
+    console.log("Error al obtener nombre sugerido:", response.statusText);
+  }
+  let constructedUrl = `/admin/areas/${areaID.value}/careers/${careerId.value}/itineraries/${itineraryId.value}/itinerary-groups/suggest-group-identifier?subjectId=1&curriculumId=1`;
+
+  console.log("Constructed URL:", constructedUrl);
+  console.log("recibido", identGroup.value);
+
 })
 
 const dayOfWeek=ref('')

@@ -4,6 +4,7 @@ import { ref, onMounted, watch } from 'vue';
 import { useAcademicPeriodStore } from '@/stores/admin/configgeneral/academicPeriodStore.js'
 import { useMainStore  } from '@/stores/MainStore'
 
+
 const academicPeriodStore = useAcademicPeriodStore();
 const mainStore = useMainStore();
 const formattedAcademicPeriods  = ref([]);
@@ -20,6 +21,7 @@ const headers = ref([
   { title: 'Año', key: 'year' },
   { title: 'Fecha Incio', key: 'startDate' },
   { title: 'Fecha Fin', key: 'endDate'},
+  { title: 'Costo Matricula', key:'enrollmentCost'},
   { title: 'Opciones', align: 'center', sortable: false, key: 'actions' }
 ]);
 
@@ -41,12 +43,14 @@ const editedItem = ref({
   year: 0,
   startDate: '',
   endDate: '',
+  enrollmentCost: 0.00,
 });
 const defaultItem = ref({
   name: '',
   year: 0,
   startDate: '',
   endDate: '',
+  enrollmentCost: 0.00,
 });
 
 const editItem = (item) => {
@@ -140,6 +144,25 @@ const startDateRules = [
     return true;
   }
 ];
+
+const enrollmentCostRules = [
+  v => !!v || 'El costo de matrícula es obligatorio',
+  v => {
+    if (!v) return true; // Si el valor está vacío, no aplica la siguiente regla
+    const parsedValue = parseFloat(v);
+    if (isNaN(parsedValue)) {
+      return 'El costo de matrícula debe ser un número';
+    }
+    if (parsedValue < 0 || parsedValue > 9999.99) {
+      return 'El costo de matrícula debe estar entre 0 y 9999.99';
+    }
+    if (parsedValue.toFixed(2) !== v) {
+      return 'El costo de la matricula debe ser expresado de la siguiente forma: 100.00 con maximo 2 decimales';
+    }
+    return true;
+  }
+];
+
 </script>
 
 <template>
@@ -188,7 +211,7 @@ const startDateRules = [
                     <v-col cols="12">
                       <v-text-field v-model="editedItem.name" required
                                     :error="showError && !editedItem.name" 
-                                    :rules="nameRules" label="Nombre *"></v-text-field>
+                                    label="Nombre *"></v-text-field>
                     </v-col>
 
                     <v-col cols="12" sm="6" >
@@ -210,6 +233,14 @@ const startDateRules = [
                         :error="showError && !editedItem.endDate"
                         :rules="startDateRules"
                       ></v-text-field>
+                    </v-col>
+
+                    <v-col cols="12">
+                      <v-text-field v-model="editedItem.enrollmentCost" required
+                                    :error="showError && !editedItem.enrollmentCost"
+                                    :rules="enrollmentCostRules"
+                                    prefix="Bs."
+                                    label="Costo Matricula *"></v-text-field>
                     </v-col>
                   
                   </v-row>
@@ -245,6 +276,9 @@ const startDateRules = [
         <v-btn variant="text" class="botones-tabla-btn"  @click="deleteItem(item)">
           <v-icon size="small">mdi-delete</v-icon>ELIMINAR
         </v-btn>
+      </template>
+      <template v-slot:item.enrollmentCost="{ item }">
+        Bs. {{ (item.enrollmentCost) }}
       </template>
     
     </v-data-table>

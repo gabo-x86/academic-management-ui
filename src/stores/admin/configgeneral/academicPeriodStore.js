@@ -33,6 +33,7 @@ export const useAcademicPeriodStore = defineStore('academicPeriodStore', () => {
       const { status, data } = await AxiosAM.get(`${pathAcademicPeriodResource}/${areaId}/academic-periods/${id}`);
       if (status === 200) {
         academicPeriod.value = data;
+        console.log(data);
       }
     } catch (error) {
       console.log('error getting academic Period by id:');
