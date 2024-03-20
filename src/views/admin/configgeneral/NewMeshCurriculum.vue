@@ -11,6 +11,7 @@ const curriculumStore = useCurriculumStore();
 const carreraActive = ref({});
 const carreraId = ref('');
 const curriculumId = ref('');
+const levels = ref([]);
 const lstNiveles = [
     {levelIdentifier: 1, levelName: 'Nivel A' },
     {levelIdentifier: 2, levelName: 'Nivel B' },
@@ -62,7 +63,7 @@ function addNewAsignature() {
     console.log('temporal lista=', tempLstNivel);
     console.log('me hiciste click');
 
-    
+
 
     const filtro = lstNiveles.filter(item => item.levelName != tempLstNivel );
 
@@ -92,6 +93,11 @@ onMounted(async () => {
 
     console.log('mensaje=', inject('message'));
 });
+
+async function submitLevels(asignatura) {
+    console.log('new valor levels=', asignatura)
+    levels.value = asignatura;
+}
 
 </script>
 
@@ -152,7 +158,7 @@ onMounted(async () => {
         </v-form>
         <v-row>
             <v-col sm="12" md="6" class="mt-4">
-                <level-curriculum :nivel-obj="nivelInicioCompartido" :asignatura-array="asignaturaInicioCampartido"></level-curriculum>
+                <level-curriculum :nivel-obj="nivelInicioCompartido" :asignatura-array="asignaturaInicioCampartido" @submit="submitLevels"></level-curriculum>
             </v-col>
         </v-row>
     </div>

@@ -3,6 +3,7 @@ import { onMounted, ref, watch } from 'vue'
 import { useSubjectStore } from '@/stores/admin/configgeneral/subjectStore'
 
 const subjectStore = useSubjectStore()
+const areaId = 1;
 const asignaturaForm = ref({
     // id: null,
     subjectId: '',
@@ -21,25 +22,20 @@ const props = defineProps({
     },
     modelValue: Boolean
 })
-const txtObject = '';
 var arrayTemAsig = [];
-// const props = defineProps({ modelValue: Boolean });
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'submit'])
 
 function close() {
     emit('update:modelValue', false)
 }
 
 function onSave() {
-    console.log('-->',asignaturaForm.value.path);
     var multiple = '';
     Array.from(asignaturaForm.value.path).forEach((element) => {
         if(element != '') {
-            console.log(txtObject+element+', ')
             multiple = multiple+element+', ';
         }
     }
-        // console.log(element)
     );
     multiple = multiple.slice(0, multiple.length - 2);
     var obj = {
@@ -48,24 +44,29 @@ function onSave() {
         "path": multiple,
         "workload": asignaturaForm.value.workload,
     };
-
-    console.log('obj=', obj);
-
     arrayTemAsig.push(obj);
 
     console.log('array=', arrayTemAsig);
-    // props.asignaturaArray = arrayTemAsig;
-    console.log(props.asignaturaArray);
+    emit('submit', arrayTemAsig);
+    emit('update:modelValue', false);
 
-    const areaTemp = Object.assign({}, asignaturaForm.value);
-
-    console.log('areaTemp=', areaTemp)
-    // emit('submit', areaTemp);
+    asignaturaForm.value = {
+        subjectId: '',
+        optional: '',
+        path: '',
+        workload: ''
+    };
 }
 
 onMounted(async () => {
-    await subjectStore.getSubjects(1)
+    await subjectStore.getSubjects(areaId)
 })
+
+watch(() => props.asignaturaArray, (ar) => {
+    console.log('tam=', ar.length);
+    arrayTemAsig = Object.assign([], props.asignaturaArray);
+    console.log('props=',props.asignaturaArray);
+});
 </script>
 <template>
     <v-dialog :model-value="modelValue" width="700">

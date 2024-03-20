@@ -1,6 +1,12 @@
 <script setup>
-import { onMounted, ref, watch} from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import AsignatureFormComp from '@/components/admin/configgeneral/meshcurriculum/AsignatureForm.vue'
+import { useSubjectStore } from '@/stores/admin/configgeneral/subjectStore'
+import axios from "axios";
+
+const subjectStore = useSubjectStore()
+const areaId = 1;
+const baseUrl = import.meta.env.VITE_APP_BASE_URL;
 
 const lstLevels = [
   {
@@ -9,8 +15,12 @@ const lstLevels = [
     workload: '10:45-11:30',
     prerequi: 'Base de datos',
     electiva: 'NO'
-  },
+  }
 ];
+
+const arrayMaterias = [];
+const asignatures = ref({});
+const asignaturesAux = ref({});
 const props = defineProps({
   nivelObj: {
     type: Object,
@@ -20,28 +30,69 @@ const props = defineProps({
     type: Array,
     required: false
   }
-});
-const showDialog = ref(false);
+})
+const showDialog = ref(false)
 
 function openNewDialog() {
-  showDialog.value = !showDialog.value;
+  showDialog.value = !showDialog.value
 }
 
-watch(() => props.nivelObj, (obj) => {
-  console.log('objeto=', obj);
-  if (obj.id) {
-    console.log('obj id=', obj.id);
-  } else {
-    console.log('Entre');
+async function submitAsignatura(asignatura) {
+  console.log('new valor asignatura=', asignatura);
+  asignatures.value = {
+    "levelIdentifier": props.nivelObj.levelIdentifier,
+    "levelName": props.nivelObj.levelName,
+    "subjectCurriculumList" : asignatura
+  };
+  console.log('asignatures=',asignatures);
+  var auxArray = [];
+  asignatura.forEach(arr => {
+    console.log('element=', arr);
+    axios.get(`${baseUrl}admin/areas/${areaId}/subjects/${arr.subjectId}`).then((result) => {
+      var objSubj = {
+        "subjectId": arr.subjectId,
+        "subjectName": result.data.name,
+        "path": arr.path,
+        "workload": arr.workload,
+        "optional": arr.optional
+      };
+      auxArray.push(objSubj);
+      // arrayMaterias.push(objSubj);
+      console.log(result.data);
+    });
+  });
+  arrayMaterias == auxArray;
+  arrayMaterias = auxArray.slice();
+
+  console.log('.....',arrayMaterias );
+  
+
+
+
+  asignaturesAux.value= {
+    "levelIdentifier": props.nivelObj.levelIdentifier,
+    "levelName": props.nivelObj.levelName,
+    "subjectCurriculumList" : auxArray
+  };
+  // this.asignaturas = test;
+  console.log('<---->',asignaturesAux.value.subjectCurriculumList);
+}
+
+watch(
+  () => props.nivelObj,
+  (obj) => {
+    console.log('objeto=', obj)
+    if (obj.id) {
+      console.log('obj id=', obj.id)
+    } else {
+      console.log('Entre')
+    }
   }
-});
-    
+)
 </script>
 
 <template>
-  <v-card
-    class="mx-auto"
-  >
+  <v-card class="mx-auto">
     <template v-slot:title>
       {{ props.nivelObj.levelName }}
       <v-divider></v-divider>
@@ -59,11 +110,11 @@ watch(() => props.nivelObj, (obj) => {
           </tr>
         </thead>
         <tbody>
-          <tr v-for="item in lstLevels" :key="item.id">
-            <td>{{ item.name }}</td>
+          <tr v-for="item in arrayMaterias[0]" :key="item.subjectId">
+            <td>{{ item.subjectId }}</td>
             <td>{{ item.workload }}</td>
-            <td>{{ item.prerequi }}</td>
-            <td>{{ item.electiva }}</td>
+            <td>{{ item.path }}</td>
+            <td>{{ item.optional }}</td>
             <td></td>
           </tr>
         </tbody>
@@ -73,9 +124,12 @@ watch(() => props.nivelObj, (obj) => {
       </div>
     </v-card-text>
   </v-card>
-  <asignature-form-comp v-model="showDialog" :nivel-obj="props.nivelObj" :asignatura-array="props.asignaturaArray"></asignature-form-comp>
+  <asignature-form-comp
+    v-model="showDialog"
+    :nivel-obj="props.nivelObj"
+    :asignatura-array="props.asignaturaArray"
+    @submit="submitAsignatura"
+  ></asignature-form-comp>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
