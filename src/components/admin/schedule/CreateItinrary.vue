@@ -1,6 +1,6 @@
 <script setup>
 import { useForm, useField } from 'vee-validate'
-import { onMounted, ref, toRef, watch } from 'vue'
+import { onMounted, ref } from 'vue'
 import * as yup from 'yup'
 import { useItineraryStore } from '@/stores/admin/schedule/itineraryStore'
 import { useCareerStore } from '@/stores/admin/configgeneral/careerStore'
@@ -12,28 +12,26 @@ const curriculumStore = useCurriculumStore()
 const props = defineProps(['dialog', 'area'])
 const emit = defineEmits(['close-dialog'])
 const schema = yup.object().shape({
-  nombre: yup.string().required(),
-  carrera: yup.string().required(),
-  curriculum: yup.string().required()
+  nombre: yup.string().required('El nombre del itinerario es requerido'),
+  carrera: yup.string().required('La carrera es requerida'),
+  curriculum: yup.string().required('El curriculum es requerido')
 })
-const { handleSubmit, resetForm, setFieldValue, resetField } = useForm({
-  validationSchema: schema
-})
-
-const name = useField('nombre', schema)
-const career = useField('carrera', schema)
-const curriculum = useField('curriculum', schema)
 
 const cargarCurriculums = async (value) => {
   await curriculumStore.getCurriculumsByCareer(props.area, value)
-
   if (curriculumStore.curriculumsByCareer.length == 1) {
-    console.log(curriculumStore.curriculumsByCareer.length)
     setFieldValue('curriculum', curriculumStore.curriculumsByCareer[length].id)
   } else {
     resetField('curriculum')
   }
 }
+
+const { handleSubmit, resetForm, setFieldValue, resetField } = useForm({
+  validationSchema: schema
+})
+const name = useField('nombre', schema)
+const career = useField('carrera', schema)
+const curriculum = useField('curriculum', schema)
 
 const onSubmit = handleSubmit(async (values, { resetForm }) => {
   const itinerary = {
@@ -77,9 +75,9 @@ onMounted(async () => {
               label="Carrera*"
               :item-title="'name'"
               :item-value="'id'"
+              required
               v-model="career.value.value"
               :error-messages="career.errorMessage.value"
-              name="carrera"
             ></v-select>
             <v-select
               :items="curriculumStore.curriculumsByCareer"

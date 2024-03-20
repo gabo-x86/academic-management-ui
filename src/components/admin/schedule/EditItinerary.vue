@@ -11,9 +11,9 @@ const props = defineProps(['dialog', 'idItinerary', 'area'])
 const emit = defineEmits(['close-dialog-edit'])
 const formEdit = ref(null)
 const schema = yup.object().shape({
-  nombre: yup.string().required(),
+  nombre: yup.string().required('El nombre del itinerario es requerido'),
   carrera: yup.string(),
-  curriculum: yup.string().required()
+  curriculum: yup.string().required('El curriculum es requerido')
 })
 const { handleSubmit, resetForm } = useForm({
   validationSchema: schema
@@ -45,7 +45,6 @@ onMounted(async () => {
       curriculum: itineraryStore.currentItinerary.curriculumId
     }
   })
-
   await curriculumStore.getCurriculumsByCareer(props.area, itineraryStore.currentItinerary.careerId)
 })
 </script>
