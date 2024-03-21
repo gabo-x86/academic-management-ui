@@ -1,6 +1,8 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import AxiosAM from '@/services/AxiosAM.js'
+import axios from "axios";
+
 
 let pathItineraryResource=`/admin/areas/1/careers/1/itineraries/1/itinerary-groups`
 
@@ -8,6 +10,8 @@ export const useItineraryGroupStore=defineStore('groupItineraryStore', ()=>{
 
   const itineraryGroups =ref([]);
   const currentItineraryGroup = ref(null)
+
+
   async function getInineraryGroups(careerId, itineraryId){
     try {
       const {status, data} = await AxiosAM.get("/admin/areas/1/careers/"+careerId+"/itineraries/"+itineraryId+"/itinerary-groups")
@@ -57,6 +61,31 @@ export const useItineraryGroupStore=defineStore('groupItineraryStore', ()=>{
       return {  error:true, success:false, data:null}
     }
   }
-  return{getInineraryGroups, getInineraryGroupById, createItineraryGroup, deleteItinerarGroup, itineraryGroups, currentItineraryGroup}
+
+
+  async function getSuggestedIdentifier(areaID, careerId, itineraryId, subjectId, curriculumId) {
+    console.log('Sending data to API:');
+    console.log('areaID:', areaID);
+    console.log('careerId:', careerId);
+    console.log('itineraryId:', itineraryId);
+    console.log('subjectId:', subjectId);
+    console.log('curriculumId:', curriculumId);
+    try {
+      const response = await AxiosAM.get(`/admin/areas/${areaID}/careers/${careerId}/itineraries/${itineraryId}/itinerary-groups/suggest-group-identifier?subjectId=${subjectId}&curriculumId=${curriculumId}`);
+      console.log('url busca:'+'/admin/areas/'+areaID+'/careers/'+careerId+'/itineraries/'+itineraryId+'/itinerary-groups/suggest-group-identifier?subjectId='+subjectId+'&curriculumId='+curriculumId+'}');
+      console.log('url busca:'+response.data);
+      return response.data; // Suponiendo que los datos están en response.data
+    } catch (error) {
+      console.error('Error al obtener el identificador sugerido:', error);
+      return null; // O cualquier valor predeterminado para los datos
+    }
+  }
+
+
+
+
+
+  return{getInineraryGroups, getInineraryGroupById, createItineraryGroup, deleteItinerarGroup, itineraryGroups, currentItineraryGroup, getSuggestedIdentifier}
+    //  return{getInineraryGroups, getInineraryGroupById, createItineraryGroup, deleteItinerarGroup, itineraryGroups, currentItineraryGroup}
   }
 )

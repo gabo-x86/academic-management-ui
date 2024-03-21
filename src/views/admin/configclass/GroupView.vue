@@ -1,5 +1,5 @@
 <script setup>
-import {onMounted, ref} from 'vue'
+import {onMounted, ref, watch} from 'vue'
 import {useRoute} from "vue-router";
 import { useSubjectStore } from "@/stores/admin/configgeneral/subjectStore.js";
 import { useClassroomStore } from "@/stores/admin/configgeneral/classroomStore.js";
@@ -45,13 +45,19 @@ const headers = ref([
 ])
 
 
-
+const subjectId = ref(1)
+const curriculumId = ref(1)
 const careerId = ref(null)
 const itineraryId=ref(null)
 const areaID = ref(null)
 const selectedSubject = ref(null)
 const identGroup=ref('')
 const remark=ref('')
+const suggestIdentifier = ref(null)
+
+const { getSuggestedIdentifier } = useItineraryGroupStore()
+
+
 
 areaID.value=route.params.areaId
 careerId.value=route.params.careerId
@@ -66,9 +72,24 @@ onMounted( async ()=>{
   await subjectStore.getSubjects(areaID.value)
   await classroomStore.getClassrooms(areaID.value)
   await itineraryStore.getItineraryById(itineraryId.value)
+
+  console.log(areaID.value+"-"+careerId.value+"-"+itineraryId.value+"-"+ subjectId.value+"-"+curriculumId.value)
+
+
   //console.log("itinerary_ID:"+itineraryStore.currentItinerary.curriculumId)
   //console.log("subject ID"+selectedSubject)
 })
+
+watch(selectedSubject, async (newValue, oldValue) => {
+  if (newValue !== oldValue) {
+    if (newValue) {
+      const materiaSelecionada = newValue
+      suggestIdentifier.value = await getSuggestedIdentifier(areaID.value, careerId.value, itineraryId.value, materiaSelecionada ,curriculumId.value);
+    } else {
+      suggestIdentifier.value = null;
+    }
+  }
+});
 
 const dayOfWeek=ref('')
 const startTime=ref('')
@@ -239,11 +260,20 @@ const typeRules = [
           md="6"
         >
           <v-text-field
+              v-model="suggestIdentifier"
+              label="Identificador sugerido"
+              variant="outlined"
+              class="mx-4"
+              disabled
+          ></v-text-field>
+
+          <v-text-field
               v-model="identGroup"
               label="Identificador de grupo *"
               variant="outlined"
               class="mx-4"
           ></v-text-field>
+
         </v-col>
 
       </v-row>
