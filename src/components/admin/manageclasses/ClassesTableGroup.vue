@@ -11,14 +11,16 @@
         <v-toolbar-title>Horarios</v-toolbar-title>
         <v-divider class="mx-4" inset vertical></v-divider>
         <v-spacer></v-spacer>
-        <agree-group-c-lasses-dialog :areaId="areaId" @agregarHorario="agregarElemento" />
+        <agree-group-c-lasses-dialog @agregarHorario="agregarElemento" />
         <v-dialog v-model="dialogDelete" max-width="500px">
           <v-card>
             <v-card-title class="text-h5">¿Está seguro que sea eliminar el horario?</v-card-title>
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn color="blue-darken-1" variant="text" @click="closeDelete">Cancelar</v-btn>
-              <v-btn color="blue-darken-1" variant="text" @click="deleteItemConfirm">Eliminar</v-btn>
+              <v-btn color="blue-darken-1" variant="text" @click="deleteItemConfirm"
+                >Eliminar</v-btn
+              >
               <v-spacer></v-spacer>
             </v-card-actions>
           </v-card>
@@ -31,23 +33,22 @@
       </v-icon>
     </template>
     <template v-slot:item.maestro="{ item }">
-      {{ item.professor?item.professor.name:item.assistant?item.assistant:"Por Designar" }}
+      {{ item.professor ? item.professor.name : item.assistant ? item.assistant : 'Por Designar' }}
     </template>
     <template v-slot:no-data>
-      <!--<v-btn color="primary" @click="initialize"> Reset </v-btn>-->
       <p>No existen datos disponibles en este momento</p>
     </template>
   </v-data-table>
-
 </template>
 
 <script>
+import { useGroup } from '@/stores/admin/configgeneral/groupStore'
 import AgreeGroupCLassesDialog from './AgreeGroupCLassesDialog.vue'
 
 export default {
   data: () => ({
     dialogDelete: false,
-    
+
     /*
      dayOfWeek: '',
               startTime: '00:00',
@@ -57,7 +58,7 @@ export default {
               classroomId: 1,
               groupItineraryId: 1
     */
-    
+
     headers: [
       {
         title: 'Día',
@@ -80,19 +81,16 @@ export default {
       subjectId: 0,
       identifier: 'ID',
       remark: 'NA',
-      listSchedule: [
-      ]
+      listSchedule: []
     },
-    
+
     defaultItem: {
       curriculumId: 0,
       subjectId: 0,
       identifier: 'ID',
       remark: 'NA',
-      listSchedule: [
-      ]
+      listSchedule: []
     }
-
   }),
 
   components: {
@@ -102,7 +100,6 @@ export default {
   props: {
     carrera: String,
     gestion: Number,
-    areaId: Number
   },
 
   computed: {
@@ -117,99 +114,50 @@ export default {
     },
     dialogDelete(val) {
       val || this.closeDelete()
+    },
+
+    desserts: {
+      handler: function (nuevo, oldVal) {
+        this.groupStore.setListSchedule(nuevo);  
+      },
+      deep: true
+    },
+  },
+
+  setup() {
+    const groupStore = useGroup()
+
+    return {
+      groupStore
     }
   },
 
-  created() {
-    this.initialize()
-  },
-
   methods: {
+    agregarElemento(elemento) {
+      if (this.isValidElemento(elemento)) {
+        this.editedItem = elemento
+        this.save()
+      }
+    },
 
-    agregarElemento(elemento){
-      this.editedItem = elemento;
-      this.save();
+    isValidElemento(elemento) {
+      let valido = true
+      if (
+        elemento.cargo === 'Asistente' &&
+        (elemento.assistant == null || elemento.assistant.length === 0)
+      ) {
+        valido = false
+      }
+
+      if(elemento.dayOfWeek.length===0||elemento.classroom===null){
+        valido = false;
+      }
+
+      return valido;
     },
 
     generarDatosRedirect() {
       this.$router.push('manage-classes/generate')
-    },
-
-    initialize() {
-      /*this.desserts = [
-        {
-          dia: 'Frozen Yogurt',
-          horaInicio: 159,
-          horaFin: 6.0,
-          aula: 24,
-          docente: 4.0
-        },
-        {
-          dia: 'Ice cream sandwich',
-          horaInicio: 237,
-          horaFin: 9.0,
-          aula: 37,
-          docente: 4.3
-        },
-        {
-          dia: 'Eclair',
-          horaInicio: 262,
-          horaFin: 16.0,
-          aula: 23,
-          docente: 6.0
-        },
-        {
-          dia: 'Cupcake',
-          horaInicio: 305,
-          horaFin: 3.7,
-          aula: 67,
-          docente: 4.3
-        },
-        {
-          dia: 'Gingerbread',
-          horaInicio: 356,
-          horaFin: 16.0,
-          aula: 49,
-          docente: 3.9
-        },
-        {
-          dia: 'Jelly bean',
-          horaInicio: 375,
-          horaFin: 0.0,
-          aula: 94,
-          docente: 0.0
-        },
-        {
-          dia: 'Lollipop',
-          horaInicio: 392,
-          horaFin: 0.2,
-          aula: 98,
-          docente: 0
-        },
-        {
-          dia: 'Honeycomb',
-          horaInicio: 408,
-          horaFin: 3.2,
-          aula: 87,
-          docente: 6.5
-        },
-        {
-          dia: 'Donut',
-          horaInicio: 452,
-          horaFin: 25.0,
-          aula: 51,
-          docente: 4.9
-        },
-        {
-          dia: 'KitKat',
-          horaInicio: 518,
-          horaFin: 26.0,
-          aula: 65,
-          docente: 7
-        }
-      ]*/
-
-      this.desserts = [];
     },
 
     editItem(item) {
@@ -253,6 +201,6 @@ export default {
       }
       this.close()
     }
-  },
+  }
 }
 </script>

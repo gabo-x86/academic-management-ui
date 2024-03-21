@@ -7,19 +7,11 @@
         </v-btn>
       </template>
       <v-card>
-        {{ 'areaID::::::' + areaId.areaId }}
-
-        {{ editedItem }}
-
-        {{ classrooms }}
-
-        {{ aulaList }}
         <v-card-title>
           <span class="text-h5">Añadir Horario </span>
         </v-card-title>
         <v-card-text>
           <v-container>
-            {{ dataPrueba }}
             <v-row>
               <v-col cols="12" sm="4" md="4">
                 <v-autocomplete
@@ -121,11 +113,9 @@ import SearchSelectorSimple from '@/components/app/SearchSelectorSimple.vue'
 
 export default {
   components: { SearchSelectorSimple },
+
   created() {
-    //this.diasList = UDate.getDayEs();
     this.diasList = UDate.getListDayEs()
-    //this.readData()
-    //console.log('agreegroup iniciado..........', this.areaId.areaId)
   },
 
   setup() {
@@ -137,33 +127,13 @@ export default {
   },
 
   data: () => ({
-    /*editedItem: {
-      periodo: null,
-      dia: null,
-      horaInicio: '',
-      horaFin: '',
-      cargo: null,
-      docente: null,
-      aula: null
-    },
-
-    defaultItem: {
-      periodo: null,
-      dia: null,
-      horaInicio: '',
-      horaFin: '',
-      cargo: null,
-      docente: null,
-      aula: null
-    },*/
-
     editedItem: {
       dayOfWeek: '',
       startTime: '00:00',
       endTime: '00:00',
-      professor: 0,
+      professor: null,
       assistant: '',
-      classroom: 1,
+      classroom: null,
       groupItineraryId: 1,
       cargo: 'Docente'
     },
@@ -172,9 +142,9 @@ export default {
       dayOfWeek: '',
       startTime: '00:00',
       endTime: '00:00',
-      professor: 0,
+      professor: null,
       assistant: '',
-      classroom: 1,
+      classroom: null,
       groupItineraryId: 1,
       cargo: 'Docente'
     },
@@ -199,75 +169,6 @@ export default {
       this.editedItem.classroom = aula
     },
 
-    async readData() {
-      this.periodosList = await this.readPeriods() //['1 - Primer Semestre', '2 - Segundo Semestre', 'Invierno', 'Verano']
-      this.diasList = ['LUNES', 'MARTES', 'MIERCOLES', 'JUEVES', 'VIERNES', 'SABADO', 'DOMINGO']
-      this.docenteList = []
-      this.aulaList = await this.readClassrooms()
-    },
-
-    async readPeriods() {
-      console.log('ESTOY LEYENDO PERIODOS', this.areaId.areaId)
-
-      let res = []
-
-      let academicPeriods
-
-      try {
-        const { status, data } = await AxiosAM.get(
-          `/admin/areas/${this.areaId.areaId}/academic-periods`
-        )
-        if (status === 200) {
-          academicPeriods = data.map((period, index) => ({
-            ...period,
-            index: index + 1,
-            startDate: period.startDate,
-            endDate: period.endDate
-          }))
-
-          //return { success: true, data: data }
-        }
-      } catch (error) {
-        console.log('error getting academic Period')
-      }
-
-      for (let i = 0; i < academicPeriods.length; i++) {
-        res.push(academicPeriods[i].name)
-      }
-
-      this.periodosData = academicPeriods
-
-      return res
-    },
-
-    async readClassrooms() {
-      console.log('ESTOY LEYENDO AULAS', this.areaId.areaId)
-
-      let res = []
-
-      //const {classrooms, getClassrooms} = useClassroomStore() // Obtiene las carreras y el método getCareers del store
-      //await getClassrooms(this.areaId.areaId)
-
-      let classrooms
-
-      try {
-        const { status, data } = await AxiosAM.get(`/admin/areas/${this.areaId.areaId}/classrooms`)
-        if (status === 200) {
-          classrooms = data
-        }
-      } catch (error) {
-        console.error('Error getting classroom: ', error)
-      }
-
-      for (let i = 0; i < classrooms.length; i++) {
-        res.push(classrooms[i].name)
-      }
-
-      this.aulaData = classrooms
-
-      return res
-    },
-
     saveData() {
       if (this.editedItem.cargo === 'Docente') {
         this.editedItem.assistant = null
@@ -279,15 +180,10 @@ export default {
       }
 
       this.$emit('agregarHorario', this.editedItem)
-
-      this.dialog = false
-
       this.editedItem = this.defaultItem
+      this.dialog = false
+      //this.editedItem = this.defaultItem
     }
-  },
-
-  props: {
-    areaId: Number
   }
 }
 </script>

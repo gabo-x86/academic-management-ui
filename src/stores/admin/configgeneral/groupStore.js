@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { useCareerStore } from './careerStore';
 import AxiosAM from '@/services/AxiosAM';
 import { errorMessages } from 'vue/compiler-sfc';
+import UDate from '@/services/UDate';
 
 export const useGroup = defineStore('myStore', {
     state: () => ({
@@ -12,8 +13,15 @@ export const useGroup = defineStore('myStore', {
         listCurriculum: [],
         listMaterias: [],
         listProfessor: [],
-        listAulas:[],
+        listAulas: [],
         datoEdit: {
+            curriculumId: null,
+            subjectId: null,
+            identifier: null,
+            remark: null,
+            listSchedule: []
+        },
+        defaultEdit:{
             curriculumId: null,
             subjectId: null,
             identifier: null,
@@ -23,6 +31,14 @@ export const useGroup = defineStore('myStore', {
     }),
 
     actions: {
+        isValidGroupEdit() {
+            let valido = true;
+            if (this.datoEdit.curriculumId === null || this.datoEdit.subjectId === null || this.datoEdit.identifier === null || this.datoEdit.listSchedule.length === 0) {
+                valido = false;
+            }
+            return valido
+        },
+
         setCurriculumEd(curriculum) {
             this.datoEdit.curriculumId = curriculum.id;
         },
@@ -32,8 +48,31 @@ export const useGroup = defineStore('myStore', {
             this.datoEdit.remark = subject.name;
         },
 
-        addNewListSchedule(dato) {
-            let datos = {
+        addGroupBD() {
+            //for(let i=0; i<this.datoEdit.listSchedule.length; i++){
+              //  this.datoEdit.listSchedule[i].groupItineraryId = 1;//this.datoEdit.identifier;
+            //}
+
+            //http://localhost:8080/admin/areas/1/careers/1/academic-periods/1/groups
+
+            console.log("TOy escribiendo BDGROUP ADD")
+
+            let direccion = `/admin/areas/${this.areaSel}/careers/${this.carreraSel.id}/academic-periods/${this.academicSel.id}/groups`
+            AxiosAM.post(direccion, this.datoEdit)
+                .then((respuesta) => {
+                    //this.listCurriculum = respuesta.data;
+                    //console.log("LEIIII CURRICULUM", this.listCurriculum)
+                    this.readListGroup();
+                    this.datoEdit = this.defaultEdit;
+                })
+                .catch((error) => {
+                    console.log(error)
+                    //this.listCurriculum = [];
+                })
+        },
+
+        setListSchedule(datos) {
+            /*let datos = {
                 dayOfWeek: "FRIDAY",
                 startTime: "09:00",
                 endTime: "11:00",
@@ -41,9 +80,28 @@ export const useGroup = defineStore('myStore', {
                 assistant: "María González",
                 classroomId: null, //classroomId: 2,
                 groupItineraryId: 1
+            }*/
+
+            let nuevaLista = [];
+
+            for (let i = 0; i < datos.length; i++) {
+
+                let nuevo = {
+                    dayOfWeek: UDate.getDayEn(datos[i].dayOfWeek),
+                    startTime: datos[i].startTime,
+                    endTime: datos[i].endTime,
+                    professorId: datos[i].professor!==null?datos[i].professor.id:null, //professorId: null,
+                    assistant: datos[i].assistant,
+                    classroomId: datos[i].classroom.id, //classroomId: 2,
+                    groupItineraryId: 1//this.datoEdit.identifier
+                }
+
+                nuevaLista.push(nuevo);
+
             }
 
-            this.datoEdit.listSchedule.push(dato);
+            //this.datoEdit.listSchedule.push(dato);
+            this.datoEdit.listSchedule = nuevaLista;
 
         },
 
@@ -68,7 +126,7 @@ export const useGroup = defineStore('myStore', {
 
         readAulas() {
             if (this.isValidData()) {
-                let direccion = "/admin/areas/"+this.areaSel+"/classrooms"
+                let direccion = "/admin/areas/" + this.areaSel + "/classrooms"
 
                 AxiosAM.get(direccion)
                     .then((respuesta) => {

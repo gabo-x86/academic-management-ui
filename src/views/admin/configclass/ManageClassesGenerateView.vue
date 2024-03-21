@@ -223,17 +223,8 @@ export default {
 
       this.generateStore.setDefaultInicial();
 
-      /*let resultado = await this.generateStore.generateClassesByItinerary(this.area.areaId)
-       */
     }
   },
-  watch: {
-    /*areaData: {
-      handler: function (nuevo, oldVal) {
-        this.verificarAreaSel(nuevo.areaId)
-      },
-      deep: true
-    }*/
-  }
+
 }
 </script>
