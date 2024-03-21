@@ -82,12 +82,20 @@ onMounted( async ()=>{
 
 watch(selectedSubject, async (newValue, oldValue) => {
   if (newValue !== oldValue) {
-    if (newValue) {
+    if (newValue!== null) {
       const materiaSelecionada = newValue
       suggestIdentifier.value = await getSuggestedIdentifier(areaID.value, careerId.value, itineraryId.value, materiaSelecionada ,curriculumId.value);
     } else {
       suggestIdentifier.value = null;
     }
+  }
+});
+
+watch(suggestIdentifier, (newValue) => {
+  // Si suggestIdentifier tiene un valor, asigna ese valor a identGroup
+  // de lo contrario, deja identGroup como está
+  if (newValue !== null) {
+    identGroup.value = newValue;
   }
 });
 
@@ -259,17 +267,10 @@ const typeRules = [
           sm="6"
           md="6"
         >
-          <v-text-field
-              v-model="suggestIdentifier"
-              label="Identificador sugerido"
-              variant="outlined"
-              class="mx-4"
-              disabled
-          ></v-text-field>
 
           <v-text-field
               v-model="identGroup"
-              label="Identificador de grupo *"
+              label="Identificador de Grupo *"
               variant="outlined"
               class="mx-4"
           ></v-text-field>
