@@ -21,14 +21,6 @@
           <v-container>
             {{ dataPrueba }}
             <v-row>
-              <v-col cols="12">
-                <v-autocomplete
-                  label="Periodo"
-                  v-model="editedItem.periodo"
-                  :items="periodosList"
-                ></v-autocomplete>
-              </v-col>
-
               <v-col cols="12" sm="4" md="4">
                 <v-autocomplete
                   label="Día *"
@@ -78,20 +70,33 @@
                 </v-radio-group>
               </v-col>
 
-              <v-col cols="12" sm="4" md="4">
-                <v-autocomplete
-                  :disabled="docenteList.length == 0"
-                  label="Docente"
-                  v-model="editedItem.docente"
-                  :items="docenteList"
-                ></v-autocomplete>
+              <v-col cols="12">
+                <search-selector-simple
+                  label="Docente*"
+                  name="name"
+                  :lista="groupStore.listProfessor"
+                  :selectionRequired="false"
+                  @guardarSel="setDocente"
+                  v-if="editedItem.cargo === 'Docente'"
+                />
               </v-col>
-              <v-col cols="12" sm="4" md="4">
-                <v-autocomplete
-                  label="Aula *"
-                  v-model="editedItem.classroomId"
-                  :items="aulaList"
-                ></v-autocomplete>
+              <v-col cols="12">
+                <v-text-field
+                  label="Asistente"
+                  type="String"
+                  suffix=""
+                  v-model="editedItem.assistant"
+                  v-if="editedItem.cargo === 'Asistente'"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12">
+                <search-selector-simple
+                  label="Aula*"
+                  name="name"
+                  :lista="groupStore.listAulas"
+                  :selectionRequired="false"
+                  @guardarSel="setAula"
+                />
               </v-col>
             </v-row>
           </v-container>
@@ -110,11 +115,25 @@ import { useMainStore } from '@/stores/MainStore'
 import { useAcademicPeriodStore } from '@/stores/admin/configgeneral/academicPeriodStore'
 import { useClassroomStore } from '@/stores/admin/configgeneral/classroomStore'
 import AxiosAM from '@/services/AxiosAM'
+import UDate from '@/services/UDate'
+import { useGroup } from '@/stores/admin/configgeneral/groupStore'
+import SearchSelectorSimple from '@/components/app/SearchSelectorSimple.vue'
 
 export default {
+  components: { SearchSelectorSimple },
   created() {
-    this.readData()
-    console.log('agreegroup iniciado..........', this.areaId.areaId)
+    //this.diasList = UDate.getDayEs();
+    this.diasList = UDate.getListDayEs()
+    //this.readData()
+    //console.log('agreegroup iniciado..........', this.areaId.areaId)
+  },
+
+  setup() {
+    const groupStore = useGroup()
+
+    return {
+      groupStore
+    }
   },
 
   data: () => ({
@@ -138,24 +157,26 @@ export default {
       aula: null
     },*/
 
-    editedItem:{
+    editedItem: {
       dayOfWeek: '',
-              startTime: '00:00',
-              endTime: '00:00',
-              professorId: 0,
-              assistant: '',
-              classroomId: 1,
-              groupItineraryId: 1
+      startTime: '00:00',
+      endTime: '00:00',
+      professor: 0,
+      assistant: '',
+      classroom: 1,
+      groupItineraryId: 1,
+      cargo: 'Docente'
     },
 
-    defaultItem:{
+    defaultItem: {
       dayOfWeek: '',
-              startTime: '00:00',
-              endTime: '00:00',
-              professorId: 0,
-              assistant: '',
-              classroomId: 1,
-              groupItineraryId: 1
+      startTime: '00:00',
+      endTime: '00:00',
+      professor: 0,
+      assistant: '',
+      classroom: 1,
+      groupItineraryId: 1,
+      cargo: 'Docente'
     },
 
     dialog: false,
@@ -165,11 +186,19 @@ export default {
     docenteList: [],
     aulaList: [],
 
-    periodosData:[],
-    aulaData:[]
+    periodosData: [],
+    aulaData: []
   }),
 
   methods: {
+    setDocente(professor) {
+      this.editedItem.professor = professor
+    },
+
+    setAula(aula) {
+      this.editedItem.classroom = aula
+    },
+
     async readData() {
       this.periodosList = await this.readPeriods() //['1 - Primer Semestre', '2 - Segundo Semestre', 'Invierno', 'Verano']
       this.diasList = ['LUNES', 'MARTES', 'MIERCOLES', 'JUEVES', 'VIERNES', 'SABADO', 'DOMINGO']
@@ -182,7 +211,7 @@ export default {
 
       let res = []
 
-      let academicPeriods;
+      let academicPeriods
 
       try {
         const { status, data } = await AxiosAM.get(
@@ -206,7 +235,7 @@ export default {
         res.push(academicPeriods[i].name)
       }
 
-      this.periodosData = academicPeriods;
+      this.periodosData = academicPeriods
 
       return res
     },
@@ -240,11 +269,21 @@ export default {
     },
 
     saveData() {
+      if (this.editedItem.cargo === 'Docente') {
+        this.editedItem.assistant = null
+      } else if (this.editedItem.cargo === 'Asistente') {
+        this.editedItem.professor = null
+      } else if (this.editedItem.cargo === null) {
+        this.editedItem.professor = null
+        this.editedItem.assistant = null
+      }
+
       this.$emit('agregarHorario', this.editedItem)
+
       this.dialog = false
 
       this.editedItem = this.defaultItem
-    },
+    }
   },
 
   props: {

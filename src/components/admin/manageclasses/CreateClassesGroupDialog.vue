@@ -18,20 +18,35 @@
           </v-toolbar-items>
         </v-toolbar>
         <v-card-item>
+          {{ listaCurriculums +":::::"}}
+          {{ groupStore.listCurriculum }}
+          {{ "DATA::" + JSON.stringify(groupStore.datoEdit)}}
           <v-row>
-            <v-col cols="12" md="6">
-              <v-autocomplete
-                label="Asignatura"
-                v-model="editedItem.remark"
-                :items="materiaList"
-              ></v-autocomplete>
+            <v-col cols="12" md="4">
+              <search-selector-simple
+                label="Malla Curricular*"
+                name="name"
+                :lista="groupStore.listCurriculum"
+                :selectionRequired="false"
+                @guardarSel="groupStore.setCurriculumEd"
+              />
             </v-col>
-            <v-col cols="12" md="6">
+
+            <v-col cols="12" md="4">
+              <search-selector-simple
+                label="Asignatura*"
+                name="name"
+                :lista="groupStore.listMaterias"
+                :selectionRequired="false"
+                @guardarSel="groupStore.setSubjectEd"
+              />
+            </v-col>
+            <v-col cols="12" md="4">
               <v-text-field
                 label="Identificador de Grupo"
                 type="String"
                 suffix=""
-                v-model="identGrupo"
+                v-model="groupStore.datoEdit.identifier"
               ></v-text-field>
             </v-col>
           </v-row>
@@ -49,6 +64,9 @@ import { useAreaStore } from '@/stores/admin/configgeneral/areaStore'
 
 import ClassesTableGroup from './ClassesTableGroup.vue'
 import AxiosAM from '@/services/AxiosAM'
+import SearchSelectorSimple from '@/components/app/SearchSelectorSimple.vue'
+import { useGroup } from '@/stores/admin/configgeneral/groupStore'
+import { ref } from 'vue'
 
 export default {
   created() {
@@ -67,7 +85,18 @@ export default {
       this.carrerasData = careers;*/
 
     console.log('createclassdesGroup createdddddddddddddd')
-    this.readMaterias()
+    //this.readMaterias()
+  },
+
+  setup() {
+    
+    const groupStore = useGroup()
+    const listaCurriculums = ref(groupStore.listCurriculum);
+
+    return {
+      listaCurriculums,
+      groupStore
+    }
   },
 
   data() {
@@ -107,6 +136,10 @@ export default {
   },
 
   methods: {
+    guardarCurriculumSel(){
+
+    },
+
     async readMaterias() {
       let res = []
       let materias
@@ -135,7 +168,8 @@ export default {
   },
 
   components: {
-    ClassesTableGroup
+    ClassesTableGroup,
+    SearchSelectorSimple
   },
 
   props: {

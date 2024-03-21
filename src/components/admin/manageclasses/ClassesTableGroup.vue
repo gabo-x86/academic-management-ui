@@ -30,6 +30,9 @@
         mdi-close-circle-outline
       </v-icon>
     </template>
+    <template v-slot:item.maestro="{ item }">
+      {{ item.professor?item.professor.name:item.assistant?item.assistant:"Por Designar" }}
+    </template>
     <template v-slot:no-data>
       <!--<v-btn color="primary" @click="initialize"> Reset </v-btn>-->
       <p>No existen datos disponibles en este momento</p>
@@ -64,8 +67,8 @@ export default {
       },
       { title: 'Horario Inicio', key: 'startTime' },
       { title: 'Horario Fin', key: 'endTime' },
-      { title: 'Aula', key: 'classroomId' },
-      { title: 'Docente', key: 'professorId' },
+      { title: 'Aula', key: 'classroom.name' },
+      { title: 'Docente', key: 'maestro' },
       { title: 'Opción', key: 'actions', sortable: false }
     ],
 

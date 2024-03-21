@@ -104,6 +104,7 @@
 import SimpleListDivider from '@/components/app/SimpleListDivider.vue'
 import CreateClassesGroupDialog from './CreateClassesGroupDialog.vue'
 import AxiosAM from '@/services/AxiosAM'
+import UDate from '@/services/UDate'
 
 export default {
   data: () => ({
@@ -115,7 +116,7 @@ export default {
         title: 'Nro',
         align: 'start',
         sortable: false,
-        key: 'name'
+        key: 'id'
       },
       { title: 'NOMNBRE ASIGNATURA', key: 'remark' },
       { title: 'GRUPO', key: 'groupIdentifier' },
@@ -189,12 +190,13 @@ export default {
     genHorarioString(item) {
       let res = []
       for (let i = 0; i < item.listScheduleDto.length; i++) {
+        let dia = item.listScheduleDto[i].dayOfWeek;
         res.push(
-          item.listScheduleDto[i].dayOfWeek.substring(0, 2) +
+           UDate.getABDay(UDate.getDayEs(dia))+
             ' ' +
-            item.listScheduleDto[i].startTime +
+            UDate.getHourString(item.listScheduleDto[i].startTime) +
             ' - ' +
-            item.listScheduleDto[i].startTime
+            UDate.getHourString(item.listScheduleDto[i].startTime)
         )
       }
 
