@@ -48,17 +48,6 @@ import AgreeGroupCLassesDialog from './AgreeGroupCLassesDialog.vue'
 export default {
   data: () => ({
     dialogDelete: false,
-
-    /*
-     dayOfWeek: '',
-              startTime: '00:00',
-              endTime: '00:00',
-              professorId: 0,
-              assistant: '',
-              classroomId: 1,
-              groupItineraryId: 1
-    */
-
     headers: [
       {
         title: 'Día',
