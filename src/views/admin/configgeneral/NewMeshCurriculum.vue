@@ -31,6 +31,8 @@ const lstNiveles = [
     {levelIdentifier: 16, levelName: 'Nivel P' },
     {levelIdentifier: 17, levelName: 'Nivel Q' },
     ];
+const listaNivel = ['Nivel A', 'Nivel B', 'Nivel C', 'Nivel D', 'Nivel E','Nivel F','Nivel G','Nivel I','Nivel J','Nivel K', 'Nivel L', 'Nivel M',
+'Nivel N', 'Nivel 0', 'Nivel P', 'Nivel Q'];
 const tempLstNivel = ['Nivel A'];
 const mainStore = useMainStore();
 const areaId = 1; // por ahora  mainStore.area.areaId
@@ -60,20 +62,9 @@ function onSave() {
 function addNewAsignature() {
     console.log('niveles completos=', lstNiveles);
     console.log('temporal lista=', tempLstNivel);
-    console.log('me hiciste click');
-
-
-
-    const filtro = lstNiveles.filter(item => item.levelName != tempLstNivel );
-
-    // let approved = students.filter(student => student.score >= 11);
-
-    console.log('filtro=',filtro);
-    // primer valor del array
-    console.log('primero en lista=', filtro[0]);
-    tempLstNivel.push(filtro[0].levelName);
+    var difference = listaNivel.filter(x => !tempLstNivel.includes(x));
+    tempLstNivel.push(difference[0]);
     console.log('auxliar=', tempLstNivel);
-
 }
 onMounted(async () => {
     const route = useRoute();
