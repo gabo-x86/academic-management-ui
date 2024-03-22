@@ -7,8 +7,8 @@ const areaId = 1;
 const asignaturaForm = ref({
     // id: null,
     subjectId: '',
-    optional: '',
-    path: '',
+    optional: false,
+    path: null,
     workload: ''
 })
 const props = defineProps({
@@ -31,13 +31,17 @@ function close() {
 
 function onSave() {
     var multiple = '';
-    Array.from(asignaturaForm.value.path).forEach((element) => {
-        if(element != '') {
-            multiple = multiple+element+', ';
-        }
+    if( asignaturaForm.value.path != null) {
+        Array.from(asignaturaForm.value.path).forEach((element) => {
+            if(element != '') {
+                multiple = multiple+element+',';
+            }
+        });
+        multiple = multiple.slice(0, multiple.length - 1);
+    } else {
+        multiple = '';
     }
-    );
-    multiple = multiple.slice(0, multiple.length - 2);
+    
     var obj = {
         "subjectId": asignaturaForm.value.subjectId,
         "optional": asignaturaForm.value.optional,
@@ -87,7 +91,7 @@ watch(() => props.asignaturaArray, (ar) => {
                         </v-col>
                         <v-col cols="12">
                             <v-select label="Requisitos" :items="subjectStore.subjects" :item-title="'name'"
-                                :item-value="'name'" v-model="asignaturaForm.path" multiple></v-select>
+                                :item-value="'id'" v-model="asignaturaForm.path" multiple></v-select>
                         </v-col>
                         <v-col cols="12">
                             <v-checkbox label="Electiva" v-model="asignaturaForm.optional"></v-checkbox>

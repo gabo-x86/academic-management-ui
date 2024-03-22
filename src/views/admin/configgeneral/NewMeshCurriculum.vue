@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, watch, inject, getCurrentInstance } from 'vue'
+import { onMounted, ref, inject } from 'vue'
 import LevelCurriculum from '@/components/admin/configgeneral/meshcurriculum/LevelCurriculum.vue'
 import { useCurriculumStore } from '@/stores/admin/configgeneral/curriculumStore';
 import { useMainStore } from '@/stores/MainStore';
@@ -32,7 +32,6 @@ const lstNiveles = [
     {levelIdentifier: 17, levelName: 'Nivel Q' },
     ];
 const tempLstNivel = ['Nivel A'];
-const niveles = ref([]);
 const mainStore = useMainStore();
 const areaId = 1; // por ahora  mainStore.area.areaId
 console.log('areaId=', areaId);

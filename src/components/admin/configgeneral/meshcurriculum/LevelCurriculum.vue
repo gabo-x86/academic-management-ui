@@ -1,24 +1,12 @@
 <script setup>
-import { onMounted, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import AsignatureFormComp from '@/components/admin/configgeneral/meshcurriculum/AsignatureForm.vue'
-import { useSubjectStore } from '@/stores/admin/configgeneral/subjectStore'
 import axios from "axios";
 
-const subjectStore = useSubjectStore()
 const areaId = 1;
 const baseUrl = import.meta.env.VITE_APP_BASE_URL;
 
-const lstLevels = [
-  {
-    id: 1,
-    name: 'Inicio',
-    workload: '10:45-11:30',
-    prerequi: 'Base de datos',
-    electiva: 'NO'
-  }
-];
-
-const arrayMaterias = [];
+const arrayMaterias = ref([]);
 const asignatures = ref({});
 const asignaturesAux = ref({});
 const props = defineProps({
@@ -57,15 +45,12 @@ async function submitAsignatura(asignatura) {
         "optional": arr.optional
       };
       auxArray.push(objSubj);
-      // arrayMaterias.push(objSubj);
-      console.log(result.data);
+      // console.log(result.data);
     });
   });
-  arrayMaterias == auxArray;
-  arrayMaterias = auxArray.slice();
+  arrayMaterias.value = auxArray;
 
-  console.log('.....',arrayMaterias );
-  
+  console.log('ver arrayMaterias=',arrayMaterias.value ); 
 
 
 
@@ -74,8 +59,7 @@ async function submitAsignatura(asignatura) {
     "levelName": props.nivelObj.levelName,
     "subjectCurriculumList" : auxArray
   };
-  // this.asignaturas = test;
-  console.log('<---->',asignaturesAux.value.subjectCurriculumList);
+  console.log('--->',asignaturesAux.value.subjectCurriculumList);
 }
 
 watch(
@@ -110,7 +94,7 @@ watch(
           </tr>
         </thead>
         <tbody>
-          <tr v-for="item in arrayMaterias[0]" :key="item.subjectId">
+          <tr v-for="item in arrayMaterias" :key="item.subjectId">
             <td>{{ item.subjectId }}</td>
             <td>{{ item.workload }}</td>
             <td>{{ item.path }}</td>
