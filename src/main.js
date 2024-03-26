@@ -5,6 +5,8 @@ import { createPinia } from 'pinia'
 
 import App from './App.vue'
 import router from './router'
+//PDF
+//import VueHtml2pdf from 'vue3-html2pdf'
 
 // Vuetify
 import 'vuetify/styles'
@@ -42,5 +44,6 @@ app.config.globalProperties.globalAreaSelected = {
 app.use(createPinia());
 app.use(router);
 app.use(vuetify);
+//app.use(VueHtml2pdf);
 
 app.mount('#app');

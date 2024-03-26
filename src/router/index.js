@@ -45,6 +45,11 @@ const router = createRouter({
       path: '/admin/academic-period',
       name: 'admin-academic-period',
       component: () => import('../views/admin/configgeneral/AcademicPeriodView.vue')
+    },
+    {
+      path: '/admin/simulacion',
+      name: 'admin-simulacion',
+      component: () => import('../views/admin/configclass/Simulacion.vue')
     }
     
   ]
