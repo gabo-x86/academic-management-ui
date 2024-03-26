@@ -65,6 +65,20 @@ export const useCurriculumStore = defineStore('curriculumStore', () => {
       }
     }
 
-    return {curriculums,curriculumsByCareer,currentCurriculum, carrera,getCurriculumsByCareer, getCurriculums, getCareerWithId, createCurriculum};
+    async function deleteCurriculum(curriculum) {
+      try {
+        const {status} = await AxiosAM.delete(`${pathCurriculumResource}{careerId}/curriculums/${curriculum.id}`);
+        if (status === 204) {
+          const index = curriculums.value.findIndex((obj) => obj.id === curriculum.id);
+          curriculums.value.splice(index, 1);
+          return { success: true, data: null };
+        }
+      } catch (error) {
+        console.log('error deleting curriculum');
+        return { error: true, success: false, data: null }
+      }
+    }
+
+    return {curriculums,curriculumsByCareer,currentCurriculum, carrera,getCurriculumsByCareer, getCurriculums, getCareerWithId, createCurriculum,deleteCurriculum};
 }
 );

@@ -5,6 +5,7 @@ import { useCurriculumStore } from '@/stores/admin/configgeneral/curriculumStore
 
 const router = useRouter();
 const curriculumStore = useCurriculumStore();
+const curriculum = ref({});
 const carreraSelect = { id: 1, name: 'Ing. de Sistemas'};
 const headers = ref([
   { title: 'Nº', align: 'start', key: 'id' },
@@ -14,9 +15,29 @@ const headers = ref([
   { title: 'Fecha Fin', align: 'start', key: 'endDate' },
   { title: 'Acciones', align: 'center', sortable: false, key: 'actions' }
 ]);
+const editedIndex = ref(-1);
+const deleteDialog = ref(false);
+const deleteMessage = ref('');
+
 function newMeshcurriculum(item){
   console.log('item id=', item);
   router.push({name:'admin-newmeshcurriculum', params: { idCarrera: carreraSelect.id }});
+}
+
+function deleteItem(item) {
+  editedIndex.value = curriculumStore.curriculums.indexOf(item);
+  curriculum.value = Object.assign({}, item);
+  deleteMessage.value = `¿Quieres eliminar el curriculum "${item.name}"?`
+  deleteDialog.value = true;
+}
+
+async function confirmDelete() {
+  await curriculumStore.deleteCurriculum(curriculum.value);
+  closeDeleteDialog();
+}
+
+function closeDeleteDialog() {
+  deleteDialog.value = false;
 }
 
 onMounted(async () => {
@@ -90,7 +111,22 @@ onMounted(async () => {
         </v-data-table-virtual>
       </v-col>
     </v-row>
-  </div>
+  </div> <v-dialog v-model="deleteDialog" persistent width="350">
+    <v-card>
+      <v-card-title class="text-h5">Confirmar eliminación</v-card-title>
+      <v-card-text>{{deleteMessage}}</v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn color="green-darken-1" variant="text" @click="closeDeleteDialog">
+          CANCEL
+        </v-btn>
+        <v-btn color="green-darken-1" variant="text" @click="confirmDelete">
+          SI
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+  
 </template>
 
 <style scoped>
