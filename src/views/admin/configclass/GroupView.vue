@@ -57,7 +57,6 @@ areaID.value=route.params.areaId
 careerId.value=route.params.careerId
 itineraryId.value=route.params.itineraryId
 
-//console.log('areaId: '+areaID.value)
 
 const listSchedule = ref([])
 const lastId=ref(null)
@@ -66,8 +65,6 @@ onMounted( async ()=>{
   await subjectStore.getSubjects(areaID.value)
   await classroomStore.getClassrooms(areaID.value)
   await itineraryStore.getItineraryById(itineraryId.value)
-  //console.log("itinerary_ID:"+itineraryStore.currentItinerary.curriculumId)
-  //console.log("subject ID"+selectedSubject)
 })
 
 const dayOfWeek=ref('')
@@ -121,11 +118,9 @@ const onSubmit = async ()=>{
       //crear horario con id de itinerario-grupo
       await itineraryScheduleStore.createItinerarySchedule(lastId.value,Schedule)
       selectedOption.value='option3'
-      console.log(JSON.stringify(Schedule))
     }
     cleanDialog()
     closeDialog();
-    console.log(itineraryGroupStore.statusGet);
 
     //si hay error porque la materia no es de la carrera
     if(itineraryGroupStore.statusGet){
@@ -137,7 +132,6 @@ const onSubmit = async ()=>{
 
       await itineraryGroupStore.getInineraryGroupById(lastId.value)
       listSchedule.value=itineraryGroupStore.currentItineraryGroup.listScheduleDto
-      //console.log('ultimo ID'+lastId.value)
     }else{
       // habilita crear itinenary-group y inténtalo
       IsCreatedGroup.value=true
@@ -158,7 +152,6 @@ const closeDialog = () => {
 };
 
 async function confirmDelete(id){
-  //console.log("Delete ID:"+id)
   await itineraryScheduleStore.deleteItinerarySchedule(id)
   await itineraryGroupStore.getInineraryGroupById(lastId.value);
   listSchedule.value=itineraryGroupStore.currentItineraryGroup.listScheduleDto
@@ -421,7 +414,7 @@ const typeRules = [
     </v-form>
 </v-card>
 <!--  <pre> listSchedule: {{ listSchedule }}</pre>-->
-  <pre> Last ID: {{ lastId }}</pre>
+<!--  <pre> Last ID: {{ lastId }}</pre>-->
 </template>
 
 <style scoped>
