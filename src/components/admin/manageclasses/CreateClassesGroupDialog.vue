@@ -21,29 +21,30 @@
           <v-row>
             <v-col cols="12" md="4">
               <search-selector-simple
-                label="Malla Curricular*"
-                name="name"
-                :lista="groupStore.listCurriculum"
-                :selectionRequired="false"
-                @guardarSel="groupStore.setCurriculumEd"
+                  label="Malla Curricular*"
+                  name="name"
+                  :lista="groupStore.listCurriculum"
+                  :selectionRequired="false"
+                  @guardarSel="groupStore.setCurriculumEd"
               />
             </v-col>
 
             <v-col cols="12" md="4">
               <search-selector-simple
-                label="Asignatura*"
-                name="name"
-                :lista="groupStore.listMaterias"
-                :selectionRequired="false"
-                @guardarSel="groupStore.setSubjectEd"
+                  label="Asignatura*"
+                  name="name"
+                  :lista="groupStore.listMaterias"
+                  :selectionRequired="false"
+                  @guardarSel="groupStore.setSubjectEd"
               />
             </v-col>
             <v-col cols="12" md="4">
               <v-text-field
-                label="Identificador de Grupo"
-                type="String"
-                suffix=""
-                v-model="groupStore.datoEdit.identifier"
+                  label="Identificador de Grupo"
+                  type="String"
+                  suffix=""
+                  v-model="groupStore.datoEdit.identifier"
+                  v-if="groupStore.datoEdit.identifier !== ''"
               ></v-text-field>
             </v-col>
           </v-row>
@@ -62,20 +63,46 @@ import ClassesTableGroup from './ClassesTableGroup.vue'
 import AxiosAM from '@/services/AxiosAM'
 import SearchSelectorSimple from '@/components/app/SearchSelectorSimple.vue'
 import { useGroup } from '@/stores/admin/configgeneral/groupStore'
-import { ref } from 'vue'
+import {ref, watch} from 'vue'
 
 export default {
-  created() {
-  },
+  created() {},
 
   setup() {
     const groupStore = useGroup()
     const listaCurriculums = ref(groupStore.listCurriculum)
 
+    const fetchGroupIdentifier = async () => {
+      try {
+        const response = await AxiosAM.get(
+            '/admin/areas/1/careers/1/academic-periods/1/groups/suggest-group-identifier',
+            {
+              params: {
+                subjectId: groupStore.datoEdit.subjectId,
+                curriculumId: groupStore.datoEdit.curriculumId,
+              }
+            }
+        );
+        groupStore.datoEdit.identifier = response.data || ''; // Asignar cadena vacía si no hay datos
+      } catch (error) {
+        console.error('Error al obtener el identificador del grupo:', error);
+      }
+    };
+
+    watch(
+        () => [groupStore.datoEdit.subjectId, groupStore.datoEdit.curriculumId],
+        async () => {
+          if (groupStore.datoEdit.subjectId && groupStore.datoEdit.curriculumId) {
+            await fetchGroupIdentifier();
+          }
+        }
+    );
+
     return {
       listaCurriculums,
-      groupStore
-    }
+      groupStore,
+      fetchGroupIdentifier
+    };
   },
 
   data() {
@@ -116,7 +143,9 @@ export default {
       }
     },
 
-    guardarCurriculumSel() {},
+    guardarCurriculumSel() {
+      fetchGroupIdentifier();
+    },
 
   },
 
