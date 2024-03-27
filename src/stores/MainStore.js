@@ -15,8 +15,21 @@ export const useMainStore = defineStore('main', () => {
     area.areaId.value = id;
   }
 
+  const itinerary={
+    itineraryId:ref(1),
+    name:ref(null),
+    active:ref(null)
+  }
+
+  function setItineraryId(id){
+    itinerary.itineraryId.value =id
+  }
   return {
     area,
     setAreaId,
+    itinerary,
+    setItineraryId
   };
+
+
 });

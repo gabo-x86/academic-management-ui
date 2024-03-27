@@ -11,6 +11,7 @@ const mainStore = useMainStore()
 const dialogCreate = ref(false)
 const dialogEdit = ref(false)
 const dialogDelete = ref(false)
+
 const idCurrentItinerary = ref(null)
 const headers = ref([
   { title: 'Carrera', align: 'center', key: 'careerName' },
@@ -40,6 +41,7 @@ const openDialogEdit = (id) => {
   idCurrentItinerary.value = id
   dialogEdit.value = true
 }
+
 const closeDialogEdit = () => {
   dialogEdit.value = false
 }
@@ -53,17 +55,6 @@ const closeDialogDelete = () => {
 </script>
 
 <template>
-  <h1>Lista de Itinerarios</h1>
-  <br />
-  <v-row justify="end">
-    <v-btn prepend-icon="mdi-plus" color="primary" @click="openDialogCreate">
-      <template v-slot:prepend>
-        <v-icon color="white"></v-icon>
-      </template>
-      Nuevo
-    </v-btn>
-  </v-row>
-  <br />
   <create-itinerary
     :dialog="dialogCreate"
     :area="mainStore.area.areaId"
@@ -90,9 +81,33 @@ const closeDialogDelete = () => {
     item-key="name"
     width="100px"
   >
+    <template v-slot:top>
+      <v-toolbar flat>
+        <v-toolbar-title>Lista de Itinerarios</v-toolbar-title>
+        <v-divider class="mx-4" inset vertical></v-divider>
+        <v-spacer></v-spacer>
+        <v-btn color="primary" dark class="mb-2" @click="openDialogCreate"> Nuevo </v-btn>
+      </v-toolbar>
+    </template>
     <template v-slot:[`item.actions`]="{ item }">
       <v-row justify="space-around">
-        <v-btn variant="text" class="botones-tabla-btn" prepend-icon="mdi-eye-outline">
+        <v-btn
+            variant="text"
+            class="botones-tabla-btn"
+            prepend-icon="mdi-playlist-edit"
+            :to="'/admin/areas/'+mainStore.area.areaId+'/careers/'+item.careerId+'/itineraries/'+item.id+'/edit'"
+        >
+          <template v-slot:prepend>
+            <v-icon color="black"></v-icon>
+          </template>
+          Editar itinerario
+        </v-btn>
+        <v-btn
+          variant="text"
+          class="botones-tabla-btn"
+          prepend-icon="mdi-eye-outline"
+          :to="'/admin/areas/'+mainStore.area.areaId+'/careers/'+item.careerId+'/itineraries/'+item.id"
+        >
           <template v-slot:prepend>
             <v-icon color="black"></v-icon>
           </template>

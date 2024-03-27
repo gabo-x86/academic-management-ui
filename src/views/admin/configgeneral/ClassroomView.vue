@@ -145,7 +145,7 @@ onMounted( async ()=>{
         </template>
       </v-data-table>
       <div v-else>
-        <p>No seleccionaste ningún Area aun, no tenemos aulas que mostrarte</p>
+        <p class="text-center font-italic text-h6 my-10">No seleccionaste ningún Area aun, no tenemos aulas que mostrarte</p>
       </div>
     </v-card-text>
   </v-card>

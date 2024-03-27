@@ -33,9 +33,11 @@ export const useClassroomStore = defineStore('classroomStore', ()=>{
                     type:'',
                     address:'',
                 };
+                return{ success:true, data: data}
             }
         }catch (error){
             console.error('Error saving classroom: ', error);
+            return { error:true, success:false, data:null}
         }
     }
 
@@ -43,10 +45,8 @@ export const useClassroomStore = defineStore('classroomStore', ()=>{
         try {
             const { status, data } = await AxiosAM.get(`${pathCareerResource}/2/classrooms/${classroomId}`);
             if (status === 200) {
-                const classroomData=data ;
-                if(classroomData){
-                    currentClassroom.value=classroomData
-                }
+                currentClassroom.value=data
+                return{ success:true, data:data}
             }
         } catch (error) {
             console.error('Error getting career by id:', error);
@@ -57,10 +57,11 @@ export const useClassroomStore = defineStore('classroomStore', ()=>{
         try {
             const { status, data } = await AxiosAM.put(`${pathCareerResource}/2/classrooms/${classroomId}`, currentClassroom.value);
             if (status === 200) {
-
+                return{ success:true, data: data}
             }
         } catch (error) {
             console.error('Error saving classroom:', error);
+            return { error:true, success:false, data:null}
         }
     }
 
@@ -68,10 +69,11 @@ export const useClassroomStore = defineStore('classroomStore', ()=>{
         try {
             const {status, data}=await AxiosAM.delete(`${pathCareerResource}/2/classrooms/${classroomId}`)
             if (status === 200) {
-
+                return{ success:true, data: data}
             }
         }catch (error){
             console.error('Error deleting classroom:', error)
+            return { error:true, success:false, data:null}
         }
     }
 
