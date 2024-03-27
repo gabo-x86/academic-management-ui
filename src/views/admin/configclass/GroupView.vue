@@ -55,15 +55,25 @@ const identGroup=ref('')
 const remark=ref('')
 const suggestIdentifier = ref(null)
 
-const { getSuggestedIdentifier } = useItineraryGroupStore()
+const dayOfWeek=ref('')
+const startTime=ref('')
+const endTime=ref('')
+const professorId=ref(null)
+const assistant=ref(null)
+const classroomId=ref(null)
 
+
+const IsCreatedGroup=ref(true)
+const stateBack=ref(false)
+const stateSC=ref(true)
+
+const { getSuggestedIdentifier } = useItineraryGroupStore()
 
 
 areaID.value=route.params.areaId
 careerId.value=route.params.careerId
 itineraryId.value=route.params.itineraryId
 
-//console.log('areaId: '+areaID.value)
 
 const listSchedule = ref([])
 const lastId=ref(null)
@@ -72,13 +82,8 @@ onMounted( async ()=>{
   await subjectStore.getSubjects(areaID.value)
   await classroomStore.getClassrooms(areaID.value)
   await itineraryStore.getItineraryById(itineraryId.value)
-
-  console.log(areaID.value+"-"+careerId.value+"-"+itineraryId.value+"-"+ subjectId.value+"-"+curriculumId.value)
-
-
-  //console.log("itinerary_ID:"+itineraryStore.currentItinerary.curriculumId)
-  //console.log("subject ID"+selectedSubject)
 })
+
 
 watch(selectedSubject, async (newValue, oldValue) => {
   if (newValue !== oldValue) {
@@ -92,76 +97,72 @@ watch(selectedSubject, async (newValue, oldValue) => {
 });
 
 watch(suggestIdentifier, (newValue) => {
-  // Si suggestIdentifier tiene un valor, asigna ese valor a identGroup
-  // de lo contrario, deja identGroup como está
   if (newValue !== null) {
     identGroup.value = newValue;
   }
 });
 
-const dayOfWeek=ref('')
-const startTime=ref('')
-const endTime=ref('')
-const professorId=ref(null)
-const assistant=ref(null)
-const classroomId=ref(null)
-
-
-const IsCreatedGroup=ref(true)
-const stateBack=ref(false)
-const stateSC=ref(true)
 
 const onSubmit = async ()=>{
   const { valid } = await form.value.validate()
   if(valid){
-  if(IsCreatedGroup.value){
-    const Group={
-      itineraryId:itineraryId.value,
-      curriculumId:itineraryStore.currentItinerary.curriculumId,
-      subjectId:selectedSubject.value,
-      identifier:identGroup.value,
-      remark:'',
-      listSchedule:[{
+    if(IsCreatedGroup.value){
+      const Group={
+        itineraryId:itineraryId.value,
+        curriculumId:itineraryStore.currentItinerary.curriculumId,
+        subjectId:selectedSubject.value,
+        identifier:identGroup.value,
+        remark:remark.value,
+        listSchedule:[{
+          dayOfWeek:dayOfWeek.value,
+          startTime:startTime.value,
+          endTime:endTime.value,
+          professorId:professorId.value,
+          assistant:assistant.value,
+          classroomId:classroomId.value
+        }]
+      }
+      //crear itinerario-grupo
+      await itineraryGroupStore.createItineraryGroup(areaID.value,careerId.value,itineraryId.value,Group)
+      IsCreatedGroup.value=false
+      stateBack.value=true
+      selectedOption.value='option3'
+      stateSC.value=false
+
+    }else{
+      const Schedule={
         dayOfWeek:dayOfWeek.value,
         startTime:startTime.value,
         endTime:endTime.value,
         professorId:professorId.value,
         assistant:assistant.value,
-        classroomId:classroomId.value
-      }]
+        classroomId:classroomId.value,
+        groupItineraryId:lastId.value
+      }
+      //crear horario con id de itinerario-grupo
+      await itineraryScheduleStore.createItinerarySchedule(lastId.value,Schedule)
+      selectedOption.value='option3'
     }
-    await itineraryGroupStore.createItineraryGroup(areaID.value,careerId.value,itineraryId.value,Group)
-    IsCreatedGroup.value=false
-    stateBack.value=true
-    selectedOption.value='option3'
-    stateSC.value=false
+    cleanDialog()
+    closeDialog();
 
-  }else{
-    const Schedule={
-      dayOfWeek:dayOfWeek.value,
-      startTime:startTime.value,
-      endTime:endTime.value,
-      professorId:professorId.value,
-      assistant:assistant.value,
-      classroomId:classroomId.value,
-      groupItineraryId:lastId.value
+    //si hay error porque la materia no es de la carrera
+    if(itineraryGroupStore.statusGet){
+      const response = await  itineraryGroupStore.getInineraryGroups(careerId.value, itineraryId.value)
+      // Ordena los datos por ID de manera descendente
+      const sortedData = response.data.sort((a, b) => b.id - a.id);
+      // Obtiene el último ID
+      lastId.value = sortedData[0].id;
+
+      await itineraryGroupStore.getInineraryGroupById(lastId.value)
+      listSchedule.value=itineraryGroupStore.currentItineraryGroup.listScheduleDto
+    }else{
+      // habilita crear itinenary-group y inténtalo
+      IsCreatedGroup.value=true
+      stateBack.value=false
+      stateSC.value=true
+      clean()
     }
-    await itineraryScheduleStore.createItinerarySchedule(lastId.value,Schedule)
-    selectedOption.value='option3'
-    console.log(JSON.stringify(Schedule))
-  }
-  clean()
-  closeDialog();
-
-  const response = await  itineraryGroupStore.getInineraryGroups(careerId.value, itineraryId.value)
-  // Ordena los datos por ID de manera descendente
-  const sortedData = response.data.sort((a, b) => b.id - a.id);
-  // Obtiene el último ID
-  lastId.value = sortedData[0].id;
-
-  await itineraryGroupStore.getInineraryGroupById(lastId.value)
-  listSchedule.value=itineraryGroupStore.currentItineraryGroup.listScheduleDto
-  //console.log('ultimo ID'+lastId.value)
   }
 }
 
@@ -171,23 +172,26 @@ const openDialog = () => {
 
 const closeDialog = () => {
   dialogVisible.value = false;
-  clean();
+  cleanDialog();
 };
 
 async function confirmDelete(id){
-  //console.log("Delete ID:"+id)
   await itineraryScheduleStore.deleteItinerarySchedule(id)
   await itineraryGroupStore.getInineraryGroupById(lastId.value);
   listSchedule.value=itineraryGroupStore.currentItineraryGroup.listScheduleDto
 }
 
-const clean=()=>{
+const cleanDialog=()=>{
   dayOfWeek.value=''
   startTime.value=''
   endTime.value=''
   professorId.value=null
   assistant.value=null
   classroomId.value=null
+}
+const clean =()=>{
+  selectedSubject.value=null
+  identGroup.value=''
 }
 const deleteGroup = async ()=>{
   await itineraryGroupStore.deleteItinerarGroup(lastId.value)
@@ -267,14 +271,12 @@ const typeRules = [
           sm="6"
           md="6"
         >
-
           <v-text-field
               v-model="identGroup"
               label="Identificador de Grupo *"
               variant="outlined"
               class="mx-4"
           ></v-text-field>
-
         </v-col>
 
       </v-row>
