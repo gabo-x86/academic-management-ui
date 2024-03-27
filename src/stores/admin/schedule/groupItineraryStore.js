@@ -74,6 +74,6 @@ export const useItineraryGroupStore=defineStore('groupItineraryStore', ()=>{
     }
   }
 
-  return{getInineraryGroups, getInineraryGroupById, createItineraryGroup, deleteItinerarGroup, itineraryGroups, currentItineraryGroup, getSuggestedIdentifier}
+  return{getInineraryGroups, getInineraryGroupById, createItineraryGroup, deleteItinerarGroup, itineraryGroups, currentItineraryGroup, statusGet , getSuggestedIdentifier}
   }
 )
