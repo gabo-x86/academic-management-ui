@@ -1,11 +1,12 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import AxiosAM from '@/services/AxiosAM.js'
+import {useMainStore} from '@/stores/MainStore.js'
 
 let pathItineraryResource=`/admin/areas/1/careers/1/itineraries/1/itinerary-groups`
 
 export const useItineraryGroupStore=defineStore('groupItineraryStore', ()=>{
-
+  const mainStore= useMainStore()/// <<<-----
   const itineraryGroups =ref([]);
   const currentItineraryGroup = ref(null)
   const statusGet =ref(true);
@@ -48,6 +49,8 @@ export const useItineraryGroupStore=defineStore('groupItineraryStore', ()=>{
       return { error:true, success:false, data:null}
     }
   }
+
+
   async function deleteItinerarGroup(idItinerarGroup){
     try {
       const {status, data} = await AxiosAM.delete(pathItineraryResource+"/"+idItinerarGroup)
@@ -60,6 +63,17 @@ export const useItineraryGroupStore=defineStore('groupItineraryStore', ()=>{
       return {  error:true, success:false, data:null}
     }
   }
-  return{getInineraryGroups, getInineraryGroupById, createItineraryGroup, deleteItinerarGroup, itineraryGroups, currentItineraryGroup, statusGet}
+
+  async function getSuggestedIdentifier(areaID, careerId, itineraryId, subjectId, curriculumId) {
+    try {
+      const response = await AxiosAM.get(`/admin/areas/${areaID}/careers/${careerId}/itineraries/${itineraryId}/itinerary-groups/suggest-group-identifier?subjectId=${subjectId}&curriculumId=${curriculumId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error al obtener el identificador sugerido:', error);
+      return null;
+    }
+  }
+
+  return{getInineraryGroups, getInineraryGroupById, createItineraryGroup, deleteItinerarGroup, itineraryGroups, currentItineraryGroup, statusGet , getSuggestedIdentifier}
   }
 )

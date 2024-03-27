@@ -1,5 +1,5 @@
 <script setup>
-import {onMounted, ref} from 'vue'
+import {onMounted, ref, watch} from 'vue'
 import {useRoute} from "vue-router";
 import { useSubjectStore } from "@/stores/admin/configgeneral/subjectStore.js";
 import { useClassroomStore } from "@/stores/admin/configgeneral/classroomStore.js";
@@ -45,13 +45,30 @@ const headers = ref([
 ])
 
 
-
+const subjectId = ref(1)
+const curriculumId = ref(1)
 const careerId = ref(null)
 const itineraryId=ref(null)
 const areaID = ref(null)
 const selectedSubject = ref(null)
 const identGroup=ref('')
 const remark=ref('')
+const suggestIdentifier = ref(null)
+
+const dayOfWeek=ref('')
+const startTime=ref('')
+const endTime=ref('')
+const professorId=ref(null)
+const assistant=ref(null)
+const classroomId=ref(null)
+
+
+const IsCreatedGroup=ref(true)
+const stateBack=ref(false)
+const stateSC=ref(true)
+
+const { getSuggestedIdentifier } = useItineraryGroupStore()
+
 
 areaID.value=route.params.areaId
 careerId.value=route.params.careerId
@@ -67,17 +84,24 @@ onMounted( async ()=>{
   await itineraryStore.getItineraryById(itineraryId.value)
 })
 
-const dayOfWeek=ref('')
-const startTime=ref('')
-const endTime=ref('')
-const professorId=ref(null)
-const assistant=ref(null)
-const classroomId=ref(null)
 
+watch(selectedSubject, async (newValue, oldValue) => {
+  if (newValue !== oldValue) {
+    if (newValue!== null) {
+      const materiaSelecionada = newValue
+      suggestIdentifier.value = await getSuggestedIdentifier(areaID.value, careerId.value, itineraryId.value, materiaSelecionada ,curriculumId.value);
+    } else {
+      suggestIdentifier.value = null;
+    }
+  }
+});
 
-const IsCreatedGroup=ref(true)
-const stateBack=ref(false)
-const stateSC=ref(true)
+watch(suggestIdentifier, (newValue) => {
+  if (newValue !== null) {
+    identGroup.value = newValue;
+  }
+});
+
 
 const onSubmit = async ()=>{
   const { valid } = await form.value.validate()
@@ -249,7 +273,7 @@ const typeRules = [
         >
           <v-text-field
               v-model="identGroup"
-              label="Identificador de grupo *"
+              label="Identificador de Grupo *"
               variant="outlined"
               class="mx-4"
           ></v-text-field>
