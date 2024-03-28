@@ -156,8 +156,9 @@ const enrollmentCostRules = [
     if (parsedValue < 0 || parsedValue > 9999.99) {
       return 'El costo de matrícula debe estar entre 0 y 9999.99';
     }
-    if (parsedValue.toFixed(2) !== v) {
-      return 'El costo de la matricula debe ser expresado de la siguiente forma: 100.00 con maximo 2 decimales';
+    const decimalCount = v.split('.')[1]?.length || 0;
+    if (decimalCount > 2) {
+      return 'El costo de la matrícula debe tener como máximo 2 decimales';
     }
     return true;
   }
