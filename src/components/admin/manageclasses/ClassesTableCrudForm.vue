@@ -8,7 +8,7 @@
   >
     <template v-slot:top>
       <v-toolbar flat>
-        <v-toolbar-title>{{ 'Clases de ' + "carrera.name" + ' ' + "gestion.year" }}</v-toolbar-title>
+        <v-toolbar-title style="flex-grow: 3;">{{groupStore.carreraSel===null||groupStore.academicSel===null?"Selecciona una carrera y una gestión academica": 'Clases de ' + groupStore.carreraSel.name + ' ' + groupStore.academicSel.name+"/"+groupStore.academicSel.year}}</v-toolbar-title>
         <v-divider class="mx-4" inset vertical></v-divider>
         <v-spacer></v-spacer>
         <v-dialog v-model="dialog" max-width="500px">
@@ -105,6 +105,7 @@ import SimpleListDivider from '@/components/app/SimpleListDivider.vue'
 import CreateClassesGroupDialog from './CreateClassesGroupDialog.vue'
 import AxiosAM from '@/services/AxiosAM'
 import UDate from '@/services/UDate'
+import { useGroup } from '@/stores/admin/configgeneral/groupStore'
 
 export default {
   data: () => ({
@@ -181,6 +182,14 @@ export default {
     this.initialize()
   },
 
+  setup() {
+    const groupStore = useGroup()
+
+    return {
+      groupStore
+    }
+  },
+
   methods: {
     agregarElemento(elemento) {
       this.editedItem = elemento
@@ -253,197 +262,6 @@ export default {
 
     initialize() {
       this.desserts = this.listData
-
-      /*this.desserts = [
-        {
-          curriculumId: 1,
-          subjectId: 1,
-          identifier: 'CGOR2N2',
-          remark: 'Clase de Geometría Orgánica',
-          listScheduleDto: [
-            {
-              dayOfWeek: 'LUNES',
-              startTime: '08:00',
-              endTime: '10:00',
-              professorId: 123,
-              assistant: 'Juan Pérez',
-              classroomId: 1,
-              groupItineraryId: 1
-            },
-            {
-              dayOfWeek: 'VIERNES',
-              startTime: '09:00',
-              endTime: '11:00',
-              professorId: 456,
-              assistant: 'María González',
-              classroomId: 2,
-              groupItineraryId: 1
-            }
-          ]
-        },
-
-        {
-          curriculumId: 2,
-          subjectId: 3,
-          identifier: 'ALG1A2',
-          remark: 'Álgebra I Avanzada',
-          listScheduleDto: [
-            {
-              dayOfWeek: 'MARTES',
-              startTime: '10:00',
-              endTime: '12:00',
-              professorId: 789,
-              assistant: null,
-              classroomId: 201,
-              groupItineraryId: 2
-            },
-            {
-              dayOfWeek: 'JUEVES',
-              startTime: '10:00',
-              endTime: '12:00',
-              professorId: 789,
-              assistant: null,
-              classroomId: 201,
-              groupItineraryId: 2
-            }
-          ]
-        }
-      ]*/
-      /*this.desserts = [
-        {
-          id: 1,
-          level: 1,
-          subjectName: 'Matemáticas',
-          subjectInitials: 'MAT',
-          groupIdentifier: 'A',
-          remark: 'Curso básico de matemáticas',
-          listScheduleDtoDto: [
-            {
-              id: 1,
-              dayOfWeek: 'Lunes',
-              startTime: {
-                hour: 8,
-                minute: 0,
-                second: 0,
-                nano: 0
-              },
-              endTime: {
-                hour: 10,
-                minute: 0,
-                second: 0,
-                nano: 0
-              },
-              classroomName: 'Aula 101',
-              classroomInitials: 'A101',
-              professorFullName: 'Juan Pérez'
-            }
-            // Otros horarios para esta materia...
-          ]
-        },
-        {
-          id: 2,
-          level: 1,
-          subjectName: 'Historia',
-          subjectInitials: 'HIS',
-          groupIdentifier: 'B',
-          remark: 'Curso introductorio de historia',
-          listScheduleDtoDto: [
-            {
-              id: 2,
-              dayOfWeek: 'Miércoles',
-              startTime: {
-                hour: 9,
-                minute: 0,
-                second: 0,
-                nano: 0
-              },
-              endTime: {
-                hour: 11,
-                minute: 0,
-                second: 0,
-                nano: 0
-              },
-              classroomName: 'Aula 102',
-              classroomInitials: 'A102',
-              professorFullName: 'María González'
-            }
-            // Otros horarios para esta materia...
-          ]
-        }
-      ]*/
-
-      /*this.desserts = [
-        {
-          name: 'Frozen Yogurt',
-          calories: 159,
-          fat: 6.0,
-          carbs: 24,
-          protein: 4.0
-        },
-        {
-          name: 'Ice cream sandwich',
-          calories: 237,
-          fat: 9.0,
-          carbs: 37,
-          protein: 4.3
-        },
-        {
-          name: 'Eclair',
-          calories: 262,
-          fat: 16.0,
-          carbs: 23,
-          protein: 6.0
-        },
-        {
-          name: 'Cupcake',
-          calories: 305,
-          fat: 3.7,
-          carbs: 67,
-          protein: 4.3
-        },
-        {
-          name: 'Gingerbread',
-          calories: 356,
-          fat: 16.0,
-          carbs: 49,
-          protein: 3.9
-        },
-        {
-          name: 'Jelly bean',
-          calories: 375,
-          fat: 0.0,
-          carbs: 94,
-          protein: 0.0
-        },
-        {
-          name: 'Lollipop',
-          calories: 392,
-          fat: 0.2,
-          carbs: 98,
-          protein: 0
-        },
-        {
-          name: 'Honeycomb',
-          calories: 408,
-          fat: 3.2,
-          carbs: 87,
-          protein: 6.5
-        },
-        {
-          name: 'Donut',
-          calories: 452,
-          fat: 25.0,
-          carbs: 51,
-          protein: 4.9
-        },
-        {
-          name: 'KitKat',
-          calories: 518,
-          fat: 26.0,
-          carbs: 65,
-          protein: 7
-        }
-      ]*/
     },
 
     editItem(item) {

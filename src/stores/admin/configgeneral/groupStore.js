@@ -49,13 +49,6 @@ export const useGroup = defineStore('myStore', {
         },
 
         addGroupBD() {
-            //for(let i=0; i<this.datoEdit.listSchedule.length; i++){
-              //  this.datoEdit.listSchedule[i].groupItineraryId = 1;//this.datoEdit.identifier;
-            //}
-
-            //http://localhost:8080/admin/areas/1/careers/1/academic-periods/1/groups
-
-            console.log("TOy escribiendo BDGROUP ADD")
 
             let direccion = `/admin/areas/${this.areaSel}/careers/${this.carreraSel.id}/academic-periods/${this.academicSel.id}/groups`
             AxiosAM.post(direccion, this.datoEdit)
@@ -113,7 +106,7 @@ export const useGroup = defineStore('myStore', {
                 AxiosAM.get(direccion)
                     .then((respuesta) => {
                         this.listCurriculum = respuesta.data;
-                        console.log("LEIIII CURRICULUM", this.listCurriculum)
+                        //console.log("LEIIII CURRICULUM", this.listCurriculum)
                     })
                     .catch((error) => {
                         console.log(error)
