@@ -4,7 +4,6 @@ import { ref, onMounted, watch } from 'vue';
 import { useAcademicPeriodStore } from '@/stores/admin/configgeneral/academicPeriodStore.js'
 import { useMainStore  } from '@/stores/MainStore'
 
-
 const academicPeriodStore = useAcademicPeriodStore();
 const mainStore = useMainStore();
 const formattedAcademicPeriods  = ref([]);
@@ -24,7 +23,6 @@ const headers = ref([
   { title: 'Costo Matricula', key:'enrollmentCost'},
   { title: 'Opciones', align: 'center', sortable: false, key: 'actions' }
 ]);
-
 
 onMounted(async () => {
   watch(() => mainStore.area.areaId, async (newAreaId) => {
@@ -125,9 +123,6 @@ for (let i = startYear; i <= endYear; i++) {
   years.value.push(i);
 }
 
-
-
-
 const startDateRules = [
   v => !!v || 'La fecha de fin es obligatoria',
   v => {
@@ -167,8 +162,6 @@ const enrollmentCostRules = [
 </script>
 
 <template>
-  
-
 
 <v-container>    
   <br>  
@@ -268,8 +261,7 @@ const enrollmentCostRules = [
             </v-card>
           </v-dialog>
       </template>
-  
-      
+
       <template v-slot:item.actions="{ item }">
         <v-btn variant="text" class="botones-tabla-btn"  @click="editItem(item)">
           <v-icon size="small">mdi-pencil</v-icon>EDITAR

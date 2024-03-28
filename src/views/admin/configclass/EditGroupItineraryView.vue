@@ -33,8 +33,6 @@ onMounted( async () =>{
   areaID.value=route.params.areaId
   careerId.value = route.params.careerId
   itineraryId.value= route.params.itineraryId
-  // console.log('careerId:'+ careerId.value)
-  // console.log('itineraryId:'+itineraryId.value)
 
   await itineraryStore.getItineraryById(itineraryId.value)
   await itineraryGroupStore.getInineraryGroups(careerId.value,itineraryId.value)

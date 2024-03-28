@@ -8,7 +8,6 @@ import {useItineraryStore} from "@/stores/admin/schedule/itineraryStore.js";
 import {useItineraryScheduleStore} from "@/stores/admin/schedule/scheduleItineraryStore.js"
 import AxiosAM from "@/services/AxiosAM.js";
 
-
 const route = useRoute();
 const subjectStore=useSubjectStore()
 const classroomStore = useClassroomStore()
@@ -45,7 +44,6 @@ const headers = ref([
   { title: 'Opcion', align:'center' ,sortable: false, key: 'actions' }
 ])
 
-
 const subjectId = ref(1)
 const curriculumId = ref(1)
 const careerId = ref(null)
@@ -63,18 +61,15 @@ const professorId=ref(null)
 const assistant=ref(null)
 const classroomId=ref(null)
 
-
 const IsCreatedGroup=ref(true)
 const stateBack=ref(false)
 const stateSC=ref(true)
 
 const { getSuggestedIdentifier } = useItineraryGroupStore()
 
-
 areaID.value=route.params.areaId
 careerId.value=route.params.careerId
 itineraryId.value=route.params.itineraryId
-
 
 const listSchedule = ref([])
 const lastId=ref(null)
@@ -85,14 +80,11 @@ watch(() => subjectStore.subjects, (subjects) => {
   }
 }, { immediate: true });
 
-
 onMounted( async ()=>{
   await subjectStore.getSubjects(areaID.value)
   await classroomStore.getClassrooms(areaID.value)
   await itineraryStore.getItineraryById(itineraryId.value)
   await subjectStore.getSubjects(areaID.value)
-
-
 
   const response = await AxiosAM.get(`/admin/areas/${areaID.value}/careers/${careerId.value}/itineraries/${itineraryId.value}/itinerary-groups/suggest-group-identifier?subjectId=1&curriculumId=1`);
   if (response.status === 200 && response.data.suggestedIdentGroup) {
@@ -103,7 +95,6 @@ onMounted( async ()=>{
   }
 
 })
-
 
 watch(selectedSubject, async (newValue, oldValue) => {
   if (newValue !== oldValue) {
@@ -121,8 +112,6 @@ watch(suggestIdentifier, (newValue) => {
     identGroup.value = newValue;
   }
 });
-
-
 
 const onSubmit = async ()=>{
   const { valid } = await form.value.validate()
@@ -458,8 +447,7 @@ const typeRules = [
     </v-row>
     </v-form>
 </v-card>
-<!--  <pre> listSchedule: {{ listSchedule }}</pre>-->
-<!--  <pre> Last ID: {{ lastId }}</pre>-->
+
 </template>
 
 <style scoped>
