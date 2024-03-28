@@ -57,10 +57,8 @@
 </template>
 
 <script>
-import { useAreaStore } from '@/stores/admin/configgeneral/areaStore'
 
 import ClassesTableGroup from './ClassesTableGroup.vue'
-import AxiosAM from '@/services/AxiosAM'
 import SearchSelectorSimple from '@/components/app/SearchSelectorSimple.vue'
 import { useGroup } from '@/stores/admin/configgeneral/groupStore'
 import {ref, watch} from 'vue'

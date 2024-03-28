@@ -76,8 +76,28 @@ const router = createRouter({
       path: '/admin/academic-period',
       name: 'admin-academic-period',
       component: () => import('../views/admin/configgeneral/AcademicPeriodView.vue')
-    }
-    
+    },
+    {
+      path: '/admin/areas/:areaId/careers/:careerId/itineraries/:itineraryId',
+      name: 'admin-see-itinerary',
+      component: () => import('../views/admin/configclass/SeeItineraryView.vue')
+    },
+    {
+      path:'/admin/areas/:areaId/careers/:careerId/itineraries/:itineraryId/itinerary-groups',
+      name: 'admin-groups',
+      component:()=> import('../views/admin/configclass/GroupView.vue')
+    },
+    {
+      path: '/admin/classrooms',
+      name: 'admin-classrooms',
+      component: () => import('../views/admin/configgeneral/ClassroomView.vue')
+    },
+    {
+      path: '/admin/areas/:areaId/careers/:careerId/itineraries/:itineraryId/edit',
+      name: 'admin-edit-itinerary',
+      component: () => import('../views/admin/configclass/EditGroupItineraryView.vue')
+    },
+
   ]
 })
 

@@ -40,6 +40,6 @@ export default {
   
 <style scoped>
 .custom-alert {
-  max-width: 400px; /* Puedes ajustar el ancho máximo según tus necesidades */
+  max-width: 400px;
 }
 </style>
