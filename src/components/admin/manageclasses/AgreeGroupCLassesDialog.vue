@@ -103,10 +103,7 @@
   </v-row>
 </template>
   <script>
-import { useMainStore } from '@/stores/MainStore'
-import { useAcademicPeriodStore } from '@/stores/admin/configgeneral/academicPeriodStore'
-import { useClassroomStore } from '@/stores/admin/configgeneral/classroomStore'
-import AxiosAM from '@/services/AxiosAM'
+
 import UDate from '@/services/UDate'
 import { useGroup } from '@/stores/admin/configgeneral/groupStore'
 import SearchSelectorSimple from '@/components/app/SearchSelectorSimple.vue'
@@ -182,7 +179,6 @@ export default {
       this.$emit('agregarHorario', this.editedItem)
       this.editedItem = this.defaultItem
       this.dialog = false
-      //this.editedItem = this.defaultItem
     }
   }
 }

@@ -90,7 +90,6 @@
     </template>
 
     <template v-slot:no-data>
-      <!--<v-btn color="primary" @click="initialize"> Reset </v-btn>-->
       <p>No existen datos disponibles en este momento</p>
     </template>
   </v-data-table>
@@ -103,13 +102,11 @@
 <script>
 import SimpleListDivider from '@/components/app/SimpleListDivider.vue'
 import CreateClassesGroupDialog from './CreateClassesGroupDialog.vue'
-import AxiosAM from '@/services/AxiosAM'
 import UDate from '@/services/UDate'
 import { useGroup } from '@/stores/admin/configgeneral/groupStore'
 
 export default {
   data: () => ({
-    //{"id":39,"level":1,"subjectName":"Introduccion a la Programacion","subjectInitials":"Intro Prog","groupIdentifier":"CGOR2N2","remark":"Clase de Geometría Orgánica","listScheduleDto":[{"id":70,"dayOfWeek":"FRIDAY","startTime":[8,0],"endTime":[10,0],"classroomName":"Laboratorio de Informática","classroomInitials":"INFLAB","professorFullName":"No esta asignado aun."}
     dialog: false,
     dialogDelete: false,
     headers: [
@@ -215,20 +212,6 @@ export default {
     genAulaString(item) {
       let res = []
       for (let i = 0; i < item.listScheduleDto.length; i++) {
-        /*let dataClassroom;
-        try {
-          const { status, data } = await AxiosAM.get(
-            `/admin/areas/${this.areaId.areaId}/classrooms/${item.listScheduleDto[i].classroomId}`
-          )
-          if (status === 200) {
-            dataClassroom = data
-          }
-        } catch (error) {
-          console.error('Error getting classroom: ', error)
-        }*/
-
-        //{"id":39,"level":1,"subjectName":"Introduccion a la Programacion","subjectInitials":"Intro Prog","groupIdentifier":"CGOR2N2","remark":"Clase de Geometría Orgánica","listScheduleDto":[{"id":70,"dayOfWeek":"FRIDAY","startTime":[8,0],"endTime":[10,0],"classroomName":"Laboratorio de Informática","classroomInitials":"INFLAB","professorFullName":"No esta asignado aun."}
-
         res.push(String(item.listScheduleDto[i].classroomName))
       }
 
@@ -238,18 +221,6 @@ export default {
     genDocenteString(item) {
       let res = []
       for (let i = 0; i < item.listScheduleDto.length; i++) {
-        /*let dataClassroom;
-        try {
-          const { status, data } = await AxiosAM.get(
-            `/admin/areas/${this.areaId.areaId}/classrooms/${item.listScheduleDto[i].classroomId}`
-          )
-          if (status === 200) {
-            dataClassroom = data
-          }
-        } catch (error) {
-          console.error('Error getting classroom: ', error)
-        }*/
-
         res.push(String(item.listScheduleDto[i].professorFullName))
       }
 

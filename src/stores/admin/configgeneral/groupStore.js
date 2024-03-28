@@ -1,7 +1,5 @@
 import { defineStore } from 'pinia'
-import { useCareerStore } from './careerStore';
 import AxiosAM from '@/services/AxiosAM';
-import { errorMessages } from 'vue/compiler-sfc';
 import UDate from '@/services/UDate';
 
 export const useGroup = defineStore('myStore', {
@@ -53,28 +51,15 @@ export const useGroup = defineStore('myStore', {
             let direccion = `/admin/areas/${this.areaSel}/careers/${this.carreraSel.id}/academic-periods/${this.academicSel.id}/groups`
             AxiosAM.post(direccion, this.datoEdit)
                 .then((respuesta) => {
-                    //this.listCurriculum = respuesta.data;
-                    //console.log("LEIIII CURRICULUM", this.listCurriculum)
                     this.readListGroup();
                     this.datoEdit = this.defaultEdit;
                 })
                 .catch((error) => {
                     console.log(error)
-                    //this.listCurriculum = [];
                 })
         },
 
         setListSchedule(datos) {
-            /*let datos = {
-                dayOfWeek: "FRIDAY",
-                startTime: "09:00",
-                endTime: "11:00",
-                professorId: null, //professorId: null,
-                assistant: "María González",
-                classroomId: null, //classroomId: 2,
-                groupItineraryId: 1
-            }*/
-
             let nuevaLista = [];
 
             for (let i = 0; i < datos.length; i++) {
@@ -83,30 +68,27 @@ export const useGroup = defineStore('myStore', {
                     dayOfWeek: UDate.getDayEn(datos[i].dayOfWeek),
                     startTime: datos[i].startTime,
                     endTime: datos[i].endTime,
-                    professorId: datos[i].professor!==null?datos[i].professor.id:null, //professorId: null,
+                    professorId: datos[i].professor!==null?datos[i].professor.id:null,
                     assistant: datos[i].assistant,
-                    classroomId: datos[i].classroom.id, //classroomId: 2,
-                    groupItineraryId: 1//this.datoEdit.identifier
+                    classroomId: datos[i].classroom.id,
+                    groupItineraryId: 1
                 }
 
                 nuevaLista.push(nuevo);
 
             }
 
-            //this.datoEdit.listSchedule.push(dato);
             this.datoEdit.listSchedule = nuevaLista;
 
         },
 
         readListCurriculums() {
-            //admin/areas/1/careers/1/curriculums
             if (this.isValidData()) {
                 let direccion = `/admin/areas/${this.areaSel}/careers/${this.carreraSel.id}/curriculums`
 
                 AxiosAM.get(direccion)
                     .then((respuesta) => {
                         this.listCurriculum = respuesta.data;
-                        //console.log("LEIIII CURRICULUM", this.listCurriculum)
                     })
                     .catch((error) => {
                         console.log(error)
@@ -175,7 +157,6 @@ export const useGroup = defineStore('myStore', {
         },
 
         readListGroup() {
-            //admin/areas/1/careers/1/academic-periods/1/groups
             if (this.isValidData()) {
                 let direccion = `/admin/areas/${this.areaSel}/careers/${this.carreraSel.id}/academic-periods/${this.academicSel.id}/groups`
 

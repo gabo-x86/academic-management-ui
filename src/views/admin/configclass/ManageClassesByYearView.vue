@@ -60,12 +60,10 @@ export default {
 
     const groupStore = useGroup()
 
-    // Observar cambios en el área y consultar carreras cuando el área cambie
     watch(
       () => mainStore.area.areaId,
       async (newAreaId) => {
         if (newAreaId !== null) {
-          //await careerStore.getCareers(newAreaId)
           groupStore.setAreaSel(newAreaId)
           await leerDatos(newAreaId)
         }
@@ -92,10 +90,7 @@ export default {
 
     onMounted(async () => {
       if (area.value.areaId !== null) {
-        //await careerStore.getCareers(area.value.areaId)
         await leerDatos(area.value.areaId)
-
-        //carreras.value = careerStore.careers
       }
     })
 

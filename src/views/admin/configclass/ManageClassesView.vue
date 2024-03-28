@@ -15,7 +15,7 @@
 export default {
   data() {
     return {
-      selectedTab: '/admin/manage-classes' // Inicialmente selecciona la primera pestaña
+      selectedTab: '/admin/manage-classes'
     }
   }
 }

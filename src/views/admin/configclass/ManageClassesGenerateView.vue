@@ -62,13 +62,11 @@
 import LoadingGenerate from '@/components/admin/manageclasses/LoadingGenerate.vue'
 import SearchSelectorSimple from '@/components/app/SearchSelectorSimple.vue'
 import { useMainStore } from '@/stores/MainStore'
-import ManageGenerateClass from './ManageGenerateClass.vue'
 import { ref, watch } from 'vue'
 import { useCareerStore } from '@/stores/admin/configgeneral/careerStore'
 import { onMounted } from 'vue'
 import { useAcademicPeriodStore } from '@/stores/admin/configgeneral/academicPeriodStore'
 import { useItineraryReadStore } from '@/stores/admin/configgeneral/itineraryReadStore'
-import SnackBarSimple from '@/components/app/SnackBarSimple.vue'
 import ToastSimple from '@/components/app/ToastSimple.vue'
 import { useGenerateClasses } from '@/stores/admin/configgeneral/generateClassesStore'
 import AxiosAM from '@/services/AxiosAM'
@@ -77,8 +75,6 @@ export default {
   components: {
     LoadingGenerate,
     SearchSelectorSimple,
-    ManageGenerateClass,
-    SnackBarSimple,
     ToastSimple
   },
 
@@ -97,12 +93,10 @@ export default {
 
     const generateStore = useGenerateClasses()
 
-    // Observar cambios en el área y consultar carreras cuando el área cambie
     watch(
       () => mainStore.area.areaId,
       async (newAreaId) => {
         if (newAreaId !== null) {
-          //await careerStore.getCareers(newAreaId)
           await leerDatos(newAreaId)
         }
       }
@@ -136,10 +130,7 @@ export default {
     
     onMounted(async () => {
       if (area.value.areaId !== null) {
-        //await careerStore.getCareers(area.value.areaId)
         await leerDatos(area.value.areaId)
-
-        //carreras.value = careerStore.careers
       }
     })
 
@@ -169,7 +160,6 @@ export default {
   }),
   methods: {
     cerrarAlerta() {
-      //this.isMostrandoAlerta = false;
       this.alertaOpciones = {
         isMostrando: false,
         mensaje: '',
