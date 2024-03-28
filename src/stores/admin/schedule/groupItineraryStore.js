@@ -49,8 +49,6 @@ export const useItineraryGroupStore=defineStore('groupItineraryStore', ()=>{
       return { error:true, success:false, data:null}
     }
   }
-
-
   async function deleteItinerarGroup(idItinerarGroup){
     try {
       const {status, data} = await AxiosAM.delete(pathItineraryResource+"/"+idItinerarGroup)

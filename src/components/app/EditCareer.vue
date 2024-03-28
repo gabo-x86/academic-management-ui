@@ -57,14 +57,11 @@ import { ref, reactive, watch, getCurrentInstance} from 'vue';
 import { useCareerStore } from '@/stores/admin/configgeneral/careerStore';
 import { format} from 'date-fns';
 
-
 const props = defineProps(['editCareer', 'model', 'editCareerId', 'onSaved']);
 const { emit } = getCurrentInstance()
 const form = ref(null)
 const editCareerVisible = ref(props.editCareer);
 
-
- 
 const nameRules = [
 (value) => {
     if (!value) {
@@ -189,7 +186,6 @@ const validateAndSaveEdit = async careerId => {
   }
 };
 
-
 const getCareerById = async careerId => {
   await useCareerStore().getCareerById(careerId);
   console.log(useCareerStore().currentCareer);
@@ -203,7 +199,6 @@ const saveCareerEdit = async careerId => {
   const currentCareer = useCareerStore().currentCareer;
   model.career = currentCareer
 };
-
 
 </script>
   
