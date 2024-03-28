@@ -90,6 +90,12 @@ const menuGroupList = ref([
         name: 'Itinerario de Clases',
         value: 'itinerario',
         route: '/admin/itinerary'
+      },
+
+      {
+        name: 'Gestionar Clases',
+        value: 'manage-classes',
+        route: '/admin/manage-classes'
       }
     ]
   }
