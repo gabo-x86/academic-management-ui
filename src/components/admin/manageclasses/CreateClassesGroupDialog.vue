@@ -8,7 +8,7 @@
       </template>
       <v-card>
         <v-toolbar dark color="primary">
-          <v-btn icon dark @click="dialog = false">
+          <v-btn icon dark @click="dialog = false; limpiarCampoTexto()">
             <v-icon>mdi-close</v-icon>
           </v-btn>
           <v-toolbar-title>Nuevo Grupo</v-toolbar-title>
@@ -44,7 +44,7 @@
                   type="String"
                   suffix=""
                   v-model="groupStore.datoEdit.identifier"
-                  v-if="groupStore.datoEdit.identifier !== ''"
+
               ></v-text-field>
             </v-col>
           </v-row>
@@ -62,6 +62,7 @@ import ClassesTableGroup from './ClassesTableGroup.vue'
 import SearchSelectorSimple from '@/components/app/SearchSelectorSimple.vue'
 import { useGroup } from '@/stores/admin/configgeneral/groupStore'
 import {ref, watch} from 'vue'
+import AxiosAM from "@/services/AxiosAM.js";
 
 export default {
   created() {},
@@ -139,6 +140,10 @@ export default {
         this.editedItem = this.defaultItem
         this.dialog = false
       }
+    },
+
+    limpiarCampoTexto() {
+      this.groupStore.datoEdit.identifier = '';
     },
 
     guardarCurriculumSel() {
