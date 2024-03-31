@@ -6,7 +6,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      redirect: {name: 'dashboard'}
+      redirect: { name: 'dashboard' }
     },
     {
       path: '/admin/dashboard',
@@ -41,17 +41,66 @@ const router = createRouter({
       name: 'admin-itineraries',
       component: () => import('../views/admin/configclass/ItineraryView.vue')
     },
+
+    {
+      path: '/admin/manage-classes',
+      component: () => import('../views/admin/configclass/ManageClassesView.vue'),
+      children: [
+        {
+          path: '',
+          name: 'admin-manage-classes',
+          component: () => import('../views/admin/configclass/ManageClassesByYearView.vue')
+        },
+        {
+          path: 'generate',
+          component: () => import('../views/admin/configclass/ManageClassesGenerateView.vue')
+        }
+      ]
+    },
+
+
+    {
+      path: '/admin/classroom',
+      name: 'admin-classroom',
+      component: () => import('../views/admin/configgeneral/ClassroomView.vue')
+    },
+
+    {
+      path: '/:pathMatch(.*)*',
+      component: () => import('../views/notfound/notFoundView.vue'),
+      name: 'not-found'
+    
+    },
+    
     {
       path: '/admin/academic-period',
       name: 'admin-academic-period',
       component: () => import('../views/admin/configgeneral/AcademicPeriodView.vue')
     },
     {
-      path: '/admin/simulacion',
+      path: '/admin/areas/:areaId/careers/:careerId/itineraries/:itineraryId',
+      name: 'admin-see-itinerary',
+      component: () => import('../views/admin/configclass/SeeItineraryView.vue')
+    },
+    {
+      path:'/admin/areas/:areaId/careers/:careerId/itineraries/:itineraryId/itinerary-groups',
+      name: 'admin-groups',
+      component:()=> import('../views/admin/configclass/GroupView.vue')
+    },
+    {
+      path: '/admin/classrooms',
+      name: 'admin-classrooms',
+      component: () => import('../views/admin/configgeneral/ClassroomView.vue')
+    },
+    {
+      path: '/admin/areas/:areaId/careers/:careerId/itineraries/:itineraryId/edit',
+      name: 'admin-edit-itinerary',
+      component: () => import('../views/admin/configclass/EditGroupItineraryView.vue')
+    },
+    {path: '/admin/simulacion',
       name: 'admin-simulacion',
       component: () => import('../views/admin/configclass/Simulacion.vue')
     }
-    
   ]
 })
 
