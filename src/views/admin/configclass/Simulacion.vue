@@ -15,7 +15,6 @@
   >
     <template #pdf-content>
       <h3>Malla Curricular</h3>
-
       <v-row no-gutters>
         <v-col
           class="text-center"
@@ -38,11 +37,8 @@
                 ><v-spacer></v-spacer>{{ materia.id }}<v-spacer></v-spacer>
               </v-toolbar>
               <v-card-text> {{ materia.nombre }} </v-card-text>
-              <!---<v-divider class="border-opacity-100" color="info"></v-divider>   solo cuando haya materias de prerequisito-->
-
               <div class="prerequisites" v-if="materia.prerequisitos.length != 0">
                 <v-divider class="border-opacity-100" color="info"></v-divider>
-
                 <v-chip
                   density="comfortable"
                   size="small"
@@ -55,9 +51,6 @@
                 </v-chip>
               </div>
             </v-card>
-            <!--End card-->
-            <!--Divider vertical-->
-            <!--End divider vertical-->
           </v-col>
         </v-col>
 
@@ -85,25 +78,82 @@
       </v-row>
     </template>
   </vue3-html2pdf>
-  <button @click="generateReport()">Simular</button>
+
+  <div ref="imagenMalla" class="imgMalla">
+    <h3 class="title-img-malla">Malla Curricular</h3>
+
+    <v-row class="text-center row-principal" v-for="(item, index) in items" :key="index">
+      <v-card color="primary" variant="tonal" class="header-row">{{ item.title }}</v-card>
+
+      <!--Card of subject--->
+      <div class="row-cards">
+        <v-card
+          color="primary"
+          variant="tonal"
+          class="v-cards"
+          v-for="(materia, index) in item.materias"
+          :key="index"
+        >
+          <v-toolbar color="primary" height="25"
+            ><v-spacer></v-spacer>{{ materia.id }}<v-spacer></v-spacer>
+          </v-toolbar>
+          <v-card-text> {{ materia.nombre }} </v-card-text>
+          <div class="prerequisites" v-if="materia.prerequisitos.length != 0">
+            <v-divider class="border-opacity-100" color="info"></v-divider>
+            <v-chip
+              density="comfortable"
+              size="small"
+              color="primary"
+              variant="flat"
+              v-for="(prerequisito, index) in materia.prerequisitos"
+              :key="index"
+            >
+              {{ prerequisito }}
+            </v-chip>
+          </div>
+        </v-card>
+      </div>
+    </v-row>
+  </div>
+
+  <button @click="generateReport()">Simular pdf</button>
+  <button type="button" class="button" @click="previewURL">Simular img</button>
 </template>
 
 <script setup>
 import Vue3Html2pdf from 'vue3-html2pdf'
-import { ref } from 'vue'
-/*
-            Generate Report using refs and calling the
-            refs function generatePdf()
-        */
+import { onMounted, ref } from 'vue'
+import jsPDF from 'jspdf'
+import html2canvas from 'html2canvas'
+
+import 'viewerjs/dist/viewer.css'
+import { api as viewerApi } from 'v-viewer'
+
 const html2Pdf = ref(null)
+const imagenMalla = ref(null)
+var malla = null
+var url = ''
+onMounted(async () => {
+  malla = await html2canvas(imagenMalla.value).then((canvas) => {
+    url = canvas.toDataURL()
+  })
+})
+
+const previewURL = () => {
+  console.log(url)
+  const sourceImageURLs = [url]
+  const $viewer = viewerApi({
+    images: sourceImageURLs
+  })
+}
+
 const options = {
   margin: [10, 10, 10, 10],
   filename: 'Malla_Curricular.pdf',
 
   pagebreak: {
     mode: ['avoid-all', 'css'],
-    avoid: 'v-col',
-    before: 'v-row'
+    avoid: 'v-col'
   },
   html2canvas: { scale: 2 },
   jsPDF: {
@@ -113,7 +163,7 @@ const options = {
 }
 
 const generateReport = () => {
-  console.log(html2Pdf._value)
+  console.log(html2Pdf)
   html2Pdf._value.generatePdf()
 }
 
@@ -215,6 +265,91 @@ const items = [
         id: 17,
         nombre: 'Circuitos electrónicos',
         prerequisitos: [11]
+      },
+      {
+        id: 17,
+        nombre: 'Circuitos electrónicos',
+        prerequisitos: [11]
+      },
+      {
+        id: 17,
+        nombre: 'Circuitos electrónicos',
+        prerequisitos: [11]
+      },
+      {
+        id: 17,
+        nombre: 'Circuitos electrónicos',
+        prerequisitos: [11]
+      },
+      {
+        id: 17,
+        nombre: 'Circuitos electrónicos',
+        prerequisitos: [11]
+      },
+      {
+        id: 17,
+        nombre: 'Circuitos electrónicos',
+        prerequisitos: [11]
+      }
+    ]
+  },
+  {
+    title: 'Nivel C',
+    materias: [
+      {
+        id: 7,
+        nombre: 'Elem. de programación y estruc. de datos',
+        prerequisitos: [1]
+      },
+      {
+        id: 8,
+        nombre: 'Cálculo II',
+        prerequisitos: [2]
+      },
+      {
+        id: 9,
+        nombre: 'Algebra II',
+        prerequisitos: [3, 2]
+      },
+      {
+        id: 10,
+        nombre: 'Arquitectura de computadoras',
+        prerequisitos: [3]
+      },
+      {
+        id: 11,
+        nombre: 'Matemática discreta',
+        prerequisitos: [5]
+      }
+    ]
+  },
+  {
+    title: 'Nivel D',
+    materias: [
+      {
+        id: 7,
+        nombre: 'Elem. de programación y estruc. de datos',
+        prerequisitos: [1]
+      },
+      {
+        id: 8,
+        nombre: 'Cálculo II',
+        prerequisitos: [2]
+      },
+      {
+        id: 9,
+        nombre: 'Algebra II',
+        prerequisitos: [3, 2]
+      },
+      {
+        id: 10,
+        nombre: 'Arquitectura de computadoras',
+        prerequisitos: [3]
+      },
+      {
+        id: 11,
+        nombre: 'Matemática discreta',
+        prerequisitos: [5]
       }
     ]
   }
@@ -234,8 +369,20 @@ h3 {
   margin: 8px 0%;
   padding: 8px 0px;
 }
+
+.header-row {
+  display: flex;
+  min-height: 112px;
+  margin-bottom: 10px;
+  margin-right: 10px;
+  padding: 3px;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+}
 .v-row {
-  width: 75vw;
+  width: 80vw;
 }
 .vue-html2pdf {
   margin: 2vw;
@@ -252,7 +399,7 @@ h3 {
 }
 
 .v-cards {
-  min-height: 112px;
+  height: 112px;
   width: 107px;
   margin-bottom: 10px;
   margin-right: 5px;
@@ -272,11 +419,40 @@ h3 {
   margin: 0px;
   padding: 0px;
 }
+
+.row-cards {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  margin: 0px;
+  padding: 0px;
+  width: 90%;
+}
+
+.row-principal {
+  display: flex;
+}
+
+.title-row {
+  width: 5%;
+}
+
 .v-chip__content {
   margin: 0px;
   padding: 0px;
 }
 .v-chip {
   padding: 0px;
+}
+.imgMalla {
+  width: auto;
+  padding: 5%;
+  position: fixed;
+  left: -100vw;
+  top: 0;
+  overflow: auto;
+}
+.title-img-malla {
+  margin-bottom: 25px;
 }
 </style>
