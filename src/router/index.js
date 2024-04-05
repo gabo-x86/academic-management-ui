@@ -96,8 +96,7 @@ const router = createRouter({
       path: '/admin/areas/:areaId/careers/:careerId/itineraries/:itineraryId/edit',
       name: 'admin-edit-itinerary',
       component: () => import('../views/admin/configclass/EditGroupItineraryView.vue')
-    },
-
+    }
   ]
 })
 
