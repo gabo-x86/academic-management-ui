@@ -1,8 +1,10 @@
 <script setup>
-import { useMainStore } from '@/stores/MainStore';
-import { useItineraryStore } from '@/stores/admin/schedule/itineraryStore';
-import { onMounted, ref, watch } from 'vue';
-
+import { onMounted, ref, watch } from 'vue'
+import { useItineraryStore } from '@/stores/admin/schedule/itineraryStore'
+import CreateItinerary from '@/components/admin/schedule/CreateItinrary.vue'
+import EditItinerary from '@/components/admin/schedule/EditItinerary.vue'
+import DeleteItinerary from '@/components/admin/schedule/DeleteItinerary.vue'
+import { useMainStore } from '@/stores/MainStore'
 
 const itineraryStore = useItineraryStore()
 const mainStore = useMainStore()
@@ -139,5 +141,4 @@ const closeDialogDelete = () => {
 </template>
 
 <style scoped>
-
 </style>
