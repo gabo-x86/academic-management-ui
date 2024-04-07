@@ -3,25 +3,30 @@ import { onMounted, ref } from 'vue'
 import * as yup from 'yup'
 import { useForm, useField } from 'vee-validate'
 import { useItineraryStore } from '@/stores/admin/schedule/itineraryStore'
+import { useCurriculumStore } from '@/stores/admin/configgeneral/curriculumStore'
 
 const itineraryStore = useItineraryStore()
-const props = defineProps(['dialog', 'idItinerary'])
+const curriculumStore = useCurriculumStore()
+const props = defineProps(['dialog', 'idItinerary', 'area'])
 const emit = defineEmits(['close-dialog-edit'])
 const formEdit = ref(null)
 const schema = yup.object().shape({
-  nombre: yup.string().required(),
-  carrera: yup.string()
+  nombre: yup.string().required('El nombre del itinerario es requerido'),
+  carrera: yup.string(),
+  curriculum: yup.string().required('El curriculum es requerido')
 })
 const { handleSubmit, resetForm } = useForm({
   validationSchema: schema
 })
 const name = useField('nombre', schema)
 const career = useField('carrera', schema)
+const curriculum = useField('curriculum', schema)
 
 const onSubmitEdit = handleSubmit(async (values, { resetForm }) => {
   const itinerary = {
     name: values.nombre,
-    careerId: values.carrera
+    careerId: values.carrera,
+    curriculumId: values.curriculum
   }
   await itineraryStore.putItinerary(itinerary)
   resetForm()
@@ -36,9 +41,11 @@ onMounted(async () => {
   resetForm({
     values: {
       nombre: itineraryStore.currentItinerary.name,
-      carrera: itineraryStore.currentItinerary.careerId
+      carrera: itineraryStore.currentItinerary.careerId,
+      curriculum: itineraryStore.currentItinerary.curriculumId
     }
   })
+  await curriculumStore.getCurriculumsByCareer(props.area, itineraryStore.currentItinerary.careerId)
 })
 </script>
 
@@ -64,6 +71,15 @@ onMounted(async () => {
               :item-value="'careerId'"
               readonly
               :error-messages="career.errorMessage.value"
+            ></v-select>
+            <v-select
+              :items="curriculumStore.curriculumsByCareer"
+              label="Curriculum*"
+              :item-title="'name'"
+              :item-value="'id'"
+              required
+              v-model="curriculum.value.value"
+              :error-messages="curriculum.errorMessage.value"
             ></v-select>
           </v-container>
         </v-card-text>

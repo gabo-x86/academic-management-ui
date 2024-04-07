@@ -65,6 +65,11 @@ const menuGroupList = ref([
         route: '/admin/subjects'
       },
       {
+        name: 'Aulas',
+        value: 'classrooms',
+        route: '/admin/classrooms'
+      },
+      {
         name: 'Parámetros de Horarios',
         value: 'schedule',
         route: '/admin/schedule'
@@ -80,6 +85,12 @@ const menuGroupList = ref([
         name: 'Itinerario de Clases',
         value: 'itinerario',
         route: '/admin/itinerary'
+      },
+
+      {
+        name: 'Gestionar Clases',
+        value: 'manage-classes',
+        route: '/admin/manage-classes'
       }
     ]
   }
