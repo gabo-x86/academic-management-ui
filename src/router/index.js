@@ -6,8 +6,16 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      redirect: { name: 'dashboard' }
+      redirect: { name: 'portal' }
     },
+
+    {
+      path: '/admin/portal',
+      name: 'portal',
+
+      component: () => import('../views/portal/PortalProp.vue')
+    },
+
     {
       path: '/admin/dashboard',
       name: 'dashboard',
