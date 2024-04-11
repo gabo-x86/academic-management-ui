@@ -22,6 +22,17 @@ export const useCurriculumStore = defineStore('classroomStore', () => {
         }
     }
 
-    return {curriculums,curriculumsByCareer,currentCurriculum,getCurriculumsByCareer};
+    async function getCurriculumByIdDetailed(areaId,careerId,curriculumId) {
+        try {
+            const { status, data } = await AxiosAM.get(`${pathCareerResource}/${areaId}/careers/${careerId}/curriculums/${curriculumId}?detailed=true`);
+            if (status === 200) {                  
+                currentCurriculum.value = data;
+            }
+        } catch (error) {
+            console.error('Error getting curriculum ', error);
+        }
+    }
+
+    return {curriculums,curriculumsByCareer,currentCurriculum,getCurriculumsByCareer,getCurriculumByIdDetailed};
 }
 );
