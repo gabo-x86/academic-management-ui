@@ -1,59 +1,8 @@
-<script setup>
-import {RouterView, useRouter} from 'vue-router'
-import AppNavigationDrawer from '@/components/app/AppNavigationDrawer.vue'
-import {ref} from "vue";
-
-const showNavigationDrawer = ref(true);
-const showAppBar = ref(true);
-
-const router = useRouter();
-
-
-function isAdmin() {
-  // Lógica para verificar si el usuario es administrador
-  return true;
-}
-// Función para verificar si el usuario es estudiante
-function isStudent() {
-  // Lógica para verificar si el usuario es estudiante
-  return false;
-}
-
-router.beforeEach((to, from, next) => {
-  // Verificar si el usuario es administrador o estudiante
-  const isAdminUser = isAdmin();
-  const isStudentUser = isStudent();
-
-  // Mostrar el navigation drawer si el usuario es administrador o estudiante
-  if (isAdminUser) {
-    showNavigationDrawer.value = true;
-  } else if (isStudentUser){
-    showNavigationDrawer.value = false;
-  }
-
-  next();
-
-});
-
-// Verificar la ruta actual y ocultar el AppNavigationDrawer si es la vista 'portal'
-router.beforeEach((to, from, next) => {
-  if (to.name === 'portal') {
-    showNavigationDrawer.value = false;
-    showAppBar.value = false;
-  } else {
-    showNavigationDrawer.value = true;
-    showAppBar.value = true;
-  }
-  next();
-});
-</script>
-
 <template>
   <v-layout class="rounded rounded-md">
-
-<!--     <app-navigation-drawer/>  -->
-<!-- Main navigation drawer component -->
+    <!-- Main navigation drawer component -->
     <component v-if="showNavigationDrawer" :is="AppNavigationDrawer" />
+    <component v-else-if="showNavigationDrawer_est" :is="AppNavigationDrawer_est" />
 
     <v-app-bar v-if="showAppBar" color="primary" density="compact">
       <template v-slot:prepend>
@@ -74,3 +23,39 @@ router.beforeEach((to, from, next) => {
 <style scoped>
 
 </style>
+
+
+<script setup>
+import { RouterView, useRouter } from 'vue-router';
+import AppNavigationDrawer from '@/components/app/AppNavigationDrawer.vue';
+import AppNavigationDrawer_est from '@/components/app/AppNavigationDrawer_est.vue';
+import { ref } from 'vue';
+import { useMainStore } from './stores/MainStore.js';
+
+const showNavigationDrawer = ref(false);
+const showNavigationDrawer_est = ref(false);
+const showAppBar = ref(false);
+
+const router = useRouter();
+const { state } = useMainStore();
+
+function isStudent() {
+  return state.userRole === 'est'; // Verifica si el rol es 'estudiante'
+}
+
+function isAdmin() {
+  return state.userRole === 'admin'; // Verifica si el rol es 'administrador'
+}
+
+router.beforeEach((to, from, next) => {
+  showNavigationDrawer.value = isAdmin();
+  showNavigationDrawer_est.value = isStudent();
+
+  if (to.name === 'portal') {
+    showNavigationDrawer.value = false;
+    showNavigationDrawer_est.value = false;
+  }
+
+  next();
+});
+</script>

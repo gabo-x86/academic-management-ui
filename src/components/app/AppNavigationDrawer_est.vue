@@ -10,21 +10,21 @@
 
     <v-list v-model:opened="open" density="compact">
       <v-select
-        label="Select Area"
-        v-model="selectedArea"
-        :items="areasSelect.map(x => x.name)"
+          label="Select Area"
+          v-model="selectedArea"
+          :items="areasSelect.map(x => x.name)"
       ></v-select>
-      <v-list-item prepend-icon="mdi-home" title="Inicio" value="inicio" router to="/admin/dashboard/"/>
+      <v-list-item prepend-icon="mdi-home" title="Inicio" value="inicio" router to="/estudiante/dashboard/"/>
       <v-list-group v-for="menuGroup in menuGroupList" :key="menuGroup.value" :value="menuGroup.value">
         <template v-slot:activator="{ props }">
           <v-list-item v-bind="props" :prepend-icon="menuGroup.icon" :title="menuGroup.name"></v-list-item>
         </template>
         <v-list-item
-          v-for="subMenu in menuGroup.subMenus"
-          :key="subMenu.value"
-          :value="subMenu.value"
-          :title="subMenu.name"
-          router :to="subMenu.route"
+            v-for="subMenu in menuGroup.subMenus"
+            :key="subMenu.value"
+            :value="subMenu.value"
+            :title="subMenu.name"
+            router :to="subMenu.route"
         ></v-list-item>
 
       </v-list-group>
@@ -70,37 +70,10 @@ const menuGroupList = ref([
         name: 'Aulas',
         value: 'classrooms',
         route: '/admin/classrooms'
-      },
-      {
-        name: 'Parámetros de Horarios',
-        value: 'schedule',
-        route: '/admin/schedule'
-      },
-      {
-        name: 'Periodo Academico',
-        value: 'academic-period',
-        route: '/admin/academic-period'
-      }
-    ]
-  },
-  {
-    name: 'Admin Clases',
-    value: 'schedule-admin',
-    icon: 'mdi-wrench-clock-outline',
-    subMenus: [
-      {
-        name: 'Itinerario de Clases',
-        value: 'itinerario',
-        route: '/admin/itinerary'
-      },
-
-      {
-        name: 'Gestionar Clases',
-        value: 'manage-classes',
-        route: '/admin/manage-classes'
       }
     ]
   }
+
 ]);
 const areaStore = useAreaStore();
 

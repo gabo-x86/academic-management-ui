@@ -21,6 +21,16 @@ export const useMainStore = defineStore('main', () => {
     active:ref(null)
   }
 
+  const state = {
+    userRole: null, // Puede ser 'admin', 'student', etc.
+  };
+
+  const mutations = {
+    setUserRole(role) {
+      state.userRole = role;
+    },
+  };
+
   function setItineraryId(id){
     itinerary.itineraryId.value =id
   }
@@ -28,7 +38,9 @@ export const useMainStore = defineStore('main', () => {
     area,
     setAreaId,
     itinerary,
-    setItineraryId
+    setItineraryId,
+    state,
+    mutations
   };
 
 
