@@ -50,15 +50,15 @@ const items = [
   { title: 'Administrador', route: '/admin/dashboard/' },
   { title: 'Estudiante', route: '/estudiante/dashboard/' },
 ];
+console.log("estado de usuario o rol en pantalla"+useMainStore().state.userRole)
 
-const { setUserRole } = useMainStore();
 
 const navigateTo = (route, userType) => {
   router.push(route);
   if (userType === 'admin') {
-    setUserRole('admin'); // Cambia el rol a 'admin'
-  } else if (userType === 'estudiante') {
-    setUserRole('est'); // Cambia el rol a 'estudiante'
+    useMainStore().mutations.setUserRole('admin'); // Cambia el rol a 'admin'
+  } else if (userType === 'est') {
+    useMainStore().mutations.setUserRole('est'); // Cambia el rol a 'estudiante'
   }
 };
 </script>

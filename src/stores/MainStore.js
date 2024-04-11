@@ -21,13 +21,13 @@ export const useMainStore = defineStore('main', () => {
     active:ref(null)
   }
 
-  const state = {
-    userRole: null, // Puede ser 'admin', 'student', etc.
-  };
+  let userRole= 'admin';
 
   const mutations = {
     setUserRole(role) {
-      state.userRole = role;
+      console.log("inicial"+userRole)
+      userRole = role;
+      console.log("final"+userRole)
     },
   };
 

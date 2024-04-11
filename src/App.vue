@@ -41,6 +41,7 @@ const { state } = useMainStore();
 
 function isStudent() {
   return state.userRole === 'est'; // Verifica si el rol es 'estudiante'
+
 }
 
 function isAdmin() {
@@ -49,7 +50,9 @@ function isAdmin() {
 
 router.beforeEach((to, from, next) => {
   showNavigationDrawer.value = isAdmin();
+  console.log("estado user"+isAdmin().valueOf())
   showNavigationDrawer_est.value = isStudent();
+  console.log("estado user est"+isStudent().valueOf())
 
   if (to.name === 'portal') {
     showNavigationDrawer.value = false;
