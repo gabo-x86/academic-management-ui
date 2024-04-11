@@ -39,7 +39,7 @@ export const useMainStore = defineStore('main', () => {
     setAreaId,
     itinerary,
     setItineraryId,
-    state,
+    userRole,
     mutations
   };
 
