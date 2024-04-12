@@ -21,16 +21,19 @@
       <!-- Menú desplegable -->
       <v-menu activator="#menu-activator">
         <v-list>
-          <v-list-item v-for="(item, index) in items" :key="index" @click="() => navigateTo(item.route)">
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
+          <v-list-item>
+            <v-list-item-title>
+              <v-btn @click="() => navigateTo('/admin/dashboard/', 'admin')">Administrador
+              </v-btn>
+            </v-list-item-title>
+            <v-list-item-title>
+              <v-btn @click="() => navigateTo('/estudiante/dashboard/', 'est')">Estudiante
+              </v-btn>
+            </v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>
     </v-app-bar>
-
-    <!-- Mostrar el cajón de navegación según el tipo de usuario -->
-    <component v-if="isAdmin" :is="AppNavigationDrawer" />
-    <component v-else-if="isStudent" :is="AppNavigationDrawer_est" />
 
     <v-main :style="{ backgroundImage: `url('/src/assets/AM_assets/backgrnd.jpg')` }">
     </v-main>
@@ -41,26 +44,20 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useMainStore } from '@/stores/MainStore.js';
-import AppNavigationDrawer_est from "@/components/app/AppNavigationDrawer_est.vue";
-import AppNavigationDrawer from "@/components/app/AppNavigationDrawer.vue";
 
 const logoSrc = ref('/src/assets/AM_assets/logo_ej.png');
 const router = useRouter();
-const items = [
-  { title: 'Administrador', route: '/admin/dashboard/' },
-  { title: 'Estudiante', route: '/estudiante/dashboard/' },
-];
+const store = useMainStore(); // Obteniendo el store de Vuex
 
-const { setUserRole } = useMainStore();
+console.log("estado de usuario o rol en pantalla"+useMainStore().userRole)
 
-const navigateTo = (route, userType) => {
-  router.push(route);
-  if (userType === 'admin') {
-    setUserRole('admin'); // Cambia el rol a 'admin'
-  } else if (userType === 'estudiante') {
-    setUserRole('est'); // Cambia el rol a 'estudiante'
-  }
-};
+function navigateTo(route, role) {
+  console.log("rol anterior"+store.userRole)
+  store.setUserRole(role); // Cambiando el rol de usuario
+  router.push(route); // Navegando a la ruta correspondiente
+  console.log("rol nuevo:"+role)
+}
+
 </script>
 
 <style scoped>

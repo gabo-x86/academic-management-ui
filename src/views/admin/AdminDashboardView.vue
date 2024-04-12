@@ -1,16 +1,10 @@
 <script setup>
-import AppNavigationDrawer from "@/components/app/AppNavigationDrawer.vue";
-import {ref} from "vue";
-import AppNavigationDrawer_est from "@/components/app/AppNavigationDrawer_est.vue";
 
-const isAdmin = ref(true);
-const isStudent = ref(false);
 </script>
 
 <template>
   <h1>DashBoard Administrador</h1>
-  <component v-if="isAdmin" :is="AppNavigationDrawer" />
-  <component v-else-if="isStudent" :is="AppNavigationDrawer_est" />
+
 </template>
 
 <style scoped>

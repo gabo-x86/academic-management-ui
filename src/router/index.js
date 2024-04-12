@@ -9,9 +9,17 @@ const router = createRouter({
       redirect: { name: 'portal' }
     },
 
+
+    {
+      path: '/portal',
+      name: 'portal',
+
+      component: () => import('../views/portal/PortalView.vue')
+    },
+
     {
       path: '/admin/portal',
-      name: 'portal',
+      name: 'portal2',
 
       component: () => import('../views/portal/PortalProp.vue')
     },
@@ -27,9 +35,6 @@ const router = createRouter({
     {
       path: '/estudiante/dashboard',
       name: 'dashboard_est',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
       component: () => import('../views/estudiante/EstDashboardView.vue')
     },
     {
