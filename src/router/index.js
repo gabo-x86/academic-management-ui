@@ -9,19 +9,11 @@ const router = createRouter({
       redirect: { name: 'portal' }
     },
 
-
     {
       path: '/portal',
       name: 'portal',
 
       component: () => import('../views/portal/PortalView.vue')
-    },
-
-    {
-      path: '/admin/portal',
-      name: 'portal2',
-
-      component: () => import('../views/portal/PortalProp.vue')
     },
 
     {
