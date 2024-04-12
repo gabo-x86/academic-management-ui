@@ -4,16 +4,6 @@
     <component v-if="showNavigationDrawer" :is="AppNavigationDrawer" />
     <component v-else-if="showNavigationDrawer_est" :is="AppNavigationDrawer_est" />
 
-    <v-app-bar v-if="showAppBar" color="primary" density="compact">
-      <template v-slot:prepend>
-        <v-app-bar-nav-icon></v-app-bar-nav-icon>
-      </template>
-      <v-app-bar-title>Admin Académica</v-app-bar-title>
-      <template v-slot:append>
-        <v-btn icon="mdi-dots-vertical"></v-btn>
-      </template>
-    </v-app-bar>
-
     <v-main style="min-height: 300px;">
       <RouterView/>
     </v-main>
@@ -24,7 +14,6 @@
 
 </style>
 
-
 <script setup>
 import { RouterView, useRouter } from 'vue-router';
 import AppNavigationDrawer from '@/components/app/AppNavigationDrawer.vue';
@@ -34,25 +23,19 @@ import { useMainStore } from './stores/MainStore.js';
 
 const showNavigationDrawer = ref(false);
 const showNavigationDrawer_est = ref(false);
-const showAppBar = ref(false);
 
 const router = useRouter();
-const { state } = useMainStore();
 
 function isStudent() {
-  return state.userRole === 'est'; // Verifica si el rol es 'estudiante'
-
+  return useMainStore().userRole === 'est'; // Verifica si el rol es 'estudiante'
 }
-
 function isAdmin() {
-  return state.userRole === 'admin'; // Verifica si el rol es 'administrador'
+  return useMainStore().userRole  === 'admin'; // Verifica si el rol es 'administrador'
 }
 
 router.beforeEach((to, from, next) => {
   showNavigationDrawer.value = isAdmin();
-  console.log("estado user"+isAdmin().valueOf())
   showNavigationDrawer_est.value = isStudent();
-  console.log("estado user est"+isStudent().valueOf())
 
   if (to.name === 'portal') {
     showNavigationDrawer.value = false;

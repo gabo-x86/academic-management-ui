@@ -28,7 +28,7 @@
         ></v-list-item>
 
       </v-list-group>
-      <v-list-item prepend-icon="mdi-exit-to-app" title="LogOut" value="logout" router to="/admin/portal"/>
+      <v-list-item prepend-icon="mdi-exit-to-app" title="LogOut" value="logout" router :to="{ name: 'portal' }"/>
     </v-list>
   </v-navigation-drawer>
 </template>
