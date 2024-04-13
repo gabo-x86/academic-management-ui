@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-app-bar app>
+    <v-app-bar app >
       <!-- Botones del app bar -->
       <v-btn text to="/">Facultades</v-btn>
       <v-spacer></v-spacer>
@@ -27,7 +27,7 @@
               </v-btn>
             </v-list-item-title>
             <v-list-item-title>
-              <v-btn @click="() => navigateTo('/estudiante/dashboard/', 'est')">Estudiante
+              <v-btn @click="() => navigateTo('/student/dashboard/', 'est')">Estudiante
               </v-btn>
             </v-list-item-title>
           </v-list-item>
