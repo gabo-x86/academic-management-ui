@@ -31,6 +31,11 @@
       <v-list-item prepend-icon="mdi-exit-to-app" title="LogOut" value="logout" router :to="{ name: 'portal' }"/>
     </v-list>
   </v-navigation-drawer>
+  <v-app-bar color="transparent" dark  style="background: linear-gradient(45deg, #001E89, #7D0000);" >
+    <v-app-bar-title>
+      <p style="color: white; text-transform: uppercase; text-align: center; font-weight: bold;"> Gestión Académica - Admin</p>
+    </v-app-bar-title>
+  </v-app-bar>
 </template>
 
 <script setup>

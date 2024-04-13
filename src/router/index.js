@@ -25,9 +25,9 @@ const router = createRouter({
       component: () => import('../views/admin/AdminDashboardView.vue')
     },
     {
-      path: '/estudiante/dashboard',
+      path: '/student/dashboard',
       name: 'dashboard_est',
-      component: () => import('../views/estudiante/EstDashboardView.vue')
+      component: () => import('../views/users/student/StudentHomeView.vue')
     },
     {
       path: '/admin/areas',
@@ -109,7 +109,27 @@ const router = createRouter({
       path: '/admin/areas/:areaId/careers/:careerId/itineraries/:itineraryId/edit',
       name: 'admin-edit-itinerary',
       component: () => import('../views/admin/configclass/EditGroupItineraryView.vue')
-    }
+    },
+    {
+      path: '/student/matriculation',
+      name: 'matriculation',
+      component: () => import('../views/users/student/MatriculationView.vue')
+    },
+    {
+      path: '/student/class-schedule',
+      name: 'class-schedule',
+      component: () => import('../views/users/student/ClassScheduleView.vue')
+    },
+    {
+      path: '/student/kardex',
+      name: 'kardex',
+      component: () => import('../views/users/student/KardexView.vue')
+    },
+    {
+      path: '/student/curriculum',
+      name: 'curriculum',
+      component: () => import('../views/users/student/CurriculumView.vue')
+    },
   ]
 })
 
