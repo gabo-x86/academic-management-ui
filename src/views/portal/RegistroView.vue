@@ -2,6 +2,7 @@
 import { useForm, useField } from 'vee-validate'
 import { onMounted, ref } from 'vue'
 import * as yup from 'yup'
+import AppNavigationDrawer_est from '@/components/app/AppNavigationDrawer_est.vue'
 
 var step = ref(0)
 
@@ -86,7 +87,30 @@ const onSubmit = handleSubmit(async (values, { resetForm }) => {
 //------------------------------------------------
 </script>
 <template>
+  <v-app-bar color="transparent" dark style="background: linear-gradient(45deg, #001e89, #7d0000)">
+    <v-app-bar-title>
+      <p style="color: white; text-transform: uppercase; text-align: center; font-weight: bold">
+        Gestión Académica
+      </p>
+    </v-app-bar-title>
+  </v-app-bar>
+  <v-bottom-navigation :elevation="0" style="position: static">
+    <v-btn to="/">
+      <span>INICIO</span>
+    </v-btn>
+
+    <v-btn>
+      <span>FACULTADES</span>
+    </v-btn>
+
+    <v-btn>
+      <span>ADMISIONES</span>
+    </v-btn>
+    <v-spacer></v-spacer>
+  </v-bottom-navigation>
   <v-container>
+    <p>REGISTRAR POSTULANTE</p>
+    <br />
     <v-stepper v-model="step">
       <template v-slot:default="{ prev }">
         <v-stepper-header>
@@ -253,5 +277,20 @@ const onSubmit = handleSubmit(async (values, { resetForm }) => {
     </v-stepper>
   </v-container>
 </template>
+
+<style scoped>
+p {
+  font-weight: 900;
+  font-size: 20px;
+}
+
+span {
+  font-weight: bold;
+}
+
+.v-bottom-navigation {
+  position: static;
+}
+</style>
 
 
