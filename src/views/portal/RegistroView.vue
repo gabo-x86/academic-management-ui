@@ -1,15 +1,60 @@
 <script setup>
 import { useForm, useField } from 'vee-validate'
-import { onMounted, ref } from 'vue'
+import { ref } from 'vue'
 import * as yup from 'yup'
-import AppNavigationDrawer_est from '@/components/app/AppNavigationDrawer_est.vue'
+import { useUserDataStore } from '@/stores/portal/registroStore'
 
+const userDataStore = useUserDataStore()
 var step = ref(0)
 
 const next = () => {
   step.value++
 }
 //--------Form 1------------------------------
+const nacionalidades = [
+  'Alemán',
+  'Argentino',
+  'Australiano',
+  'Austriaco',
+  'Belga',
+  'Boliviano',
+  'Brasileño',
+  'Británico',
+  'Canadiense',
+  'Chileno',
+  'Chino',
+  'Colombiano',
+  'Coreano',
+  'Danés',
+  'Egipcio',
+  'Emiratí',
+  'Español',
+  'Estadounidense',
+  'Finlandés',
+  'Francés',
+  'Indio',
+  'Indonesio',
+  'Iraní',
+  'Israelí',
+  'Italiano',
+  'Japonés',
+  'Mexicano',
+  'Neozelandés',
+  'Nigeriano',
+  'Noruego',
+  'Paquistaní',
+  'Peruano',
+  'Portugués',
+  'Ruso',
+  'Saudí',
+  'Sudafricano',
+  'Sueco',
+  'Suizo',
+  'Turco',
+  'Venezolano'
+]
+const extensionesCarnet = ['LP', 'CB', 'SC', 'OR', 'PT', 'CH', 'TJ', 'PA', 'BN', 'PD']
+
 const schema = yup.object().shape({
   ci: yup
     .string()
@@ -21,24 +66,51 @@ const schema = yup.object().shape({
   dateBirth: yup
     .string()
     .required('La fecha de nacimiento es requerida')
-    .matches(/^\d{4}[-\/]\d{2}[-\/]\d{2}$/, 'El formato de fecha debe ser YYYY-MM-DD o YYYY/MM/DD')
+    .matches(/^\d{2}[-]\d{2}[-]\d{4}$/, 'El formato de fecha debe ser DD-MM-YYYY')
+    .test('fecha valida', 'La fecha no es válida', function (value) {
+      const [dayCurrent, monthCurrent, yearCurrent] = value.split('-').map(Number)
+      const parsedDate = new Date(`${yearCurrent}-${monthCurrent}-${dayCurrent}`)
+      if (isNaN(parsedDate.getTime())) {
+        return false
+      }
+
+      const year = parsedDate.getFullYear()
+      const month = parsedDate.getMonth() + 1
+      const lastDayOfMonth = new Date(year, month, 0).getDate()
+
+      return dayCurrent <= lastDayOfMonth && monthCurrent == month
+    })
     .test(
       'no debe ser mayor que hoy',
       'La fecha no puede ser mayor que la fecha actual',
       (value) => {
-        const fecha = new Date(value)
+        const [dayCurrent, monthCurrent, yearCurrent] = value.split('-')
+        const fecha = new Date(yearCurrent, monthCurrent, dayCurrent)
         const fechaActual = new Date()
         return fecha <= fechaActual
       }
     ),
-  name: yup.string().required('El nombre es requerido'),
-  lastNameP: yup.string().required('El apellido paterno es requerido'),
-  lastNameM: yup.string().required('El apellido materno es requerido'),
+  name: yup
+    .string()
+    .required('El nombre es requerido')
+    .trim()
+    .matches(/^[a-zA-ZñÑ\s]+$/, 'El campo solo puede contener letras y espacios'),
+  lastNameP: yup
+    .string()
+    .required('El apellido paterno es requerido')
+    .matches(/^[a-zA-ZñÑ\s]+$/, 'El campo solo puede contener letras y espacios'),
+  lastNameM: yup
+    .string()
+    .required('El apellido materno es requerido')
+    .matches(/^[a-zA-ZñÑ\s]+$/, 'El campo solo puede contener letras y espacios'),
   gender: yup.string().required('El género es requerido'),
   address: yup.string().required('La dirección es requerida'),
   nationality: yup.string().required('La nacionalidad es requerida'),
   email: yup.string().required('El email es requerido').email('Debe ser un email válido'),
-  password: yup.string().required('La contraseña es requerida'),
+  password: yup
+    .string()
+    .required('La contraseña es requerida')
+    .min(5, 'La contraseña debe contener más de 5 caracteres'),
   passwordConfirm: yup
     .string()
     .required('La confirmación es requerida')
@@ -63,24 +135,22 @@ const password = useField('password', schema)
 const passwordConfirm = useField('passwordConfirm', schema)
 
 const onSubmit = handleSubmit(async (values, { resetForm }) => {
-  console.log('onSubmit')
   const userData = {
     idNumber: values.ci,
     issuedIn: values.emitted,
-    dateOfBirth: values.dateBirth,
+    dateOfBirth: values.dateBirth.split('-').reverse().join('-'),
     firstNames: values.name,
     paternalLastName: values.lastNameP,
     maternalLastName: values.lastNameM,
     nationality: values.nationality,
     gender: values.gender,
-    cellPhoneNumber: 'string',
     email: values.email,
     currentAddress: values.address,
     careerId: 0,
     password: values.password
   }
 
-  console.log(userData)
+  await userDataStore.saveUserData(userData)
   resetForm()
   step.value++
 })
@@ -150,7 +220,7 @@ const onSubmit = handleSubmit(async (values, { resetForm }) => {
                 </v-col>
                 <v-col cols="4">
                   <v-select
-                    :items="['CB', 'SC']"
+                    :items="extensionesCarnet"
                     label="Emitido en"
                     v-model="emitted.value.value"
                     :error-messages="emitted.errorMessage.value"
@@ -196,7 +266,7 @@ const onSubmit = handleSubmit(async (values, { resetForm }) => {
               <v-row>
                 <v-col cols="4"
                   ><v-select
-                    :items="['Hombre', 'Mujer']"
+                    :items="['Masculino', 'Femenino']"
                     label="Sexo"
                     v-model="gender.value.value"
                     :error-messages="gender.errorMessage.value"
@@ -211,7 +281,7 @@ const onSubmit = handleSubmit(async (values, { resetForm }) => {
                 </v-col>
                 <v-col cols="4"
                   ><v-select
-                    :items="['B', 'A']"
+                    :items="nacionalidades"
                     label="Nacionalidad"
                     v-model="nationality.value.value"
                     :error-messages="nationality.errorMessage.value"
@@ -292,5 +362,3 @@ span {
   position: static;
 }
 </style>
-
-
