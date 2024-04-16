@@ -93,15 +93,18 @@ const schema = yup.object().shape({
   name: yup
     .string()
     .required('El nombre es requerido')
+    .min(3, 'El nombre debe contener mas de 3 caracteres')
     .trim()
     .matches(/^[a-zA-ZñÑ\s]+$/, 'El campo solo puede contener letras y espacios'),
   lastNameP: yup
     .string()
     .required('El apellido paterno es requerido')
+    .min(3, 'El apellido paterno debe contener mas de 3 caracteres')
     .matches(/^[a-zA-ZñÑ\s]+$/, 'El campo solo puede contener letras y espacios'),
   lastNameM: yup
     .string()
     .required('El apellido materno es requerido')
+    .min(3, 'El apellido materno debe contener mas de 3 caracteres')
     .matches(/^[a-zA-ZñÑ\s]+$/, 'El campo solo puede contener letras y espacios'),
   gender: yup.string().required('El género es requerido'),
   address: yup.string().required('La dirección es requerida'),
