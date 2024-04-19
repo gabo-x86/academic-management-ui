@@ -12,7 +12,7 @@
         </div>
       </v-card>
       <v-spacer></v-spacer>
-      <v-btn text to="/registro">Registro</v-btn>
+      <v-btn text to="/portal/registration">Registro</v-btn>
       <v-spacer></v-spacer>
 
       <!-- Botón de login -->

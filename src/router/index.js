@@ -131,11 +131,12 @@ const router = createRouter({
       component: () => import('../views/users/student/CurriculumView.vue')
     },
     {
-      path: '/registro',
-      name: 'registro',
-      component: () => import('../views/portal/RegistroView.vue')
+      path: '/portal/registration',
+      name: 'registration',
+      component: () => import('../views/portal/RegisterView.vue')
     }
   ]
 })
 
 export default router
+ 

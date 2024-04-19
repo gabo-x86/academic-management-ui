@@ -5,7 +5,6 @@ export const useUserDataStore =defineStore('userDataStore',()=>{
 
   async function saveUserData(userData) {
     try {
-        console.log(userData)
       const { status, data } = await AxiosAM.post('/admissions/candidates',userData);
       if(status===201){
         console.log('save user data');
