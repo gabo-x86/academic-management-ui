@@ -149,10 +149,8 @@ const onSubmit = handleSubmit(async (values, { resetForm }) => {
     gender: values.gender,
     email: values.email,
     currentAddress: values.address,
-    careerId: 0,
     password: values.password
   }
-
   await userDataStore.saveUserData(userData)
   resetForm()
   step.value++
