@@ -3,29 +3,31 @@
     <v-row>
       <v-col cols="12">
         <v-card>
-          <v-card-title align="center">
+          <v-card-title class="text-center">
               DOCUMENTOS OFICIALES (FORMATO PDF)
           </v-card-title>
 
           <v-card-text>
             <v-row>
               <v-col>
-                <v-text-field
+                <v-file-input
                     label="Carnet de Identidad"
                     type="file"
+                    prepend-icon="mdi-file-document-outline"
                     accept=".pdf"
                 @change="handleFileSelect('pdf1')"
-                ></v-text-field>
+                ></v-file-input>
               </v-col>
             </v-row>
             <v-row>
               <v-col>
-                <v-text-field
+                <v-file-input
                     label="Diploma o Libreta"
                     type="file"
+                    prepend-icon="mdi-file-document-outline"
                     accept=".pdf"
                 @change="handleFileSelect('pdf2')"
-                ></v-text-field>
+                ></v-file-input>
               </v-col>
             </v-row>
           </v-card-text>
@@ -41,6 +43,7 @@
 
 <script setup>
 import { ref } from 'vue';
+import { userDataPdfStore } from '@/stores/pdfStore.js'; // Ajusta la ruta correcta
 
 const selectedPdf1 = ref(null);
 const selectedPdf2 = ref(null);
@@ -59,20 +62,10 @@ const handleFileSelect = (inputId) => {
 };
 
 const sendPdfsToBackend = async () => {
-  const formData = new FormData();
-  formData.append('pdf1', selectedPdf1.value);
-  formData.append('pdf2', selectedPdf2.value);
-
-  try {
-    const response = await fetch('/api/upload-pdfs', {
-      method: 'POST',
-      body: formData,
-    });
-    const data = await response.json();
-    console.log('PDFs uploaded successfully:', data);
-  } catch (error) {
-    console.error('Error uploading PDFs:', error);
-  }
+  await userDataPdfStore.uploadPdfsToBackend({
+    pdf1: selectedPdf1.value,
+    pdf2: selectedPdf2.value,
+  });
 };
 </script>
 
@@ -92,6 +85,11 @@ const sendPdfsToBackend = async () => {
   margin-top: 30pt;
   margin-bottom: 30pt;
   align-content: center;
+}
+.v-file-input{
+  border: 1pt solid #ccc;
+  border-radius: 10pt;
+  padding: 2pt;
 }
 .v-card-title{
   align-content: center;
