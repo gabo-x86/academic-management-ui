@@ -3,32 +3,35 @@
     <v-row>
       <v-col cols="12">
         <v-card>
-          <v-card-title>
-            <span class="font-weight-bold">Subir PDFs</span>
+          <v-card-title align="center">
+              DOCUMENTOS OFICIALES (FORMATO PDF)
           </v-card-title>
 
           <v-card-text>
             <v-row>
-              <v-col cols="6">
+              <v-col>
                 <v-text-field
-                    label="PDF 1"
+                    label="Carnet de Identidad"
                     type="file"
-                    @change="handleFileSelect('pdf1')"
+                    accept=".pdf"
+                @change="handleFileSelect('pdf1')"
                 ></v-text-field>
               </v-col>
-
-              <v-col cols="6">
+            </v-row>
+            <v-row>
+              <v-col>
                 <v-text-field
-                    label="PDF 2"
+                    label="Diploma o Libreta"
                     type="file"
-                    @change="handleFileSelect('pdf2')"
+                    accept=".pdf"
+                @change="handleFileSelect('pdf2')"
                 ></v-text-field>
               </v-col>
             </v-row>
           </v-card-text>
 
-          <v-card-actions>
-            <v-btn @click="sendPdfsToBackend">Enviar PDFs</v-btn>
+          <v-card-actions class="justify-end">
+            <v-btn @click="sendPdfsToBackend">Registrar</v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -75,6 +78,23 @@ const sendPdfsToBackend = async () => {
 
 <style scoped>
 .v-card {
-  margin-bottom: 20px;
+  margin-bottom: 30pt;
+  margin-top: 30pt;
+  align-content: center;
+}
+.v-container{
+  width: 700pt;
+  height: 700pt;
+}
+.v-card-text {
+  margin: auto;
+  width: 400pt;
+  margin-top: 30pt;
+  margin-bottom: 30pt;
+  align-content: center;
+}
+.v-card-title{
+  align-content: center;
+  margin: auto;
 }
 </style>
