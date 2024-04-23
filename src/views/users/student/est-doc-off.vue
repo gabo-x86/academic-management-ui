@@ -4,7 +4,7 @@
       <v-col cols="12">
         <v-card>
           <v-card-title class="text-center">
-              DOCUMENTOS OFICIALES (FORMATO PDF)
+            DOCUMENTOS OFICIALES (FORMATO PDF)
           </v-card-title>
 
           <v-card-text>
@@ -15,7 +15,7 @@
                     type="file"
                     prepend-icon="mdi-file-document-outline"
                     accept=".pdf"
-                @change="handleFileSelect('pdf1')"
+                    @change="handleFileSelect($event, 'pdf1')"
                 ></v-file-input>
               </v-col>
             </v-row>
@@ -26,7 +26,7 @@
                     type="file"
                     prepend-icon="mdi-file-document-outline"
                     accept=".pdf"
-                @change="handleFileSelect('pdf2')"
+                    @change="handleFileSelect($event, 'pdf2')"
                 ></v-file-input>
               </v-col>
             </v-row>
@@ -42,30 +42,24 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { userDataPdfStore } from '@/stores/pdfStore.js'; // Ajusta la ruta correcta
+import { usePdfStore } from '@/stores/pdfStore.js'; // Importa tu store de pdf
 
-const selectedPdf1 = ref(null);
-const selectedPdf2 = ref(null);
+const handleFileSelect = (event, type) => {
+  const pdfStore = usePdfStore(); // Accede al store de pdf
 
-const handleFileSelect = (inputId) => {
-  const fileInput = document.getElementById(inputId);
-  const selectedFile = fileInput.files[0];
-
-  if (selectedFile) {
-    if (inputId === 'pdf1') {
-      selectedPdf1.value = selectedFile;
-    } else {
-      selectedPdf2.value = selectedFile;
-    }
+  const file = event.target.files[0];
+  if (type === 'pdf1') {
+    pdfStore.setPdf1(file);
+  } else if (type === 'pdf2') {
+    pdfStore.setPdf2(file);
   }
 };
 
 const sendPdfsToBackend = async () => {
-  await userDataPdfStore.uploadPdfsToBackend({
-    pdf1: selectedPdf1.value,
-    pdf2: selectedPdf2.value,
-  });
+  const pdfStore = usePdfStore(); // Accede al store de pdf
+
+  await pdfStore.uploadPdfsToBackend();
+
 };
 </script>
 
