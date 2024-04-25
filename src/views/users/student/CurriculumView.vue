@@ -3,8 +3,7 @@
 </script>
 
 <template>
-  <h1>DashBoard Administrador</h1>
-
+<h1>This is curriculum</h1>
 </template>
 
 <style scoped>

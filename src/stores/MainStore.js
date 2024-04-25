@@ -8,28 +8,34 @@ export const useMainStore = defineStore('main', () => {
     name: ref(null),
     initials: ref(null),
     active: ref(null),
-
   };
 
   function setAreaId(id) {
     area.areaId.value = id;
   }
 
-  const itinerary={
-    itineraryId:ref(1),
-    name:ref(null),
-    active:ref(null)
+  const itinerary = {
+    itineraryId: ref(1),
+    name: ref(null),
+    active: ref(null),
+  };
+
+  function setItineraryId(id) {
+    itinerary.itineraryId.value = id;
   }
 
-  function setItineraryId(id){
-    itinerary.itineraryId.value =id
+  const userRole = ref('');
+
+  function setUserRole(role) {
+    userRole.value = role; // Mutación para actualizar el rol de usuario
   }
+
   return {
     area,
     setAreaId,
     itinerary,
-    setItineraryId
+    setItineraryId,
+    userRole,
+    setUserRole,
   };
-
-
 });

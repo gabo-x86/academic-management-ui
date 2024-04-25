@@ -6,8 +6,16 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      redirect: { name: 'dashboard' }
+      redirect: { name: 'portal' }
     },
+
+    {
+      path: '/portal',
+      name: 'portal',
+
+      component: () => import('../views/portal/PortalView.vue')
+    },
+
     {
       path: '/admin/dashboard',
       name: 'dashboard',
@@ -15,6 +23,11 @@ const router = createRouter({
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/admin/AdminDashboardView.vue')
+    },
+    {
+      path: '/student/dashboard',
+      name: 'dashboard_est',
+      component: () => import('../views/users/student/StudentHomeView.vue')
     },
     {
       path: '/admin/areas',
@@ -96,8 +109,34 @@ const router = createRouter({
       path: '/admin/areas/:areaId/careers/:careerId/itineraries/:itineraryId/edit',
       name: 'admin-edit-itinerary',
       component: () => import('../views/admin/configclass/EditGroupItineraryView.vue')
+    },
+    {
+      path: '/student/matriculation',
+      name: 'matriculation',
+      component: () => import('../views/users/student/MatriculationView.vue')
+    },
+    {
+      path: '/student/class-schedule',
+      name: 'class-schedule',
+      component: () => import('../views/users/student/ClassScheduleView.vue')
+    },
+    {
+      path: '/student/kardex',
+      name: 'kardex',
+      component: () => import('../views/users/student/KardexView.vue')
+    },
+    {
+      path: '/student/curriculum',
+      name: 'curriculum',
+      component: () => import('../views/users/student/CurriculumView.vue')
+    },
+    {
+      path: '/portal/registration',
+      name: 'registration',
+      component: () => import('../views/portal/RegisterView.vue')
     }
   ]
 })
 
 export default router
+ 

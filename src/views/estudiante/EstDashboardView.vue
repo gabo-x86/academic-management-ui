@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <h1>DashBoard Administrador</h1>
+  <h1>DashBoard Estudiante</h1>
 
 </template>
 

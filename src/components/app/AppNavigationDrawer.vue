@@ -14,7 +14,7 @@
         v-model="selectedArea"
         :items="areasSelect.map(x => x.name)"
       ></v-select>
-      <v-list-item prepend-icon="mdi-home" title="Home" value="home" router to="/"/>
+      <v-list-item prepend-icon="mdi-home" title="Inicio" value="inicio" router to="/admin/dashboard/"/>
       <v-list-group v-for="menuGroup in menuGroupList" :key="menuGroup.value" :value="menuGroup.value">
         <template v-slot:activator="{ props }">
           <v-list-item v-bind="props" :prepend-icon="menuGroup.icon" :title="menuGroup.name"></v-list-item>
@@ -26,9 +26,16 @@
           :title="subMenu.name"
           router :to="subMenu.route"
         ></v-list-item>
+
       </v-list-group>
+      <v-list-item prepend-icon="mdi-exit-to-app" title="LogOut" value="logout" router :to="{ name: 'portal' }"/>
     </v-list>
   </v-navigation-drawer>
+  <v-app-bar color="transparent" dark  style="background: linear-gradient(45deg, #001E89, #7D0000);" >
+    <v-app-bar-title>
+      <p style="color: white; text-transform: uppercase; text-align: center; font-weight: bold;"> Gestión Académica - Admin</p>
+    </v-app-bar-title>
+  </v-app-bar>
 </template>
 
 <script setup>
