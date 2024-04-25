@@ -139,6 +139,6 @@ const closeDialogDelete = () => {
     </template>
   </v-data-table>
 </template>
-
+  
 <style scoped>
 </style>
