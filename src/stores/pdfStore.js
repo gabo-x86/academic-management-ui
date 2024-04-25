@@ -27,10 +27,8 @@ export const usePdfStore = defineStore({
                     },
                 });
                 console.log('Response from backend:', response.data);
-                // Aquí puedes manejar la respuesta del servidor, como mostrar un mensaje de éxito al usuario.
             } catch (error) {
                 console.error('Error sending PDFs to backend:', error);
-                // Aquí puedes manejar cualquier error que ocurra durante la solicitud.
                 throw error;
             }
         },

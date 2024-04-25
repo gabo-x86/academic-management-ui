@@ -3,7 +3,9 @@ import { useForm, useField } from 'vee-validate'
 import { ref } from 'vue'
 import * as yup from 'yup'
 import { useUserDataStore } from '@/stores/portal/registroStore'
+import { useRouter } from 'vue-router'
 
+const router = useRouter();
 const userDataStore = useUserDataStore()
 var step = ref(0)
 
@@ -155,6 +157,28 @@ const onSubmit = handleSubmit(async (values, { resetForm }) => {
   resetForm()
   step.value++
 })
+
+//Send PDF to Store
+const handleFileSelect = (event, type) => {
+  const pdfStore = useUserDataStore();
+  const file = event.target.files[0];
+  if (type === 'pdf1') {
+    pdfStore.setPdf1(file);
+  } else if (type === 'pdf2') {
+    pdfStore.setPdf2(file);
+  }
+};
+
+const sendPdfsToBackend = async () => {
+  try {
+    await userDataStore.uploadPdfsToBackend();
+    alert('Datos registrados correctamente');
+    await router.push("/");
+
+  } catch (error) {
+    console.error('Error sending PDFs to Backend', error);
+  }
+};
 //------------------------------------------------
 </script>
 <template>
@@ -336,7 +360,35 @@ const onSubmit = handleSubmit(async (values, { resetForm }) => {
           </v-stepper-window-item>
 
           <v-stepper-window-item value="3">
-            <span>3</span>
+            <v-card-text>
+              <v-row>
+                <v-col>
+                  <v-file-input
+                      label="Carnet de Identidad"
+                      type="file"
+                      prepend-icon="mdi-file-document-outline"
+                      accept=".pdf"
+                      @change="handleFileSelect($event, 'pdf1')"
+                  ></v-file-input>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col>
+                  <v-file-input
+                      label="Diploma o Libreta"
+                      type="file"
+                      prepend-icon="mdi-file-document-outline"
+                      accept=".pdf"
+                      @change="handleFileSelect($event, 'pdf2')"
+                  ></v-file-input>
+                </v-col>
+              </v-row>
+            </v-card-text>
+
+            <v-card-actions class="justify-end">
+              <v-btn @click="sendPdfsToBackend">Registrar</v-btn>
+            </v-card-actions>
+
             <v-stepper-actions prev-text="Anterior" @click:prev="prev" disabled="prev">
               <template v-slot:next>
                 <v-btn type="submit" class="v-stepper__action" @click="next"> Siguiente </v-btn>
