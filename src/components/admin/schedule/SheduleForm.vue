@@ -2,8 +2,6 @@
   <v-app>
     <v-main>
 
-      {{ areaId }}
-
       <v-container v-if="areaSel">
         <div class="mb-4">
           <v-alert
