@@ -5,12 +5,13 @@ import InputWebCam from "../../components/estudiante/InputWebCam.vue";
 </script>
 
 <template>
-  <h1>DashBoard Estudiante</h1>
+  <h1>PruebaCam</h1>
   <input-image/>
-  <p>ff</p>
+  <p>f</p>
+
+  
   <input-web-cam/>
 </template>
-
 <style scoped>
 
 </style>
