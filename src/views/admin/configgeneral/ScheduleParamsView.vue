@@ -13,7 +13,6 @@ import { useMainStore } from '@/stores/MainStore'
 import HorarioForm from '../../../components/admin/schedule/SheduleForm.vue'
 
 export default {
-  name: 'MainHorario',
   components: {
     HorarioForm
   },
