@@ -4,6 +4,7 @@ import { ref } from 'vue'
 import * as yup from 'yup'
 import { useUserDataStore } from '@/stores/portal/registroStore'
 import { useRouter } from 'vue-router'
+//import { useToast } from '@vuetify/vue3'
 
 const router = useRouter();
 const userDataStore = useUserDataStore()
@@ -172,8 +173,10 @@ const handleFileSelect = (event, type) => {
 const sendPdfsToBackend = async () => {
   try {
     await userDataStore.uploadPdfsToBackend();
-    alert('Datos registrados correctamente');
-    await router.push("/");
+    this.$alert.success('Datos registrados correctamente');
+    setTimeout(() => {
+      router.push({ name: 'home' });
+    }, 2000);
 
   } catch (error) {
     console.error('Error sending PDFs to Backend', error);

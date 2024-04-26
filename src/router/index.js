@@ -135,11 +135,6 @@ const router = createRouter({
       name: 'registration',
       component: () => import('../views/portal/RegisterView.vue')
     },
-    {
-      path: '/student/page3',
-      name: 'doc-off',
-      component: () => import('../views/users/student/est-doc-off.vue')
-    },
   ]
 })
 
