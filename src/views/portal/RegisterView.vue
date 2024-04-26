@@ -4,7 +4,6 @@ import { ref } from 'vue'
 import * as yup from 'yup'
 import { useUserDataStore } from '@/stores/portal/registroStore'
 import { useRouter } from 'vue-router'
-//import { useToast } from '@vuetify/vue3'
 
 const router = useRouter();
 const userDataStore = useUserDataStore()
@@ -173,11 +172,8 @@ const handleFileSelect = (event, type) => {
 const sendPdfsToBackend = async () => {
   try {
     await userDataStore.uploadPdfsToBackend();
-    this.$alert.success('Datos registrados correctamente');
-    setTimeout(() => {
-      router.push({ name: 'home' });
-    }, 2000);
-
+    alert('Datos registrados correctamente');
+    await router.push({ name: 'home'});
   } catch (error) {
     console.error('Error sending PDFs to Backend', error);
   }
@@ -388,13 +384,9 @@ const sendPdfsToBackend = async () => {
               </v-row>
             </v-card-text>
 
-            <v-card-actions class="justify-end">
-              <v-btn @click="sendPdfsToBackend">Registrar</v-btn>
-            </v-card-actions>
-
             <v-stepper-actions prev-text="Anterior" @click:prev="prev" disabled="prev">
               <template v-slot:next>
-                <v-btn type="submit" class="v-stepper__action" @click="next"> Siguiente </v-btn>
+                <v-btn type="submit" class="v-stepper__action" @click="sendPdfsToBackend"> Registrar </v-btn>
               </template>
             </v-stepper-actions>
           </v-stepper-window-item>
