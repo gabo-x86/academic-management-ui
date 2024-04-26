@@ -134,9 +134,8 @@ const router = createRouter({
       path: '/portal/registration',
       name: 'registration',
       component: () => import('../views/portal/RegisterView.vue')
-    }
+    },
   ]
 })
 
 export default router
- 
