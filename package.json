@@ -19,6 +19,7 @@
     "html2canvas": "^1.4.1",
     "jspdf": "^2.5.1",
     "pinia": "^2.1.7",
+    "quasar": "^2.15.2",
     "v-viewer": "^3.0.13",
     "vee-validate": "^4.12.5",
     "viewerjs": "^1.11.6",
