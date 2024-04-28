@@ -1,13 +1,10 @@
 <script setup>
-import firstPhoto from "@/assets/AM_assets/foto1.jpg"
 
 </script>
 
 <template>
   <v-parallax
     height="300"
-
-    :style="{ backgroundImage: `url('/src/assets/AM_assets/foto1.jpg')` }"
   >
     <div class="d-flex flex-column fill-height justify-center align-center text-white">
       <div class="text-h1 font-weight-bold">UNIVERSIDAD MAYOR DE SAN SIMÓN</div>
