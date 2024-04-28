@@ -1,138 +1,123 @@
 <script setup>
-import { ref } from 'vue';
+import { ref } from 'vue'
+import Payment from '@/components/users/Payment.vue';
+var step = ref(0)
+const dialogPayment = ref(false)
 
-const tab = ref('option-1');
-const desserts = [{n:1, manage:'1/2024', careers:'Ingenieria de Sistemas', dateMatricula:[{start:'12/02/2024', end:'24/02/2024'}], amountMatricula:15.0}];
-const headers= [
+const openDialogPayment=()=>{
+  
+}
+
+const desserts = [
+  {
+    number: 1,
+    manage: '1/2024',
+    career: 'Ingenieria de Sistemas',
+    dateMatricula: {start: '12/02/2024', end: '24/02/2024' },
+    amountMatricula: 15.0
+  }
+]
+const headers = [
   { title: 'N°', align: 'start', key: 'number' },
-  { title: 'Nombre', align: 'start', key: 'name' },
-  { title: 'Sigla', align: 'start', key: 'initial' },
-  { title: 'Nivel', align: 'start', key: 'level' },
-  { title: 'Electiva', align: 'start', key: 'elective' },
-  { title: 'Opciones', align: 'start', key: 'actions' },
+  { title: 'Gestión', align: 'start', key: 'manage' },
+  { title: 'Carrera', align: 'start', key: 'career' },
+  { title: 'Fecha compra matrícula', align: 'start', key: 'dateMatricula' },
+  { title: 'Monto', align: 'start', key: 'amountMatricula' },
+  { title: 'Pagar matrícula', align: 'start', key: 'actions' }
 ]
 
-const listSubjects=[
-  {number:1, name:'Introducción a la Programacion',initial:'Intro', level:'A', elective:'NO'},
-  {number:2, name:'Elementos de la  Programacion',initial:'EP', level:'B', elective:'NO'},
-  {number:3, name:'Base de Datos 1',initial:'BD1', level:'C', elective:'NO'},]
+
 const nextTab = () => {
   if (tab.value === 'option-1') {
-    tab.value = 'option-2';
+    tab.value = 'option-2'
   } else if (tab.value === 'option-2') {
-    tab.value = 'option-3';
+    tab.value = 'option-3'
   }
   // Puedes agregar más condiciones si tienes más pestañas
 }
 </script>
 
 <template>
-    <v-container>
-      <v-card max-width="1200" variant="flat" class="mx-auto my-16">
-      <v-tabs
-        v-model="tab"
-        align-tabs="center"
-        bg-color="#001E89"
-        slider-color="blue-lighten-5"
-      >
-        <v-tab value="option-1">
-          PASO 1 - PAGAR MATRICULA
-        </v-tab>
-        <v-tab value="option-2">
-          PASO 2 - OBTENER CODIGO
-        </v-tab>
-        <v-tab value="option-3">
-          PASO 3 - INSCRIPCIÓN DE MATERIAS
-        </v-tab>
-      </v-tabs>
-        <v-window v-model="tab">
-          <v-window-item value="option-1">
-            <v-card flat>
-              <v-card-text>
-                <p class="font-weight-bold text-h6 text-center my-5">PAGAR MATRÍCULA</p>
-                <v-table>
-                  <thead>
-                  <tr>
-                    <th class="text-left">
-                      N°
-                    </th>
-                    <th class="text-left">
-                      Gestión
-                    </th>
-                    <th class="text-left">
-                      Carrera
-                    </th>
-                    <th class="text-left">
-                      Fecha compra matrícula
-                    </th>
-                    <th class="text-left">
-                      Monto
-                    </th>
-                    <th class="text-left">
-                      Pagar matricula
-                    </th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  <tr
-                    v-for="item in desserts"
-                    :key="item.n"
-                  >
-                    <td>{{ item.n }}</td>
-                    <td>{{ item.manage }}</td>
-                    <td>{{ item.careers }}</td>
-                    <td>
-                      <p>{{ "Desde: "+item.dateMatricula[0].start}}</p>
-                      <p>{{" Hasta: "+ item.dateMatricula[0].end}}</p>
-                    </td>
-                    <td>{{ item.amountMatricula }} Bs.</td>
-                    <td><v-btn color="#001E89">pagar</v-btn></td>
-                  </tr>
-                  </tbody>
-                </v-table>
-              </v-card-text>
-            </v-card>
-          </v-window-item>
-          <v-window-item value="option-2">
-            <v-card flat>
-              <v-card-text>
-                <p class="font-weight-bold text-h5 text-center my-5">OBTENER CODIGO DE ACCESO</p>
-                <v-row justify="center" class="my-4">
-                    <v-btn color="#001E89" width="280" height="110">
-                      <p class="font-weight-regular text-h6 ">ENVIAR A CORREO</p>
-                    </v-btn>
-                </v-row>
-              </v-card-text>
-            </v-card>
-          </v-window-item>
-          <v-window-item value="option-3">
-            <v-card flat>
-              <v-card-text>
-                <p class="font-weight-bold text-h6 text-center my-5">INSCRIPCIÓN DE MATERIAS</p>
-                <v-data-table
-                  :headers="headers"
-                  :items="listSubjects"
-                  density="compact"
-                  item-key="name"
-                >
-                  <template v-slot:[`item.actions`]="{ item }">
-                    <v-row justify="space-around">
-                      <v-btn color="#001E89" class="my-4">
-                        INSCRIBIRSE
-                      </v-btn>
-                    </v-row>
-                  </template>
-                </v-data-table>
-              </v-card-text>
-            </v-card>
-          </v-window-item>
-        </v-window>
-      </v-card>
-    </v-container>
-  <v-btn @click="nextTab" :disabled="tab === 'option-3'">Siguiente</v-btn>
 
+  <payment
+  :dialog="dialogPayment"
+  ></payment>
+
+  <v-container>
+    <v-card max-width="1200" variant="flat" class="mx-auto my-16">
+      <v-stepper v-model="step">
+        <template v-slot:default="{ prev }">
+          <v-stepper-header>
+            <v-stepper-item
+              title="PASO 1 - PAGAR MATRICULA"
+              value="1"
+              selected-class="selected-step"
+              color="white"
+            ></v-stepper-item>
+            <v-stepper-item
+              title="PASO 2 - OBTENER CODIGOS"
+              value="2"
+              selected-class="selected-step"
+              color="white"
+            ></v-stepper-item>
+            <v-stepper-item
+              title="PASO 3 - INSCRIPCION DE MATERIAS"
+              value="3"
+              color="white"
+              selected-class="selected-step"
+            ></v-stepper-item>
+          </v-stepper-header>
+
+          <v-stepper-window>
+            <v-stepper-window-item value="1">
+              <v-card title="PAGAR MATRÍCULA" center>
+                <v-data-table :headers="headers" :items="desserts" >
+                  <template v-slot:[`item.dateMatricula`]="{item}">
+                  <p>Desde: {{item.dateMatricula.start }}</p>
+                  <p>Hasta: {{item.dateMatricula.end }}</p>
+                 </template>
+                 <template v-slot:[`item.actions`]>
+                  <v-btn color="primary" variant="elevated" @click="openDialogPayment">PAGAR</v-btn>
+                 </template>
+                </v-data-table>
+              </v-card>
+              <template v-slot:next>
+                  <v-btn type="submit" class="v-stepper__action" @click="next"> Siguiente </v-btn>
+                </template>
+            </v-stepper-window-item>
+
+            <v-stepper-window-item value="2">
+              <span>2</span>
+              <v-stepper-actions prev-text="Anterior" @click:prev="prev" disabled="prev">
+                <template v-slot:next>
+                  <v-btn type="submit" class="v-stepper__action" @click="next"> Siguiente </v-btn>
+                </template>
+              </v-stepper-actions>
+            </v-stepper-window-item>
+
+            <v-stepper-window-item value="3">
+              <span>3</span>
+              <v-stepper-actions prev-text="Anterior" @click:prev="prev" disabled="prev">
+                <template v-slot:next>
+                  <v-btn type="submit" class="v-stepper__action" @click="next"> Siguiente </v-btn>
+                </template>
+              </v-stepper-actions>
+            </v-stepper-window-item>
+          </v-stepper-window>
+        </template>
+      </v-stepper>
+    </v-card>
+  </v-container>
 </template>
 
 <style scoped>
-
+.v-stepper-header {
+  background: rgba(0, 30, 137, 1);
+  color: white;
+  font-size: 15px;
+}
+.selected-step {
+  background: rgba(154, 170, 226, 1);
+  color: black;
+}
 </style>
