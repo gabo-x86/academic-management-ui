@@ -1,0 +1,8 @@
+version: '3.0'
+services:
+  academic_mg_ui:
+    image: academic-mg-ui:0.0.1
+    container_name: academic-mg-ui
+    build: .
+    ports:
+      - 80:8080
