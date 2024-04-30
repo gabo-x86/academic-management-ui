@@ -30,6 +30,12 @@ const menuGroupList = ref([
         value: 'curriculum',
         route:'/student/curriculum'
       },
+      {
+        name:'documentos off',
+        value: 'doc-off',
+        route:'/student/page3'
+      },
+
 
     ]
   }

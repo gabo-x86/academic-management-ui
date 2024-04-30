@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-app-bar app >
+    <v-app-bar app>
       <!-- Botones del app bar -->
       <v-btn text to="/">Facultades</v-btn>
       <v-spacer></v-spacer>
@@ -12,7 +12,7 @@
         </div>
       </v-card>
       <v-spacer></v-spacer>
-      <v-btn text to="/contactos">Contactos</v-btn>
+      <v-btn text to="/portal/registration">Registro</v-btn>
       <v-spacer></v-spacer>
 
       <!-- Botón de login -->
@@ -23,38 +23,34 @@
         <v-list>
           <v-list-item>
             <v-list-item-title>
-              <v-btn @click="() => navigateTo('/admin/dashboard/', 'admin')">Administrador
-              </v-btn>
+              <v-btn @click="() => navigateTo('/admin/dashboard/', 'admin')">Administrador </v-btn>
             </v-list-item-title>
             <v-list-item-title>
-              <v-btn @click="() => navigateTo('/student/dashboard/', 'est')">Estudiante
-              </v-btn>
+              <v-btn @click="() => navigateTo('/student/dashboard/', 'est')">Estudiante </v-btn>
             </v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>
     </v-app-bar>
 
-    <v-main :style="{ backgroundImage: `url('/src/assets/AM_assets/backgrnd.jpg')` }">
-    </v-main>
+    <v-main :style="{ backgroundImage: `url('/src/assets/AM_assets/backgrnd.jpg')` }"> </v-main>
   </v-app>
 </template>
 
 <script setup>
 //import PortalPage from '@/components/portal/PortalPage.vue'
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { useMainStore } from '@/stores/MainStore.js';
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useMainStore } from '@/stores/MainStore.js'
 
-const logoSrc = ref('/src/assets/AM_assets/logo_ej.png');
-const router = useRouter();
-const store = useMainStore(); // Obteniendo el store de Vuex
+const logoSrc = ref('/src/assets/AM_assets/logo_ej.png')
+const router = useRouter()
+const store = useMainStore() // Obteniendo el store de Vuex
 
 function navigateTo(route, role) {
-  store.setUserRole(role); // Cambiando el rol de usuario
-  router.push(route); // Navegando a la ruta correspondiente
+  store.setUserRole(role) // Cambiando el rol de usuario
+  router.push(route) // Navegando a la ruta correspondiente
 }
-
 </script>
 
 <style scoped>
@@ -83,7 +79,7 @@ function navigateTo(route, role) {
 }
 
 .v-btn:hover {
-  background-color: rgba(0, 0, 0, 0.0); /* Azul marino con opacidad baja */
+  background-color: rgba(0, 0, 0, 0); /* Azul marino con opacidad baja */
 }
 
 main {
