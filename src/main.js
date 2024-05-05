@@ -5,6 +5,7 @@ import { createPinia } from 'pinia'
 
 import App from './App.vue'
 import router from './router'
+import { keycloakInit } from './utils/keycloak'
 
 // Vuetify
 import 'vuetify/styles'
@@ -16,6 +17,7 @@ import { aliases, mdi } from 'vuetify/iconsets/mdi'
 import { fa } from 'vuetify/iconsets/fa'
 const globalAreaId = 3
 
+await keycloakInit();
 const vuetify = createVuetify({
   components,
   directives,

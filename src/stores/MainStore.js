@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
+import { keycloak } from "../utils/keycloak";
 
 export const sharedReload = ref(false);
 export const useMainStore = defineStore('main', () => {
@@ -24,10 +25,22 @@ export const useMainStore = defineStore('main', () => {
     itinerary.itineraryId.value = id;
   }
 
-  const userRole = ref('');
+  function getKeycloakRole(keycloakData) {
+    if(keycloakData) {
+      return keycloakData.realm_access.roles.includes('admin') ? 'admin' : 'user';
+    }else {
+      return '';
+    }
+  }
 
-  function setUserRole(role) {
-    userRole.value = role; // Mutación para actualizar el rol de usuario
+  function getUserInfo() {
+    const keycloakData = keycloak.tokenParsed;
+      return {
+        'username': keycloakData ? keycloakData.preferred_username : '',
+        'role': keycloakData ? getKeycloakRole(keycloakData) : '',
+        'email': keycloakData ? keycloakData.email : '',
+        'emailIsVerified': keycloakData ? keycloakData.email_verified: ''
+      }
   }
 
   return {
@@ -35,7 +48,6 @@ export const useMainStore = defineStore('main', () => {
     setAreaId,
     itinerary,
     setItineraryId,
-    userRole,
-    setUserRole,
+    getUserInfo
   };
 });

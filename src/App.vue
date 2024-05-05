@@ -25,12 +25,13 @@ const showNavigationDrawer = ref(false);
 const showNavigationDrawer_est = ref(false);
 
 const router = useRouter();
+const userInfo = useMainStore().getUserInfo();
 
 function isStudent() {
-  return useMainStore().userRole === 'est'; // Verifica si el rol es 'estudiante'
+  return userInfo['role'] === 'user'; // Verifica si el rol es 'estudiante'
 }
 function isAdmin() {
-  return useMainStore().userRole  === 'admin'; // Verifica si el rol es 'administrador'
+  return userInfo['role']  === 'admin'; // Verifica si el rol es 'administrador'
 }
 
 router.beforeEach((to, from, next) => {
