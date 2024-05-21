@@ -32,7 +32,7 @@
         </v-list>
       </v-menu>
     </v-app-bar>
-
+    <Profile/>
     <v-main :style="{ backgroundImage: `url('/src/assets/AM_assets/backgrnd.jpg')` }"> </v-main>
   </v-app>
 </template>
@@ -42,6 +42,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useMainStore } from '@/stores/MainStore.js'
+import Profile from "@/components/app/Profile.vue";
 
 const logoSrc = ref('/src/assets/AM_assets/logo_ej.png')
 const router = useRouter()
