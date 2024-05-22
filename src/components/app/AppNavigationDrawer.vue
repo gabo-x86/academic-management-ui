@@ -130,7 +130,6 @@ onMounted(async () => {
     id: area.id,
     name: area.name
   }));
-  console.log(import.meta.env.MODE);
 });
 </script>
 <style scoped>
