@@ -33,15 +33,17 @@
   </v-navigation-drawer>
   <v-app-bar color="transparent" dark  style="background: linear-gradient(45deg, #001E89, #7D0000);" >
     <v-app-bar-title>
-      <p style="color: white; text-transform: uppercase; text-align: center; font-weight: bold;"> Gestión Académica - Admin</p>
+      <p style="color: white; text-transform: uppercase; text-align: center; font-weight: bold;"> Gestión Académica - Administrador</p>
     </v-app-bar-title>
   </v-app-bar>
+  <Profile/>
 </template>
 
 <script setup>
 import { ref, onMounted, watch } from 'vue';
 import { sharedReload, useMainStore } from '@/stores/MainStore'
 import { useAreaStore } from '@/stores/admin/configgeneral/areaStore';
+import Profile from "@/components/app/Profile.vue";
 
 const drawer = ref(true);
 const rail = ref(false);
@@ -131,5 +133,4 @@ onMounted(async () => {
 });
 </script>
 <style scoped>
-
 </style>
