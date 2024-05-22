@@ -1,11 +1,12 @@
 <script setup>
 
+import firstPhoto from "@/assets/AM_assets/foto1.jpg";
 </script>
 
 <template>
   <v-app>
     <v-parallax class="custom-parallax"
-                :style="{ backgroundImage: `url('/src/assets/AM_assets/foto1.jpg')`,backgroundSize: 'cover', backgroundPosition: 'center'}"
+                :style="{ backgroundImage: `url(${firstPhoto})`,backgroundSize: 'cover', backgroundPosition: 'center'}"
     >
       <div class="overlay">
         <div class="d-flex flex-column fill-height justify-center text-white">
