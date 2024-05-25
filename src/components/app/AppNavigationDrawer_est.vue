@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue';
+import Profile from "@/components/app/Profile.vue";
 
 const drawer = ref(true);
 const rail = ref(false);
@@ -93,4 +94,5 @@ const menuGroupList = ref([
     <p style="color: white; text-transform: uppercase; text-align: center; font-weight: bold;"> Gestión Académica - Estudiantes</p>
   </v-app-bar-title>
   </v-app-bar>
+  <Profile/>
 </template>

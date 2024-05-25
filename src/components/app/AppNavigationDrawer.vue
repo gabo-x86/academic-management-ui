@@ -5,43 +5,44 @@
       <v-btn variant="text" icon="mdi-chevron-left" @click.stop="rail = !rail"/>
     </template>
   </v-list-item>
+    <v-divider></v-divider>
 
-  <v-divider></v-divider>
+    <v-list v-model:opened="open" density="compact">
+      <v-select
+        label="Select Area"
+        v-model="selectedArea"
+        :items="areasSelect.map(x => x.name)"
+      ></v-select>
+      <v-list-item prepend-icon="mdi-home" title="Inicio" value="inicio" router to="/admin/dashboard/"/>
+      <v-list-group v-for="menuGroup in menuGroupList" :key="menuGroup.value" :value="menuGroup.value">
+        <template v-slot:activator="{ props }">
+          <v-list-item v-bind="props" :prepend-icon="menuGroup.icon" :title="menuGroup.name"></v-list-item>
+        </template>
+        <v-list-item
+          v-for="subMenu in menuGroup.subMenus"
+          :key="subMenu.value"
+          :value="subMenu.value"
+          :title="subMenu.name"
+          router :to="subMenu.route"
+        ></v-list-item>
 
-  <v-list v-model:opened="open" density="compact">
-    <v-select
-      label="Select Area"
-      v-model="selectedArea"
-      :items="areasSelect.map(x => x.name)"
-    ></v-select>
-    <v-list-item prepend-icon="mdi-home" title="Inicio" value="inicio" router to="/admin/dashboard/"/>
-    <v-list-group v-for="menuGroup in menuGroupList" :key="menuGroup.value" :value="menuGroup.value">
-      <template v-slot:activator="{ props }">
-        <v-list-item v-bind="props" :prepend-icon="menuGroup.icon" :title="menuGroup.name"></v-list-item>
-      </template>
-      <v-list-item
-        v-for="subMenu in menuGroup.subMenus"
-        :key="subMenu.value"
-        :value="subMenu.value"
-        :title="subMenu.name"
-        router :to="subMenu.route"
-      ></v-list-item>
-
-    </v-list-group>
-    <v-list-item prepend-icon="mdi-exit-to-app" title="LogOut" value="logout" router :to="{ name: 'portal' }"/>
-  </v-list>
-</v-navigation-drawer>
-<v-app-bar color="transparent" dark  style="background: linear-gradient(45deg, #001E89, #7D0000);" >
-  <v-app-bar-title>
-    <p style="color: white; text-transform: uppercase; text-align: center; font-weight: bold;"> Gestión Académica - Admin</p>
-  </v-app-bar-title>
-</v-app-bar>
+      </v-list-group>
+      <v-list-item prepend-icon="mdi-exit-to-app" title="LogOut" value="logout" router :to="{ name: 'portal' }"/>
+    </v-list>
+  </v-navigation-drawer>
+  <v-app-bar color="transparent" dark  style="background: linear-gradient(45deg, #001E89, #7D0000);" >
+    <v-app-bar-title>
+      <p style="color: white; text-transform: uppercase; text-align: center; font-weight: bold;"> Gestión Académica - Administrador</p>
+    </v-app-bar-title>
+  </v-app-bar>
+  <Profile/>
 </template>
 
 <script setup>
 import { ref, onMounted, watch} from 'vue';
 import { sharedReload, useMainStore } from '@/stores/MainStore'
 import { useAreaStore } from '@/stores/admin/configgeneral/areaStore';
+import Profile from "@/components/app/Profile.vue";
 
 const drawer = ref(true);
 const rail = ref(false);
@@ -148,5 +149,4 @@ onMounted(async () => {
 });
 </script>
 <style scoped>
-
 </style>
