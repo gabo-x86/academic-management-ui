@@ -60,16 +60,22 @@ const headers = ref([
   { title: 'Opciones', align:'center' ,sortable: false, key: 'actions' }
 ]);
 
-onMounted( async ()=>{
-  watch(()=>mainStore.area.areaId, async (newAreaId)=>{
-    if (newAreaId != null){
-      await classroomStore.getClassrooms(mainStore.area.areaId);
-      classrooms.value=classroomStore.classrooms
-      classroomsReady.value=true
-      //console.log(classroomStore.classrooms)
+watch(
+  () => mainStore.area.areaId,
+  async (newAreaId) => {
+    if (newAreaId !== null) {
+      await classroomStore.getClassrooms(newAreaId);
+      classrooms.value = classroomStore.classrooms;
+      classroomsReady.value = true;
     }
-  })
-})
+  }
+);
+
+onMounted(async () => {
+  await classroomStore.getClassrooms(mainStore.area.areaId);
+  classrooms.value = classroomStore.classrooms;
+  classroomsReady.value = true;
+});
 </script>
 <template>
   <v-card

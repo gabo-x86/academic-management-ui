@@ -144,11 +144,6 @@ const updateDeleteCareer = (value) => {
   eliminarCarrera.value = value;
 };
 
-const reloadTable = async () => {
-  const areaId = mainStore.area.areaId;
-  await careerStore.getCareers(areaId);
-};
-
 const formatCareers = (careers) => {
   return careers.map((career) => ({
     ...career,
@@ -156,28 +151,38 @@ const formatCareers = (careers) => {
   }));
 };
 
+async function reloadTable() {
+  const newAreaId = mainStore.area.areaId;
+  if (newAreaId !== null) {
+    await careerStore.getCareers(newAreaId);
+    careers.value = careerStore.careers;
+    formattedCareers.value = careers.value.map((career) => ({
+      ...career,
+      creationDate: formatDate(career.creationDate),
+    }));
+    careersReady.value = true;
+  }
+}
+
+watch(
+  () => mainStore.area.areaId,
+  async (newAreaId) => {
+    if (newAreaId !== null) {
+      await reloadTable();
+    } 
+  }
+);
 
 onMounted(async () => {
-  watch(() => mainStore.area.areaId, async (newAreaId) => {
-    if (newAreaId !== null) {
-      await careerStore.getCareers(newAreaId);
-      careers.value = careerStore.careers;
-      formattedCareers.value = careers.value.map((career) => ({
-        ...career,
-        creationDate: formatDate(career.creationDate),
-      }));
-      careersReady.value = true;
-    }
-  });
-
   await areaStore.getAreas();
-  areasSelect.value = areaStore.areas.map(area => ({
+  areasSelect.value = areaStore.areas.map((area) => ({
     id: area.id,
-    name: area.name
+    name: area.name,
   }));
+  await reloadTable();
 });
 
- 
+
 
 </script>
 

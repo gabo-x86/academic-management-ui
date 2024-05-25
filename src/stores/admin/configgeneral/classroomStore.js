@@ -20,26 +20,21 @@ export const useClassroomStore = defineStore('classroomStore', ()=>{
         }
     }
 
-    async function saveClassroom(model){
+    async function saveClassroom(model) {
         try {
-            const { areaId } = mainStore.area;
-            model.classroom.areaId = areaId;
-
-            const {status, data} = await AxiosAM.post(`${pathCareerResource}/2/classrooms`, model.classroom);
-            if (status===200){
-                model.classroom={
-                    name:'',
-                    initials:'',
-                    type:'',
-                    address:'',
-                };
-                return{ success:true, data: data}
-            }
-        }catch (error){
-            console.error('Error saving classroom: ', error);
-            return { error:true, success:false, data:null}
+          const { areaId } = mainStore.area;
+          model.classroom.areaId = areaId;
+          const { status, data } = await AxiosAM.post(`${pathCareerResource}/${areaId}/classrooms`, model.classroom);
+          if (status === 201) {
+            classrooms.value.push(data);
+            model.classroom = { name: '', initials: '', type: '', address: '' };
+            return { success: true, data: data };
+          }
+        } catch (error) {
+          console.error('Error saving classroom: ', error);
+          return { error: true, success: false, data: null };
         }
-    }
+      }
 
     async function getClassroomById(classroomId){
         try {

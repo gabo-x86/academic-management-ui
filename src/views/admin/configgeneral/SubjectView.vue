@@ -53,15 +53,25 @@ const headers = [
   { title: 'Acción', align: 'center', sortable: false, key: 'actions' },
 ];
 
-onMounted(async () => {
-  watch(() => mainStore.area.areaId, async (newAreaId) => {
+watch(
+  () => mainStore.area.areaId,
+  async (newAreaId) => {
     if (newAreaId !== null) {
-      await subjectStore.getSubjects(mainStore.area.areaId);
-      subjects.value=subjectStore.subjects
-      subjectsReady.value = true
+      await subjectStore.getSubjects(newAreaId);
+      subjects.value = subjectStore.subjects;
+      subjectsReady.value = true;
     }
-  })
-})
+  }
+);
+
+onMounted(async () => {
+  const initialAreaId = mainStore.area.areaId;
+  if (initialAreaId !== null) {
+    await subjectStore.getSubjects(initialAreaId);
+    subjects.value = subjectStore.subjects;
+    subjectsReady.value = true;
+  }
+});
 
 </script>
 
