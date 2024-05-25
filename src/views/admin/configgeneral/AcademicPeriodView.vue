@@ -24,13 +24,19 @@ const headers = ref([
   { title: 'Opciones', align: 'center', sortable: false, key: 'actions' }
 ]);
 
-onMounted(async () => {
-  watch(() => mainStore.area.areaId, async (newAreaId) => {
+watch(
+  () => mainStore.area.areaId,
+  async (newAreaId) => {
     if (newAreaId !== null) {
       await academicPeriodStore.listAcademicPeriodByArea(newAreaId);
-      formattedAcademicPeriods.value=academicPeriodStore.academicPeriods;
+      formattedAcademicPeriods.value = academicPeriodStore.academicPeriods;
     }
-  });
+  }
+);
+
+onMounted(async () => {
+  await academicPeriodStore.listAcademicPeriodByArea(mainStore.area.areaId);
+  formattedAcademicPeriods.value = academicPeriodStore.academicPeriods;
 });
 
 const dialog = ref(false);
@@ -96,11 +102,14 @@ const save = () => {
     close();
   } else {
     if (editedItem.value.name && editedItem.value.year && editedItem.value.startDate && editedItem.value.endDate) {
-      formattedAcademicPeriods.value.push({ ...editedItem.value });
-      academicPeriodStore.createAcademicPeriod(editedItem.value);
-      showError.value = false;
-      close();
-    }else{
+      academicPeriodStore.createAcademicPeriod(editedItem.value).then(({ success, data }) => {
+        if (success) {
+          formattedAcademicPeriods.value = academicPeriodStore.academicPeriods;
+          showError.value = false;
+          close();
+        }
+      });
+    } else {
       console.log("Los Campos estan vacios");
     }
   }

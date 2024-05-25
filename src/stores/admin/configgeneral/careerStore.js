@@ -27,18 +27,12 @@
         model.career.areaId = areaId;
         console.log(areaId)
         console.log(model.career.areaId)
-        
         const parsedCreationDate = parse(model.career.creationDate, 'dd/MM/yyyy', new Date());
         model.career.creationDate = format(parsedCreationDate, 'yyyy-MM-dd', { timezone: 'UTC' });
-    
-        const { status, data } = await AxiosAM.post(`${pathCareerResource}/2/careers`, model.career);
-    
-        if (status === 200) {
-          model.career = {
-            name: '',
-            initials: '',
-            description: '',
-          };
+        const { status, data } = await AxiosAM.post(`${pathCareerResource}/${areaId}/careers`, model.career);
+        if (status === 201) {
+          careers.value.push(data);
+          model.career = { name: '', initials: '', description: '', };
         }
       } catch (error) {
         console.error('Error saving career:', error);

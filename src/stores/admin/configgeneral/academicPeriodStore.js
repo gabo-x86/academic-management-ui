@@ -41,11 +41,17 @@ export const useAcademicPeriodStore = defineStore('academicPeriodStore', () => {
 
   async function createAcademicPeriod(model) {
     try {
-      model.areaId=areaId;
-      model.startDate=formatDate(model.startDate, false);
-      model.endDate=formatDate(model.endDate, false);
-        const { status, data } = await AxiosAM.post(`${pathAcademicPeriodResource}/${areaId}/academic-periods`, model, areaId);
+      model.areaId = areaId;
+      model.startDate = formatDate(model.startDate, false);
+      model.endDate = formatDate(model.endDate, false);
+      const { status, data } = await AxiosAM.post(`${pathAcademicPeriodResource}/${areaId}/academic-periods`, model, areaId);
       if (status === 201) {
+        academicPeriods.value.push({
+          ...data,
+          index: academicPeriods.value.length + 1,
+          startDate: formatDate(data.startDate, true),
+          endDate: formatDate(data.endDate, true),
+        });
         return { success: true, data: data };
       }
     } catch (error) {
